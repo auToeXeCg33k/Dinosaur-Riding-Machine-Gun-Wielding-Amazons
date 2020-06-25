@@ -1,23 +1,39 @@
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Tile {
-  private ArrayList<Amazon> amazonList = new ArrayList<>();
+  private HashSet<Amazon> amazonSet = new HashSet<>();
   
-  private ArrayList<Dinoszaurusz> dinoszauruszList = new ArrayList<>();
+  private HashSet<Dinoszaurusz> dinoszauruszSet = new HashSet<>();
   
   public void addAmazon(Amazon a) {
-    this.amazonList.add(a);
+    this.amazonSet.add(a);
   }
   
   public void addDinoszaurusz(Dinoszaurusz d) {
-    this.dinoszauruszList.add(d);
+    this.dinoszauruszSet.add(d);
+  }
+  
+  public void rmAmazon(Amazon a) {
+    this.amazonSet.remove(a);
+  }
+  
+  public void rmDinoszaurusz(Dinoszaurusz d) {
+    this.dinoszauruszSet.remove(d);
   }
   
   public boolean containsDinoszaurusz(Dinoszaurusz d) {
-    return this.dinoszauruszList.contains(d);
+    return this.dinoszauruszSet.contains(d);
   }
   
   public boolean containsAmazon(Amazon a) {
-    return this.amazonList.contains(a);
+    return this.amazonSet.contains(a);
+  }
+  
+  public HashSet<Amazon> getAmazonSet() {
+    return this.amazonSet;
+  }
+  
+  public HashSet<Dinoszaurusz> getDinoszauruszSet() {
+    return this.dinoszauruszSet;
   }
 }

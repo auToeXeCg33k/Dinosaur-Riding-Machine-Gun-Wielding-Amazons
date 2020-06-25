@@ -1,16 +1,21 @@
 import java.util.HashMap;
-import java.util.Map;
 
 public class World {
   Tile[][] tiles;
   
-  private Map<String, Dinoszaurusz> dinoszauruszMap;
+  private HashMap<String, Dinoszaurusz> dinoszauruszMap;
   
-  private Map<String, Amazon> amazonMap;
+  private HashMap<String, Amazon> amazonMap;
   
-  private Map<String, Command> commandMap;
+  private HashMap<String, Command> commandMap;
+  
+  int x;
+  
+  int y;
   
   public World(int x, int y) {
+    this.x = x;
+    this.y = y;
     this.tiles = new Tile[x][y];
     for (int i = 0; i < x; i++) {
       for (int j = 0; j < y; j++)
@@ -25,6 +30,7 @@ public class World {
     this.commandMap.put("help", new Help());
     this.commandMap.put("attack", new Attack());
     this.commandMap.put("where", new Where());
+    this.commandMap.put("move", new Move());
   }
   
   public void newDinoszaurusz(String str) {
@@ -37,19 +43,27 @@ public class World {
     this.tiles[0][0].addAmazon(this.amazonMap.get(str));
   }
   
-  public Map<String, Amazon> getAmazonMap() {
+  public HashMap<String, Amazon> getAmazonMap() {
     return this.amazonMap;
   }
   
-  public Map<String, Dinoszaurusz> getDinoszauruszMap() {
+  public HashMap<String, Dinoszaurusz> getDinoszauruszMap() {
     return this.dinoszauruszMap;
   }
   
-  public Map<String, Command> getCommandMap() {
+  public HashMap<String, Command> getCommandMap() {
     return this.commandMap;
   }
   
   public Tile[][] getTiles() {
     return this.tiles;
+  }
+  
+  public int getX() {
+    return this.x;
+  }
+  
+  public int getY() {
+    return this.y;
   }
 }

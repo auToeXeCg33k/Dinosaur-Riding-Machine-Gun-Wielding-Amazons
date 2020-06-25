@@ -8,7 +8,7 @@ class Help implements Command {
     System.out.println("new [entitástípus] [név]: csinál egy entitást azzal a névvel és típussal, amit beírsz");
     System.out.println("select [entitástípus] [név]: kiválaszt egy entitást azzal a névvel és típussal, amit beírsz");
     System.out.println("attack [név]: a kiválaszott amazon megtámadja a megadott amazont");
-    System.out.println("where [entitástípus] [név]: a kiválasztott entitás tartózkodási helye");
+    System.out.println("where: a kiválasztott entitás tartózkodási helye");
     return true;
   }
 }

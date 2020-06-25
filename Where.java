@@ -1,31 +1,25 @@
 public class Where implements Command {
   public void execute(String[] strs, World world) {
-    if (strs.length == 3) {
-      if (strs[1].equals("amazon")) {
-        if (world.getAmazonMap().containsKey(strs[2])) {
+    if (strs.length == 1) {
+      if (((Select)world.getCommandMap().get("select")).isSelected()) {
+        if (((Select)world.getCommandMap().get("select")).getSelection() instanceof Amazon) {
           for (int i = 0; i < (world.getTiles()).length; i++) {
             for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-              if (world.getTiles()[i][j].containsAmazon(world.getAmazonMap().get(strs[2])))
+              if (world.getTiles()[i][j].containsAmazon((Amazon)((Select)world.getCommandMap().get("select")).getSelection()))
                 System.out.println("Az amazon a(z) " + i + ";" + j + " koordinátán van"); 
             } 
           } 
         } else {
-          System.out.println("ilyen amazon nincs");
-        } 
-      } else if (strs[1].equals("dinoszaurusz")) {
-        if (world.getDinoszauruszMap().containsKey(strs[2])) {
           for (int i = 0; i < (world.getTiles()).length; i++) {
             for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-              if (world.getTiles()[i][j].containsDinoszaurusz(world.getDinoszauruszMap().get(strs[2])))
+              if (world.getTiles()[i][j].containsDinoszaurusz((Dinoszaurusz)((Select)world.getCommandMap().get("select")).getSelection()))
                 System.out.println("A dinoszaurusz a(z) " + i + ";" + j + " koordinátán van"); 
             } 
           } 
-        } else {
-          System.out.println("ilyen dinoszaurusz nincs");
         } 
+      } else {
+        System.out.println("válasszá ki először vkit");
       } 
-    } else if (strs.length < 3) {
-      System.out.println("nincs elég argumentum");
     } else {
       System.out.println("túl sok argumentum");
     } 

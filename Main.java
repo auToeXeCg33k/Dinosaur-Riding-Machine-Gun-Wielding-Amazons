@@ -11,24 +11,20 @@ public class Main {
       System.out.println("na zsa parancs");
       String command = sc.nextLine();
       String[] strings = command.split(" ");
-      if (strings.length != 0 && !world.getCommandMap().containsKey(strings[0])) {
-        System.out.println("ilyen parancs nincs is");
+      if (strings[0].equals("")) {
+        System.out.println("há azé írhatná be valamit");
         continue;
       } 
-      if (strings.length > 1) {
-        if (strings[0].equals("help") || strings[0].equals("exit")) {
-          System.out.println("mi ez az argumentumtenger more? értelmesen má");
-          continue;
-        } 
-        if (world.getCommandMap().containsKey(strings[0]))
-          ((Command)world.getCommandMap().get(strings[0])).execute(strings, world); 
+      if (!world.getCommandMap().containsKey(strings[0])) {
+        System.out.println("ilyen parancs nincs is");
         continue;
       } 
       if (strings[0].equals("help") || strings[0].equals("exit")) {
         repeat = ((Command)world.getCommandMap().get(strings[0])).execute();
         continue;
       } 
-      System.out.println("more, argumentumok?");
+      if (world.getCommandMap().containsKey(strings[0]))
+        ((Command)world.getCommandMap().get(strings[0])).execute(strings, world); 
     } 
   }
 }

@@ -91,24 +91,27 @@ public class DinoszauruszonLovagloGepfegyveresAmazon {
   }
   
   public void tamad(DinoszauruszonLovagloGepfegyveresAmazon enemy) {
-    if (!this.nev.equals(enemy.getNev())) {
-      if (this.alive) {
-        System.out.print(this.nev + " támad. ");
-        if (!this.gepfegyver) {
-          System.out.println("Nem tok durrogtatni, nincs gépfegyverem xd");
-        } else if (enemy.isLovagol()) {
-          enemy.setDino(false);
-          System.out.println(enemy.nev + " dínója meghótt.");
+    if (this.alive) {
+      if (!this.nev.equals(enemy.getNev())) {
+        if (enemy.getHP() != 0.0D) {
+          if (!this.gepfegyver) {
+            System.out.println("nem is tok durrogtatni, nincs is gépfegyverem");
+          } else if (enemy.isLovagol()) {
+            enemy.setDino(false);
+            System.out.println(enemy.nev + " dínója megdöglött.");
+          } else {
+            double temp = getDMG();
+            enemy.decHP(temp);
+            System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+          } 
         } else {
-          double temp = getDMG();
-          enemy.decHP(temp);
-          System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + temp);
+          System.out.println("nem is él ez a szerencsétlen");
         } 
       } else {
-        System.out.println("nem is élek geci");
+        System.out.println("há most lőjem magam gec?");
       } 
     } else {
-      System.out.println("há most lőjem magam gec?");
+      System.out.println("nem is élek geci");
     } 
   }
 }

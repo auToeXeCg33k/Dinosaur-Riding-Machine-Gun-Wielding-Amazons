@@ -6,56 +6,35 @@ public class Main {
   public static void main(String[] args) {
     boolean repeat = true;
     Scanner sc = new Scanner(System.in);
-    Map<String, DinoszauruszonLovagloGepfegyveresAmazon> objMap = new HashMap<>();
+    Map<String, DinoszauruszonLovagloGepfegyveresAmazon> amazonMap = new HashMap<>();
+    Map<String, Command> commandMap = new HashMap<>();
+    commandMap.put("select", new Select());
+    commandMap.put("exit", new Exit());
+    commandMap.put("new", new New());
+    commandMap.put("help", new Help());
+    commandMap.put("attack", new Attack());
     while (repeat) {
-      String name;
-      System.out.println("What do you want to do?");
+      System.out.println("mi kéne ha vóna?");
       String command = sc.nextLine();
-      switch (command) {
-        case "exit":
-          System.out.println("Exiting...");
-          repeat = false;
-          continue;
-        case "new":
-          System.out.println("Name of new entity?");
-          name = sc.nextLine();
-          if (objMap.containsKey(name)) {
-            System.out.println("An entity with this name already exists.");
-            continue;
-          } 
-          objMap.put(name, new DinoszauruszonLovagloGepfegyveresAmazon(name, true, true, true));
-          continue;
-        case "select":
-          System.out.println("Select whom?");
-          name = sc.nextLine();
-          if (objMap.containsKey(name)) {
-            System.out.println(name + " selected.");
-            System.out.println("What would you like this entity to do?");
-            command = sc.nextLine();
-            switch (command) {
-              case "attack":
-                System.out.println("Attack whom?");
-                command = sc.nextLine();
-                if (objMap.containsKey(command)) {
-                  ((DinoszauruszonLovagloGepfegyveresAmazon)objMap.get(name)).tamad(objMap.get(command));
-                  continue;
-                } 
-                System.out.println("There's no entity with the given name.");
-                continue;
-            } 
-            continue;
-          } 
-          System.out.println("No entity exists with the given name.");
-          continue;
-        case "help":
-          System.out.println("Possible commands:");
-          System.out.println("exit: quit the game.");
-          System.out.println("new: create new entity.");
-          System.out.println("select: choose an entity to give command to.");
-          System.out.println("attack: after selecting an entity, you can command the entity to attack another one.");
-          continue;
+      String[] strings = command.split(" ");
+      if (strings.length != 0 && !commandMap.containsKey(strings[0])) {
+        System.out.println("ilyen parancs nincs is");
+        continue;
       } 
-      System.out.println("Unknown command. To get a list of the available commands, type 'help'.");
+      if (strings.length > 1) {
+        if (strings[0].equals("help") || strings[0].equals("exit")) {
+          System.out.println("mi ez az argumentumtenger more? értelmesen má");
+          continue;
+        } 
+        if (commandMap.containsKey(strings[0]))
+          ((Command)commandMap.get(strings[0])).execute(strings[1], amazonMap, (Select)commandMap.get("select")); 
+        continue;
+      } 
+      if (strings[0].equals("help") || strings[0].equals("exit")) {
+        repeat = ((Command)commandMap.get(strings[0])).execute();
+        continue;
+      } 
+      System.out.println("more, argumentumok?");
     } 
   }
 }

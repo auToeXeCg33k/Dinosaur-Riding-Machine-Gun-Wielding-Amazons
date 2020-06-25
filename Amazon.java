@@ -1,4 +1,4 @@
-public class DinoszauruszonLovagloGepfegyveresAmazon {
+public class Amazon implements Entity {
   private String nev;
   
   private boolean gepfegyver;
@@ -11,7 +11,7 @@ public class DinoszauruszonLovagloGepfegyveresAmazon {
   
   private boolean alive;
   
-  public DinoszauruszonLovagloGepfegyveresAmazon(String nev, boolean fegyo, boolean dino, boolean lovagol) {
+  public Amazon(String nev, boolean fegyo, boolean dino, boolean lovagol) {
     this.nev = nev;
     this.gepfegyver = fegyo;
     if (lovagol) {
@@ -53,8 +53,7 @@ public class DinoszauruszonLovagloGepfegyveresAmazon {
   }
   
   public double getDMG() {
-    double temp = StrictMath.random();
-    return temp * 20.0D + 5.0D;
+    return StrictMath.random() * 20.0D + 5.0D;
   }
   
   public boolean hasDino() {
@@ -90,7 +89,7 @@ public class DinoszauruszonLovagloGepfegyveresAmazon {
       this.lovagol = true; 
   }
   
-  public void tamad(DinoszauruszonLovagloGepfegyveresAmazon enemy) {
+  public void tamad(Amazon enemy) {
     if (this.alive) {
       if (!this.nev.equals(enemy.getNev())) {
         if (enemy.getHP() != 0.0D) {

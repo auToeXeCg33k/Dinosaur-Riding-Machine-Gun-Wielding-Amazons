@@ -1,14 +1,23 @@
-import java.util.Map;
-
 class Attack implements Command {
-  private String selection;
-  
-  public void execute(String param1, Map<String, DinoszauruszonLovagloGepfegyveresAmazon> param2, Select command) {
-    if (command.isSelected()) {
-      this.selection = command.getSelection();
-      ((DinoszauruszonLovagloGepfegyveresAmazon)param2.get(this.selection)).tamad(param2.get(param1));
+  public void execute(String[] strs, World world) {
+    if (strs.length == 2) {
+      if (((Select)world.getCommandMap().get("select")).isSelected()) {
+        if (((Select)world.getCommandMap().get("select")).getSelection() instanceof Amazon) {
+          if (world.getAmazonMap().containsKey(strs[2])) {
+            ((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).tamad(world.getAmazonMap().get(strs[2]));
+          } else {
+            System.out.println("ilyen amazon nincs - currently csak amazonokat lehet támadni");
+          } 
+        } else if (((Select)world.getCommandMap().get("select")).getSelection() instanceof Dinoszaurusz) {
+          System.out.println("a dínók egyenlőre nem tudnak támadni");
+        } 
+      } else {
+        System.out.println("válasszá valami buzit");
+      } 
+    } else if (strs.length > 2) {
+      System.out.println("túl sok argumentum");
     } else {
-      System.out.println("válasszá valamit buzi");
+      System.out.println("túl kevés argumentum");
     } 
   }
   

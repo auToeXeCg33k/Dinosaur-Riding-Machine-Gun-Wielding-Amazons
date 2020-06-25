@@ -1,7 +1,5 @@
-import java.util.Map;
-
 class Exit implements Command {
-  public void execute(String param1, Map<String, DinoszauruszonLovagloGepfegyveresAmazon> param2, Select command) {}
+  public void execute(String[] strs, World world) {}
   
   public boolean execute() {
     System.out.println("jóvan jóvan lépek má");

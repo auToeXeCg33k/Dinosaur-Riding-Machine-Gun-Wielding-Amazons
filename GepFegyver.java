@@ -1,1 +1,1 @@
-public class GepFegyver {}
+public class GepFegyver implements Item {}

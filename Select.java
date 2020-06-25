@@ -1,18 +1,40 @@
-import java.util.Map;
-
 public class Select implements Command {
   private boolean selected;
   
-  private String selection;
+  private Entity selection;
   
-  public void execute(String param1, Map<String, DinoszauruszonLovagloGepfegyveresAmazon> param2, Select command) {
-    if (param2.containsKey(param1)) {
-      this.selection = param1;
-      this.selected = true;
-      System.out.println(param1 + " kiválasztva.");
+  public void execute(String[] strs, World world) {
+    if (strs.length == 3) {
+      if (strs[1].equals("amazon")) {
+        if (world.getAmazonMap().containsKey(strs[2])) {
+          this.selection = world.getAmazonMap().get(strs[2]);
+          this.selected = true;
+          System.out.println(strs[2] + ", az amazon, kiválasztva.");
+        } else if (world.getDinoszauruszMap().containsKey(strs[2])) {
+          this.selection = world.getDinoszauruszMap().get(strs[2]);
+          this.selected = true;
+          System.out.println(strs[2] + ", a dinoszaurusz, kiválasztva.");
+        } else {
+          this.selected = false;
+          System.out.println("ilyen névvel nincs amazon");
+        } 
+      } else if (strs[1].equals("dinoszaurusz")) {
+        if (world.getDinoszauruszMap().containsKey(strs[2])) {
+          this.selection = world.getDinoszauruszMap().get(strs[2]);
+          this.selected = true;
+          System.out.println(strs[2] + ", a dinoszaurusz, kiválasztva.");
+        } else {
+          this.selected = false;
+          System.out.println("ilyen névvel nincs dinoszaurusz");
+        } 
+      } else {
+        this.selected = false;
+        System.out.println("ilyen típus nincs");
+      } 
+    } else if (strs.length > 3) {
+      System.out.println("túl sok argumentum");
     } else {
-      this.selected = false;
-      System.out.println("nincs ilyen amazon");
+      System.out.println("nincs elég argumentum");
     } 
   }
   
@@ -20,7 +42,7 @@ public class Select implements Command {
     return true;
   }
   
-  public String getSelection() {
+  public Entity getSelection() {
     return this.selection;
   }
   

@@ -1,14 +1,14 @@
-import java.util.Map;
-
 class Help implements Command {
-  public void execute(String param1, Map<String, DinoszauruszonLovagloGepfegyveresAmazon> param2, Select command) {}
+  public void execute(String[] strs, World world) {}
   
   public boolean execute() {
-    System.out.println("na, ezeket írhatod be");
+    System.out.println("A játékban kétféle entitás létezik : dinoszaurusz és amazon. Az amazonok tudnak támadni. Éééés...basically thats it so far....");
+    System.out.println("Az elérhető parancsok az alábbiak:");
     System.out.println("exit: most magyarázzam?");
-    System.out.println("new [név]: csinál egy amazont azzal a névvel amit beírsz");
-    System.out.println("select [név]: kiválaszt egy amazont azzal a névvel amit beírsz");
+    System.out.println("new [entitástípus] [név]: csinál egy entitást azzal a névvel és típussal, amit beírsz");
+    System.out.println("select [entitástípus] [név]: kiválaszt egy entitást azzal a névvel és típussal, amit beírsz");
     System.out.println("attack [név]: a kiválaszott amazon megtámadja a megadott amazont");
+    System.out.println("where [entitástípus] [név]: a kiválasztott entitás tartózkodási helye");
     return true;
   }
 }

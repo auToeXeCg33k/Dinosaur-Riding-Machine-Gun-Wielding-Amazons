@@ -6,13 +6,13 @@ public class Select implements Command {
       if (world.getAmazonMap().containsKey(strs[1])) {
         this.selection = world.getAmazonMap().get(strs[1]);
         System.out.println(strs[1] + " kiválasztva.");
-      } else {
-        this.selection = null;
-        System.out.println("ilyen névvel nincs amazon");
+        return;
       } 
-    } else {
-      System.out.println("nem megfelelő argumentummennyiség");
+      this.selection = null;
+      System.out.println("ilyen névvel nincs amazon");
+      return;
     } 
+    System.out.println("nem megfelelő argumentummennyiség");
   }
   
   public boolean execute() {

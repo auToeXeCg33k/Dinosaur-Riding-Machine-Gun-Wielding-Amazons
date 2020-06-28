@@ -62,10 +62,6 @@ public class Tile {
     return this.dinoszauruszList.contains(d);
   }
   
-  public boolean containsItem(Item i) {
-    return this.itemList.contains(i);
-  }
-  
   public HashSet<Amazon> getAmazonSet() {
     return this.amazonSet;
   }

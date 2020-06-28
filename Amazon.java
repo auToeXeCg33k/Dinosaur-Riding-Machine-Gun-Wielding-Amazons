@@ -4,8 +4,6 @@ import java.util.Map;
 public class Amazon implements Entity {
   private String nev;
   
-  private boolean alive;
-  
   private double elet;
   
   private Dinoszaurusz dinoszaurusz;
@@ -21,7 +19,6 @@ public class Amazon implements Entity {
     this.dinoszaurusz = null;
     this.lovagol = false;
     this.elet = 100.0D;
-    this.alive = true;
     this.inventory = (HashMap)new HashMap<>();
     this.inventory.put(GepFegyver.class, new GepFegyver[2]);
   }
@@ -98,68 +95,49 @@ public class Amazon implements Entity {
   public void incHP(double r) {
     if (this.elet + r <= 100.0D) {
       this.elet += r;
-    } else {
-      this.elet = 100.0D;
+      return;
     } 
-    this.alive = true;
+    this.elet = 100.0D;
   }
   
   public void decHP(double r) {
     if (this.elet - r >= 0.0D) {
       this.elet -= r;
-    } else {
-      this.elet = 0.0D;
-      this.alive = false;
+      return;
     } 
+    this.elet = 0.0D;
   }
   
   public void tame(Dinoszaurusz d) {
-    if (this.alive) {
-      if (!d.getTamed()) {
-        this.dinoszaurusz = d;
-        d.setTamed(true);
-        System.out.println("a dínó beidomítva");
-      } else {
-        System.out.println("ez a dínó mán másé");
-      } 
-    } else {
-      System.out.println("nem is élek geci");
-    } 
+    this.dinoszaurusz = d;
+    d.setTamed(true);
   }
   
   public void tamad(Amazon enemy) {
-    if (this.alive) {
-      if (!this.nev.equals(enemy.getNev())) {
-        if (enemy.alive) {
-          if (this.gepFegyver == null) {
-            System.out.println("nem is tok durrogtatni, nincs is gépfegyverem");
-          } else {
-            double temp = this.gepFegyver.getDMG();
-            if (enemy.isLovagol()) {
-              enemy.getDinoszaurusz().decHP(temp);
-              if (enemy.getDinoszaurusz().isAlive()) {
-                System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
-              } else {
-                enemy.setLovagol(false);
-                System.out.println(enemy.nev + " dinoszaurusza meghalt.");
-              } 
-            } else {
-              enemy.decHP(temp);
-              if (enemy.alive) {
-                System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
-              } else {
-                System.out.println(enemy.nev + " meghótt a gecibe.");
-              } 
-            } 
-          } 
-        } else {
-          System.out.println("nem is él ez a szerencsétlen");
-        } 
-      } else {
-        System.out.println("há most lőjem magam gec?");
+    if (!this.nev.equals(enemy.getNev())) {
+      if (this.gepFegyver == null) {
+        System.out.println("nem tok durrogtatni, fasse fogok");
+        return;
       } 
-    } else {
-      System.out.println("nem is élek geci");
+      double temp = this.gepFegyver.getDMG();
+      if (enemy.isLovagol()) {
+        enemy.getDinoszaurusz().decHP(temp);
+        if (enemy.getDinoszaurusz().getHP() > 0.0D) {
+          System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+          return;
+        } 
+        enemy.setLovagol(false);
+        System.out.println(enemy.nev + " dinoszaurusza meghalt.");
+        return;
+      } 
+      enemy.decHP(temp);
+      if (enemy.elet != 0.0D) {
+        System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+        return;
+      } 
+      System.out.println(enemy.nev + " meghótt a gecibe.");
+      return;
     } 
+    System.out.println("há most lőjem magam gec?");
   }
 }

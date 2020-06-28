@@ -1,5 +1,5 @@
 public class RocketLauncher extends GepFegyver {
   public String toString() {
-    return "rocketlauncher ";
+    return "rocketlauncher";
   }
 }

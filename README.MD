@@ -75,3 +75,9 @@
 # ALPHA 0.8.1
 * Fixed an issue that caused the status command to show "null null" when an amazon didn't have items
 * Replaced some UTF-8 characters so Windows can display text properly
+
+# ALPHA 0.8.2
+* Fixed dead amazons being able to perform actions
+* Fixed an issue where the tame command didn't throw an error when given a negative number
+* Improved some outputs
+* Micro-optimizations

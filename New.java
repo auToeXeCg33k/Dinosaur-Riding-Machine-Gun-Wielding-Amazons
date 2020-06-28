@@ -3,13 +3,13 @@ public class New implements Command {
     if (strs.length == 2) {
       if (world.getAmazonMap().containsKey(strs[1])) {
         System.out.println("ilyen amazon már van");
-      } else {
-        world.newAmazon(strs[1]);
-        System.out.println(strs[1] + " létrehozva");
+        return;
       } 
-    } else {
-      System.out.println("nem megfelelő argumentummenyiség");
+      world.newAmazon(strs[1]);
+      System.out.println(strs[1] + " létrehozva");
+      return;
     } 
+    System.out.println("nem megfelelő argumentummenyiség");
   }
   
   public boolean execute() {

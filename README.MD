@@ -71,3 +71,7 @@
 * New commands: equip, drop
 * Fixed a bug that caused the pickup command to not throw an error when using it without selecting an amazon first
 * Fixed a bug causing dinos to not move with the amazons riding them
+
+# ALPHA 0.8.1
+* Fixed an issue that caused the status command to show "null null" when an amazon didn't have items
+* Replaced some UTF-8 characters so Windows can display text properly

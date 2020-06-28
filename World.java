@@ -21,7 +21,7 @@ public class World {
   
   public World() {
     Scanner sc = new Scanner(System.in);
-    System.out.println("add meg a gecit (jelenleg csak a geci1 érhető el):");
+    System.out.println("add meg a gecit (jelenleg csak a geci1 érhetö el):");
     boolean repeat = true;
     while (repeat) {
       String input = sc.nextLine();

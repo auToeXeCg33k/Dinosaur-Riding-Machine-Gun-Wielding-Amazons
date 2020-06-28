@@ -14,8 +14,10 @@ public class Status implements Command {
               System.out.println("A(z) " + i + 1 + ";" + j + 1 + " koordinátán áll.");
               System.out.println("Az itemjei: ");
               for (Map.Entry<Class<?>, Item[]> entry : ((Select)world.getCommandMap().get("select")).getSelection().getInventory().entrySet()) {
-                for (int k = 0; k < ((Item[])entry.getValue()).length; k++)
-                  System.out.print("" + ((Item[])entry.getValue())[k] + " "); 
+                for (int k = 0; k < ((Item[])entry.getValue()).length; k++) {
+                  if (((Item[])entry.getValue())[k] != null)
+                    System.out.print("" + ((Item[])entry.getValue())[k] + " "); 
+                } 
               } 
             } 
           } 

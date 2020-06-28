@@ -1,155 +1,153 @@
 package commands;
 
-import core.World;
+import core.Data;
 import entities.Amazon;
 import entities.Dinoszaurusz;
 import items.Item;
 
 public class LookAround implements Command {
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     if (strs.length == 1) {
-      if (((Select)world.getCommandMap().get("select")).getSelection() != null) {
-        if (((Select)world.getCommandMap().get("select")).getSelection().getHP() > 0.0D)
-          for (int i = 0; i < (world.getTiles()).length; i++) {
-            for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-              if (world.getTiles()[i][j].containsAmazon(((Select)world.getCommandMap().get("select")).getSelection())) {
-                String string = "";
-                for (Amazon amazon : world.getTiles()[i][j].getAmazonSet()) {
-                  if (amazon != ((Select)world.getCommandMap().get("select")).getSelection())
-                    string = string.concat("" + amazon + amazon + ", "); 
+      if (((Select)data.getCommand("select")).getSelection() != null) {
+        if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D)
+          for (int i = 0; i < (data.getWorld().getTiles()).length; i++) {
+            for (int j = 0; j < (data.getWorld().getTiles()[0]).length; j++) {
+              if (data.getWorld().getTiles()[i][j].containsAmazon(((Select)data.getCommand("select")).getSelection())) {
+                String ret = "";
+                String temp = "";
+                for (Amazon amazon : data.getWorld().getTiles()[i][j].getAmazonSet()) {
+                  if (amazon != ((Select)data.getCommand("select")).getSelection())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
                 } 
-                for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j].getDinoszauruszList())
-                  string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                for (Item item : world.getTiles()[i][j].getItemList())
-                  string = string.concat("" + item + ", "); 
-                if (string.equals("")) {
-                  System.out.println("Az aktuális csempén nincs semmi.");
+                for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i][j].getDinoszauruszList())
+                  temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                for (Item item : data.getWorld().getTiles()[i][j].getItemList())
+                  temp = temp.concat("" + item + ", "); 
+                if (temp.equals("")) {
+                  ret = ret.concat("Az aktuális mezőn nincs semmi.\n");
                 } else {
-                  System.out.println("Az aktuális csempén: " + string.substring(0, string.length() - 2) + ".");
-                  string = "";
+                  ret = ret.concat("Az aktuális mezőn: " + temp.substring(0, temp.length() - 2) + ".\n");
+                  temp = "";
                 } 
-                if (i + 1 < world.getX()) {
-                  for (Amazon amazon : world.getTiles()[i + 1][j].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i + 1][j].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Délre" : "Északra") + " nincs semmi.");
+                if (i + 1 < data.getWorld().getSize().getX()) {
+                  for (Amazon amazon : data.getWorld().getTiles()[i + 1][j].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i + 1][j].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Délre" : "Északra") + " nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Délre: " : "Északra: ") + (world.getActivePlayer() ? "Délre: " : "Északra: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Délre: " : "Északra: ") + (data.getPlayerMarker() ? "Délre: " : "Északra: ") + ".\n");
+                    temp = "";
                   } 
                 } 
-                if (i + 1 < world.getX() && j + 1 < world.getY()) {
-                  for (Amazon amazon : world.getTiles()[i + 1][j + 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j + 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i + 1][j + 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Dél-nyugatra " : "Észak-keletre ") + "nincs semmi.");
+                if (i + 1 < data.getWorld().getSize().getX() && j + 1 < data.getWorld().getSize().getY()) {
+                  for (Amazon amazon : data.getWorld().getTiles()[i + 1][j + 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j + 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i + 1][j + 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Dél-nyugatra " : "Észak-keletre ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Dél-nyugatra: " : "Észak-keletre: ") + (world.getActivePlayer() ? "Dél-nyugatra: " : "Észak-keletre: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Dél-nyugatra: " : "Észak-keletre: ") + (data.getPlayerMarker() ? "Dél-nyugatra: " : "Észak-keletre: ") + ".\n");
+                    temp = "";
                   } 
                 } 
-                if (j + 1 < world.getY()) {
-                  for (Amazon amazon : world.getTiles()[i][j + 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j + 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i][j + 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Nyugatra " : "Keletre ") + "nincs semmi.");
+                if (j + 1 < data.getWorld().getSize().getY()) {
+                  for (Amazon amazon : data.getWorld().getTiles()[i][j + 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i][j + 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i][j + 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Nyugatra " : "Keletre ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Nyugatra: " : "Keletre: ") + (world.getActivePlayer() ? "Nyugatra: " : "Keletre: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Nyugatra: " : "Keletre: ") + (data.getPlayerMarker() ? "Nyugatra: " : "Keletre: ") + ".\n");
+                    temp = "";
                   } 
                 } 
-                if (i - 1 >= 0 && j + 1 < world.getY()) {
-                  for (Amazon amazon : world.getTiles()[i - 1][j + 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j + 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i - 1][j + 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Észak-nyugatra " : "Dél-keletre ") + "nincs semmi.");
+                if (i - 1 >= 0 && j + 1 < data.getWorld().getSize().getY()) {
+                  for (Amazon amazon : data.getWorld().getTiles()[i - 1][j + 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i - 1][j + 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i - 1][j + 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Észak-nyugatra " : "Dél-keletre ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Észak-nyugatra: " : "Dél-keletre: ") + (world.getActivePlayer() ? "Észak-nyugatra: " : "Dél-keletre: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Észak-nyugatra: " : "Dél-keletre: ") + (data.getPlayerMarker() ? "Észak-nyugatra: " : "Dél-keletre: ") + ".\n");
+                    temp = "";
                   } 
                 } 
                 if (i - 1 >= 0) {
-                  for (Amazon amazon : world.getTiles()[i - 1][j].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i - 1][j].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Északra " : "Délre ") + "nincs semmi.");
+                  for (Amazon amazon : data.getWorld().getTiles()[i - 1][j].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i - 1][j].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i - 1][j].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Északra " : "Délre ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Északra: " : "Délre: ") + (world.getActivePlayer() ? "Északra: " : "Délre: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Északra: " : "Délre: ") + (data.getPlayerMarker() ? "Északra: " : "Délre: ") + ".\n");
+                    temp = "";
                   } 
                 } 
                 if (i - 1 >= 0 && j - 1 >= 0) {
-                  for (Amazon amazon : world.getTiles()[i - 1][j - 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i - 1][j - 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Észak-keletre " : "Dél-nyugatra ") + "nincs semmi.");
+                  for (Amazon amazon : data.getWorld().getTiles()[i - 1][j - 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i - 1][j - 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i - 1][j - 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Észak-keletre " : "Dél-nyugatra ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Észak-keletre: " : "Dél-nyugatra: ") + (world.getActivePlayer() ? "Észak-keletre: " : "Dél-nyugatra: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Észak-keletre: " : "Dél-nyugatra: ") + (data.getPlayerMarker() ? "Észak-keletre: " : "Dél-nyugatra: ") + ".\n");
+                    temp = "";
                   } 
                 } 
                 if (j - 1 >= 0) {
-                  for (Amazon amazon : world.getTiles()[i][j - 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i][j - 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Keletre " : "Nyugatra ") + "nincs semmi.");
+                  for (Amazon amazon : data.getWorld().getTiles()[i][j - 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i][j - 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i][j - 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Keletre " : "Nyugatra ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Keletre: " : "Nyugatra: ") + (world.getActivePlayer() ? "Keletre: " : "Nyugatra: ") + ".");
-                    string = "";
+                    ret = ret.concat((data.getPlayerMarker() ? "Keletre: " : "Nyugatra: ") + (data.getPlayerMarker() ? "Keletre: " : "Nyugatra: ") + ".\n");
+                    temp = "";
                   } 
                 } 
-                if (i + 1 < world.getX() && j - 1 >= 0) {
-                  for (Amazon amazon : world.getTiles()[i + 1][j - 1].getAmazonSet())
-                    string = string.concat("" + amazon + amazon + ", "); 
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszList())
-                    string = string.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
-                  for (Item item : world.getTiles()[i + 1][j - 1].getItemList())
-                    string = string.concat("" + item + ", "); 
-                  if (string.equals("")) {
-                    System.out.println((world.getActivePlayer() ? "Dél-keletre " : "Észak-nyugatra ") + "nincs semmi.");
+                if (i + 1 < data.getWorld().getSize().getX() && j - 1 >= 0) {
+                  for (Amazon amazon : data.getWorld().getTiles()[i + 1][j - 1].getAmazonSet())
+                    temp = temp.concat("" + amazon + amazon + ", "); 
+                  for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j - 1].getDinoszauruszList())
+                    temp = temp.concat("" + dinoszaurusz + dinoszaurusz + ", "); 
+                  for (Item item : data.getWorld().getTiles()[i + 1][j - 1].getItemList())
+                    temp = temp.concat("" + item + ", "); 
+                  if (temp.equals("")) {
+                    ret = ret.concat((data.getPlayerMarker() ? "Dél-keletre " : "Észak-nyugatra ") + "nincs semmi.\n");
                   } else {
-                    System.out.println((world.getActivePlayer() ? "Dél-keletre: " : "Észak-nyugatra: ") + (world.getActivePlayer() ? "Dél-keletre: " : "Észak-nyugatra: ") + ".");
+                    ret = ret.concat((data.getPlayerMarker() ? "Dél-keletre: " : "Észak-nyugatra: ") + (data.getPlayerMarker() ? "Dél-keletre: " : "Észak-nyugatra: ") + ".\n");
                   } 
                 } 
-                System.out.println();
-                return;
+                return ret;
               } 
             } 
           }  
-        System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " nem is él!\n");
-        return;
+        return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él!\n";
       } 
-      System.out.println("Válasszá ki valakit!\n");
-      return;
+      return "Válasszá ki valakit!\n";
     } 
-    System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
+    return "Nem megfelelő a gyökérségek száma heló!\n";
   }
 }

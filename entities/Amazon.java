@@ -117,32 +117,22 @@ public class Amazon implements Entity {
     d.setTamed(true);
   }
   
-  public int tamad(Amazon enemy) {
-    if (this.gepFegyver == null) {
-      System.out.println("Nem tok durrogtatni, fasse fogok.\n");
-      return 2;
-    } 
+  public String tamad(Amazon enemy) {
     double temp = this.gepFegyver.getDMG();
     if (enemy.isLovagol()) {
       enemy.getDinoszaurusz().decHP(temp);
-      if (enemy.getDinoszaurusz().getHP() > 0.0D) {
-        System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp) + ".\n");
-        return 0;
-      } 
+      if (enemy.getDinoszaurusz().getHP() > 0.0D)
+        return enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp) + ".\n"; 
       enemy.setLovagol(false);
-      System.out.println(enemy.nev + " dinoszaurusza meghalt.\n");
-      return 0;
+      return enemy.nev + " dinoszaurusza meghalt.\n";
     } 
     enemy.decHP(temp);
-    if (enemy.elet != 0.0D) {
-      System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp) + ".\n");
-      return 0;
-    } 
-    System.out.println(enemy.nev + " meghótt a gecibe.\n");
-    return 1;
+    if (enemy.elet != 0.0D)
+      return enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp) + ".\n"; 
+    return enemy.nev + " meghótt a gecibe.\n";
   }
   
   public String toString() {
-    return this.nev + "(" + this.nev + Math.round(this.elet);
+    return this.nev + "(" + this.nev + Math.round(this.elet) + (this.lovagol ? ("HP, lovagol, a dinója élete: " + Math.round(this.dinoszaurusz.getHP())) : "HP, nem lovagol");
   }
 }

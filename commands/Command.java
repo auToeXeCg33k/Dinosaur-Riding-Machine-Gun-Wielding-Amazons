@@ -1,7 +1,7 @@
 package commands;
 
-import core.World;
+import core.Data;
 
 public interface Command {
-  void execute(String[] paramArrayOfString, World paramWorld);
+  String execute(String[] paramArrayOfString, Data paramData);
 }

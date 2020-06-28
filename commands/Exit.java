@@ -1,9 +1,10 @@
 package commands;
 
-import core.World;
+import core.Data;
 
 public class Exit implements Command {
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     System.exit(0);
+    return "Exiting.";
   }
 }

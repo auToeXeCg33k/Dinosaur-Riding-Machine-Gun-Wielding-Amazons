@@ -1,9 +1,9 @@
 package commands;
 
-import core.World;
+import core.Data;
 
 public class End implements Command {
-  public void execute(String[] strs, World world) {
-    world.turn();
+  public String execute(String[] strs, Data data) {
+    return "\n--- End of turn----\n";
   }
 }

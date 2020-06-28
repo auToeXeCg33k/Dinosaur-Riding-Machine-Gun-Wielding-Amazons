@@ -1,19 +1,16 @@
 package commands;
 
-import core.Player;
-import core.World;
+import core.Data;
 import entities.Amazon;
 import java.util.Map;
 
 public class List implements Command {
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     String string = "";
-    for (Map.Entry<String, Amazon> entry : (Iterable<Map.Entry<String, Amazon>>)((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getAmazonMap().entrySet())
+    for (Map.Entry<String, Amazon> entry : (Iterable<Map.Entry<String, Amazon>>)data.getActivePlayer().getAmazonMap().entrySet())
       string = string.concat((String)entry.getKey() + ", "); 
-    if (string.equals("")) {
-      System.out.println("Nincsenek amazonjaid.\n");
-      return;
-    } 
-    System.out.println("Az amazonjaid: " + string.substring(0, string.length() - 2) + ".\n");
+    if (string.equals(""))
+      return "Nincsenek amazonjaid.\n"; 
+    return "Az amazonjaid: " + string.substring(0, string.length() - 2) + ".\n";
   }
 }

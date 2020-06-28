@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
-  private int spawnCounter = 0;
+  private int spawns = 0;
   
-  private int activeCounter = 0;
+  private int actives = 0;
   
   private HashMap<String, Amazon> amazonMap = new HashMap<>();
   
-  public int getSpawnCounter() {
-    return this.spawnCounter;
+  public int getSpawns() {
+    return this.spawns;
   }
   
-  public int getActiveCounter() {
-    return this.activeCounter;
+  public int getActives() {
+    return this.actives;
   }
   
   public HashMap<String, Amazon> getAmazonMap() {
@@ -24,15 +24,15 @@ public class Player {
   }
   
   public void incActive() {
-    this.activeCounter++;
+    this.actives++;
   }
   
   public void decActive() {
-    this.activeCounter--;
+    this.actives--;
   }
   
   public void incSpawn() {
-    this.spawnCounter++;
+    this.spawns++;
   }
   
   public boolean hasAmazon(Amazon a) {
@@ -41,5 +41,20 @@ public class Player {
         return true; 
     } 
     return false;
+  }
+  
+  public boolean hasAmazon(String name) {
+    return this.amazonMap.containsKey(name);
+  }
+  
+  public void addAmazon(String name) {
+    if (!this.amazonMap.containsKey(name))
+      this.amazonMap.put(name, new Amazon(name)); 
+  }
+  
+  public Amazon getAmazon(String name) {
+    if (this.amazonMap.containsKey(name))
+      return this.amazonMap.get(name); 
+    return null;
   }
 }

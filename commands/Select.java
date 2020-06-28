@@ -1,24 +1,21 @@
 package commands;
 
-import core.Player;
-import core.World;
+import core.Data;
 import entities.Amazon;
 
 public class Select implements Command {
   private Amazon selection;
   
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     if (strs.length == 2) {
-      if (((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getAmazonMap().containsKey(strs[1])) {
-        this.selection = (Amazon)((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getAmazonMap().get(strs[1]);
-        System.out.println(strs[1] + " kiválasztva.\n");
-        return;
+      if (data.getActivePlayer().hasAmazon(strs[1])) {
+        this.selection = data.getActivePlayer().getAmazon(strs[1]);
+        return strs[1] + " kiválasztva.\n";
       } 
       this.selection = null;
-      System.out.println(strs[1] + " nem is van!\n");
-      return;
+      return strs[1] + " nem is van!\n";
     } 
-    System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
+    return "Nem megfelelő a gyökérségek száma heló!\n";
   }
   
   public Amazon getSelection() {

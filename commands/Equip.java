@@ -1,29 +1,23 @@
 package commands;
 
-import core.World;
+import core.Data;
 
 public class Equip implements Command {
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     if (strs.length == 2) {
-      if (((Select)world.getCommandMap().get("select")).getSelection() != null) {
-        if (((Select)world.getCommandMap().get("select")).getSelection().getHP() > 0.0D) {
-          if (world.getItemClassMap().get(strs[1]) != null) {
-            if (((Select)world.getCommandMap().get("select")).getSelection().equip((Class)world.getItemClassMap().get(strs[1]))) {
-              System.out.println(strs[1] + " kézbe véve.\n");
-              return;
-            } 
-            System.out.println("Nincs is " + strs[1] + " az inventoryban!\n");
-            return;
+      if (((Select)data.getCommand("select")).getSelection() != null) {
+        if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D) {
+          if (data.getMaps().getItemClassMap().get(strs[1]) != null) {
+            if (((Select)data.getCommand("select")).getSelection().equip((Class)data.getMaps().getItemClassMap().get(strs[1])))
+              return strs[1] + " kézbe véve.\n"; 
+            return "Nincs is " + strs[1] + " az inventoryban!\n";
           } 
-          System.out.println("Olyan fegyver, hogy " + strs[1] + ", nincs is!\n");
-          return;
+          return "Olyan fegyver, hogy " + strs[1] + ", nincs is!\n";
         } 
-        System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " nem is él!\n");
-        return;
+        return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él!\n";
       } 
-      System.out.println("Válasszá ki valakit!\n");
-      return;
+      return "Válasszá ki valakit!\n";
     } 
-    System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
+    return "Nem megfelelő a gyökérségek száma heló!\n";
   }
 }

@@ -106,3 +106,17 @@
 * Fixed a bug that caused dinos to never appear on tiles after getting ridden
 * Fixed a crash when trying to move to a coordinate containing 0
 * Removed some legacy code
+
+# ALPHA 1.1.0
+* The game now has its own user interface
+  * UTF-8 characters are now supported
+* Player switches now retain the event log of the players
+  * Added some lines to indicate where switches happened
+* Removed a hidden feature :(
+* Commands are now case insensitive
+* References to tiles changed to fields
+* Renamed katana back to gépkatana
+* Renamed to pistol to pisztoly
+* Reworked the way taming works when multiple dinos are available
+* Improved outputs
+* Fixed a typo when listing amazons

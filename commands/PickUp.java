@@ -1,47 +1,35 @@
 package commands;
 
-import core.World;
+import core.Data;
 import items.Item;
 
 public class PickUp implements Command {
-  public void execute(String[] strs, World world) {
-    if (world.getMoveCounter() < world.getMaxCounter()) {
+  public String execute(String[] strs, Data data) {
+    if (data.canDoAction()) {
       if (strs.length == 2) {
-        if (((Select)world.getCommandMap().get("select")).getSelection() != null) {
-          if (((Select)world.getCommandMap().get("select")).getSelection().getHP() > 0.0D) {
-            if (world.getItemClassMap().get(strs[1]) != null)
-              for (int i = 0; i < (world.getTiles()).length; i++) {
-                for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-                  if (world.getTiles()[i][j].containsAmazon(((Select)world.getCommandMap().get("select")).getSelection())) {
-                    for (int k = 0; k < world.getTiles()[i][j].getItemList().size(); k++) {
-                      if (((Item)world.getTiles()[i][j].getItemList().get(k)).getClass().equals(world.getItemClassMap().get(strs[1]))) {
-                        if (((Select)world.getCommandMap().get("select")).getSelection().putInInventory(world.getTiles()[i][j].getItemList().get(k))) {
-                          world.getTiles()[i][j].rmItem(world.getTiles()[i][j].getItemList().get(k));
-                          System.out.println(strs[1] + " felvéve.\n");
-                          world.incCounter();
-                          return;
-                        } 
-                        System.out.println("Nem sikerült felvenni.\n");
-                        return;
-                      } 
-                    } 
-                    System.out.println(strs[1] + " nincs is a közelben.\n");
-                    return;
+        if (((Select)data.getCommand("select")).getSelection() != null) {
+          if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D) {
+            if (data.getMaps().getItemClassMap().get(strs[1]) != null) {
+              for (int k = 0; k < data.tileOfSelected().getItemList().size(); k++) {
+                if (((Item)data.tileOfSelected().getItemList().get(k)).getClass().equals(data.getMaps().getItemClassMap().get(strs[1]))) {
+                  if (((Select)data.getCommand("select")).getSelection().putInInventory(data.tileOfSelected().getItemList().get(k))) {
+                    data.tileOfSelected().rmItem(data.tileOfSelected().getItemList().get(k));
+                    String ret = strs[1] + " felvéve.\n";
+                    return ret.concat(data.nextMove());
                   } 
+                  return "Nem sikerült felvenni.\n";
                 } 
-              }  
-            System.out.println("Olyan item, hogy " + strs[1] + " nincs is.\n");
-            return;
+              } 
+              return strs[1] + " nincs is a közelben.\n";
+            } 
+            return "Olyan item, hogy " + strs[1] + " nincs is.\n";
           } 
-          System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " nem is él!\n");
-          return;
+          return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él!\n";
         } 
-        System.out.println("Válasszá ki valakit!\n");
-        return;
+        return "Válasszá ki valakit!\n";
       } 
-      System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
-      return;
+      return "Nem megfelelő a gyökérségek száma heló!\n";
     } 
-    System.out.println("Nincs több lépésed.\n");
+    return "Nincs több lépésed.\n";
   }
 }

@@ -1,52 +1,36 @@
 package commands;
 
-import core.Player;
-import core.World;
-import entities.Amazon;
+import core.Data;
 
 public class Attack implements Command {
-  public void execute(String[] strs, World world) {
-    if (world.getMoveCounter() < world.getMaxCounter()) {
+  public String execute(String[] strs, Data data) {
+    if (data.canDoAction()) {
       if (strs.length == 2) {
-        if (((Select)world.getCommandMap().get("select")).getSelection() != null) {
-          if (((Select)world.getCommandMap().get("select")).getSelection().getHP() != 0.0D) {
-            if (((Player)world.getPlayerMap().get(Boolean.valueOf(!world.getActivePlayer()))).getAmazonMap().containsKey(strs[1]))
-              for (int i = 0; i < (world.getTiles()).length; i++) {
-                for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-                  if (world.getTiles()[i][j].containsAmazon(((Select)world.getCommandMap().get("select")).getSelection())) {
-                    if (world.getTiles()[i][j].containsAmazon((Amazon)((Player)world.getPlayerMap().get(Boolean.valueOf(!world.getActivePlayer()))).getAmazonMap().get(strs[1]))) {
-                      if (((Amazon)((Player)world.getPlayerMap().get(Boolean.valueOf(!world.getActivePlayer()))).getAmazonMap().get(strs[1])).getHP() != 0.0D) {
-                        switch (((Select)world.getCommandMap().get("select")).getSelection().tamad((Amazon)((Player)world.getPlayerMap().get(Boolean.valueOf(!world.getActivePlayer()))).getAmazonMap().get(strs[1]))) {
-                          case 0:
-                            world.incCounter();
-                            return;
-                          case 1:
-                            ((Player)world.getPlayerMap().get(Boolean.valueOf(!world.getActivePlayer()))).decActive();
-                            world.incCounter();
-                            return;
-                        } 
-                        return;
-                      } 
-                      System.out.println(strs[1] + " is nem él.\n");
-                      return;
-                    } 
-                    System.out.println(strs[1] + " nincs is rangeben.\n");
-                    return;
+        if (((Select)data.getCommand("select")).getSelection() != null) {
+          if (((Select)data.getCommand("select")).getSelection().getHP() != 0.0D) {
+            if (((Select)data.getCommand("select")).getSelection().getGepFegyver() != null) {
+              if (data.getOtherPlayer().hasAmazon(strs[1])) {
+                if (data.tileOfSelected().containsAmazon(data.getOtherPlayer().getAmazon(strs[1]))) {
+                  if (data.getOtherPlayer().getAmazon(strs[1]).getHP() != 0.0D) {
+                    String ret = ((Select)data.getCommand("select")).getSelection().tamad(data.getOtherPlayer().getAmazon(strs[1])) + ((Select)data.getCommand("select")).getSelection().tamad(data.getOtherPlayer().getAmazon(strs[1]));
+                    if (data.getOtherPlayer().getAmazon(strs[1]).getHP() == 0.0D)
+                      data.getOtherPlayer().decActive(); 
+                    return ret;
                   } 
+                  return strs[1] + " is nem él.\n";
                 } 
-              }  
-            System.out.println(strs[1] + " nem is létezik.\n");
-            return;
+                return strs[1] + " nincs is rangeben.\n";
+              } 
+              return strs[1] + " nem is létezik.\n";
+            } 
+            return "Nem tok durrogtatni, fasse fogok.\n";
           } 
-          System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " nem is él.\n");
-          return;
+          return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él.\n";
         } 
-        System.out.println("Válasszá valami buzit!\n");
-        return;
+        return "Válasszá valami buzit!\n";
       } 
-      System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
-      return;
+      return "Nem megfelelő a gyökérségek száma heló!\n";
     } 
-    System.out.println("Nincs több lépésed.\n");
+    return "Nincs több lépésed.\n";
   }
 }

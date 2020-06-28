@@ -1,44 +1,32 @@
 package commands;
 
-import core.World;
+import core.Data;
 
 public class GetOn implements Command {
-  public void execute(String[] strs, World world) {
+  public String execute(String[] strs, Data data) {
     if (strs.length == 1) {
-      if (((Select)world.getCommandMap().get("select")).getSelection() != null) {
-        if (((Select)world.getCommandMap().get("select")).getSelection().getHP() > 0.0D) {
-          if (((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz() != null) {
-            if (!((Select)world.getCommandMap().get("select")).getSelection().isLovagol())
-              for (int i = 0; i < (world.getTiles()).length; i++) {
-                for (int j = 0; j < (world.getTiles()[0]).length; j++) {
-                  if (world.getTiles()[i][j].containsAmazon(((Select)world.getCommandMap().get("select")).getSelection())) {
-                    if (world.getTiles()[i][j].containsDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz())) {
-                      if (((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz().getHP() > 0.0D) {
-                        world.getTiles()[i][j].rmDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz());
-                        ((Select)world.getCommandMap().get("select")).getSelection().setLovagol(true);
-                        System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " felszállt a dinoszauruszra.\n");
-                        return;
-                      } 
-                      System.out.println("A dínó ki van múlva.\n");
-                      return;
-                    } 
-                    System.out.println("Nincs itt a dínó.\n");
-                    return;
-                  } 
+      if (((Select)data.getCommand("select")).getSelection() != null) {
+        if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D) {
+          if (((Select)data.getCommand("select")).getSelection().getDinoszaurusz() != null) {
+            if (!((Select)data.getCommand("select")).getSelection().isLovagol()) {
+              if (data.tileOfSelected().containsDinoszaurusz(((Select)data.getCommand("select")).getSelection().getDinoszaurusz())) {
+                if (((Select)data.getCommand("select")).getSelection().getDinoszaurusz().getHP() > 0.0D) {
+                  data.tileOfSelected().rmDinoszaurusz(((Select)data.getCommand("select")).getSelection().getDinoszaurusz());
+                  ((Select)data.getCommand("select")).getSelection().setLovagol(true);
+                  return ((Select)data.getCommand("select")).getSelection().getNev() + " felszállt a dinoszauruszra.\n";
                 } 
-              }  
-            System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " már lovagol!\n");
-            return;
+                return "A dinó ki van múlva.\n";
+              } 
+              return "Nincs itt a dinó.\n";
+            } 
+            return ((Select)data.getCommand("select")).getSelection().getNev() + " már lovagol!\n";
           } 
-          System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " amazonnak nincs dínója. Idomíts be vele egyet!\n");
-          return;
+          return ((Select)data.getCommand("select")).getSelection().getNev() + " amazonnak nincs dinója. Idomíts be vele egyet!\n";
         } 
-        System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " nem is él!\n");
-        return;
+        return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él!\n";
       } 
-      System.out.println("Válasszá valakit!\n");
-      return;
+      return "Válasszá valakit!\n";
     } 
-    System.out.println("Nem megfelelö a gyökérségek száma heló!\n");
+    return "Nem megfelelő a gyökérségek száma heló!\n";
   }
 }

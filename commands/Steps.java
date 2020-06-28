@@ -1,13 +1,13 @@
 package commands;
 
-import core.Player;
-import core.World;
+import core.Data;
 
 public class Steps implements Command {
-  public void execute(String[] strs, World world) {
-    System.out.println("A lehetséges lépéseid száma: " + world.getMaxCounter() - world.getMoveCounter() + ".");
-    System.out.println("A spawnjaid száma: " + ((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getSpawnCounter());
-    System.out.println("Az élö amazonjaid száma: " + ((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getActiveCounter() + ".");
-    System.out.println("A hátralévö spawnjaid száma: " + Math.min(world.getActiveMax() - ((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getActiveCounter(), world.getSpawnMax() - ((Player)world.getPlayerMap().get(Boolean.valueOf(world.getActivePlayer()))).getSpawnCounter()) + ".\n");
+  public String execute(String[] strs, Data data) {
+    return "A hátralévő lépéseid száma: " + data.getCounters().getMaxMoves() - data.getCounters().getMoves() + ".\nA összes spawnod száma: " + data
+      .getActivePlayer().getSpawns() + ".\nAz éppen élő amazonjaid száma: " + data
+      .getActivePlayer().getActives() + ".\nA aktuális spawnlehetőségeid száma: " + 
+      
+      Math.min(data.getCounters().getMaxActive() - data.getActivePlayer().getActives(), data.getCounters().getMaxSpawn() - data.getActivePlayer().getSpawns()) + ".\n";
   }
 }

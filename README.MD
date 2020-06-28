@@ -29,10 +29,15 @@
 * Handling of dinosaurs reworked
 * New commands: tame, geton, getoff
 
-#ALPHA 0.6.5
+# ALPHA 0.6.5
 * Doubled the lower and upper limits of the damage range
 * Dinosaurs now spawn on random tiles
 * Only the new command requires a type argument
 * Formatted the output of lookaround to be more readable
 * Fixed a crash when attacking a riding amazon
 * Fixed a crash related to using the move command with invalid arguments
+
+# AlPHA 0.6.6
+* Fixed a typo in the output of the attack command
+* Made the output of the attack command clearer
+* Improvements to the output of the lookaround command

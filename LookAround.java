@@ -8,11 +8,11 @@ public class LookAround implements Command {
               System.out.print("Amazonok az aktuális koordinátán: ");
               for (Amazon amazon : world.getTiles()[i][j].getAmazonSet()) {
                 if (amazon != ((Select)world.getCommandMap().get("select")).getSelection())
-                  System.out.println(amazon.getNev() + " "); 
+                  System.out.print(amazon.getNev() + " "); 
               } 
               System.out.print("\nDinoszauruszok az aktuális koordinátán: ");
               for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j].getDinoszauruszSet())
-                System.out.println(dinoszaurusz.getNev() + " "); 
+                System.out.print(dinoszaurusz.getNev() + " "); 
               try {
                 if (world.getTiles()[i + 1][j].exists()) {
                   System.out.print("\nAmazonok északra: ");
@@ -55,42 +55,42 @@ public class LookAround implements Command {
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i - 1][j].exists()) {
-                  System.out.println("\nAmazonok délre: ");
+                  System.out.print("\nAmazonok délre: ");
                   for (Amazon amazon : world.getTiles()[i - 1][j].getAmazonSet())
-                    System.out.println(amazon.getNev() + " "); 
-                  System.out.println("\nDinoszauruszok délre: ");
+                    System.out.print(amazon.getNev() + " "); 
+                  System.out.print("\nDinoszauruszok délre: ");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.getNev() + " "); 
+                    System.out.print(dinoszaurusz.getNev() + " "); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i - 1][j - 1].exists()) {
-                  System.out.println("\nAmazonok dél-nyugatra: ");
+                  System.out.print("\nAmazonok dél-nyugatra: ");
                   for (Amazon amazon : world.getTiles()[i - 1][j - 1].getAmazonSet())
-                    System.out.println(amazon.getNev() + " "); 
-                  System.out.println("\nDinoszauruszok dél-nyugatra: ");
+                    System.out.print(amazon.getNev() + " "); 
+                  System.out.print("\nDinoszauruszok dél-nyugatra: ");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.getNev() + " "); 
+                    System.out.print(dinoszaurusz.getNev() + " "); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i][j - 1].exists()) {
-                  System.out.println("\nAmazonok nyugatra: ");
+                  System.out.print("\nAmazonok nyugatra: ");
                   for (Amazon amazon : world.getTiles()[i][j - 1].getAmazonSet())
-                    System.out.println(amazon.getNev() + " "); 
-                  System.out.println("\nDinoszauruszok nyugatra: ");
+                    System.out.print(amazon.getNev() + " "); 
+                  System.out.print("\nDinoszauruszok nyugatra: ");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.getNev() + " "); 
+                    System.out.print(dinoszaurusz.getNev() + " "); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i + 1][j - 1].exists()) {
-                  System.out.println("\nAmazonok észak-nyugatra: ");
+                  System.out.print("\nAmazonok észak-nyugatra: ");
                   for (Amazon amazon : world.getTiles()[i + 1][j - 1].getAmazonSet())
-                    System.out.println(amazon.getNev() + " "); 
-                  System.out.println("\nDinoszauruszok észak-nyugatra: ");
+                    System.out.print(amazon.getNev() + " "); 
+                  System.out.print("\nDinoszauruszok észak-nyugatra: ");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.getNev() + " "); 
+                    System.out.print(dinoszaurusz.getNev() + " "); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               System.out.println();

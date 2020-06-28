@@ -93,12 +93,16 @@ public class Amazon implements Entity {
               System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
             } else {
               enemy.setLovagol(false);
-              System.out.println(enemy.nev + " dinszoaurusza meghalt.");
+              System.out.println(enemy.nev + " dinoszaurusza meghalt.");
             } 
           } else {
             double temp = getDMG();
             enemy.decHP(temp);
-            System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+            if (enemy.alive) {
+              System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+            } else {
+              System.out.println(enemy.nev + " meghótt a gecibe.");
+            } 
           } 
         } else {
           System.out.println("nem is él ez a szerencsétlen");

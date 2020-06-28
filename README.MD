@@ -37,7 +37,15 @@
 * Fixed a crash when attacking a riding amazon
 * Fixed a crash related to using the move command with invalid arguments
 
-# AlPHA 0.6.6
+# ALPHA 0.6.6
 * Fixed a typo in the output of the attack command
 * Made the output of the attack command clearer
 * Improvements to the output of the lookaround command
+
+# ALPHA 0.6.7
+* Removed command: where
+* New command: status
+* Only amazons on the same tile can attack each other
+* The lookaround command now informs the player whether the selected amazon is on a dino
+* Made the required world size format clearer
+* Made the default spawn location for entities in help clearer

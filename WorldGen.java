@@ -7,7 +7,7 @@ public class WorldGen {
   
   public WorldGen() {
     Scanner sc = new Scanner(System.in);
-    System.out.println("kérek 2 számot (ez lesz a világ mérete)");
+    System.out.println("kérek 2 számot szóközzel elválasztva (ez lesz a világ mérete)");
     boolean repeat = true;
     while (repeat) {
       String input = sc.nextLine();

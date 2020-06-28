@@ -30,12 +30,12 @@ public class World {
     this.commandMap.put("new", new New());
     this.commandMap.put("help", new Help());
     this.commandMap.put("attack", new Attack());
-    this.commandMap.put("where", new Where());
     this.commandMap.put("move", new Move());
     this.commandMap.put("lookaround", new LookAround());
     this.commandMap.put("tame", new Tame());
     this.commandMap.put("geton", new GetOn());
     this.commandMap.put("getoff", new GetOff());
+    this.commandMap.put("status", new Status());
   }
   
   public void newDinoszaurusz(String str) {

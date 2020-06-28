@@ -114,4 +114,8 @@ public class Amazon implements Entity {
       System.out.println("nem is élek geci");
     } 
   }
+  
+  public boolean getGepfegyver() {
+    return this.gepfegyver;
+  }
 }

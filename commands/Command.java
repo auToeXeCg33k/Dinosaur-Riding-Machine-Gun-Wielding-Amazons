@@ -1,7 +1,7 @@
 package commands;
 
 import core.Data;
-import core.Report;
+import units.Report;
 
 public interface Command {
   Report execute(String[] paramArrayOfString, Data paramData);

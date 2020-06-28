@@ -17,12 +17,15 @@ import commands.Select;
 import commands.Status;
 import commands.Steps;
 import commands.Tame;
+import entities.Amazon;
 import items.GepKatana;
 import items.MiniGun;
 import items.Pistol;
 import items.RocketLauncher;
 import items.ShotGun;
 import java.util.HashMap;
+import units.Point;
+import units.Report;
 
 public class Data {
   private final HashMap<String, Command> commands;
@@ -117,7 +120,7 @@ public class Data {
         this.maxActive = 3;
         this.maxMoves = 3;
         this.maxSpawn = 6;
-        return new Report("Világ létrehozva " + this.world.getSize() + "x" + this.world.getSize() + " mérettel.\nA maximális spawnok száma: " + this.maxSpawn + ", a játékosonként egyszerre élő amazonok maximális száma: " + this.maxActive + ".\n", true);
+        return new Report("Világ létrehozva " + this.world.getSize() + "x" + this.world.getSize() + " mérettel.\nA maximális spawnok száma: " + this.maxSpawn + ", a játékosonként egyszerre élő amazonok maximális száma: " + this.maxActive + ".\n\nA help menü elérése: \"help\" parancs.\n", true);
     } 
     return new Report("Ilyen játékmód nincs is. Retry: ", false);
   }
@@ -143,11 +146,11 @@ public class Data {
     return name + " létrehozva az 1;1 mezőn.\n";
   }
   
-  public Tile tileOfSelected() {
+  public Point location(Amazon a) {
     for (int i = 0; i < (this.world.getTiles()).length; i++) {
       for (int j = 0; j < (this.world.getTiles()[0]).length; j++) {
-        if (this.world.getTiles()[i][j].contains(((Select)this.commands.get("select")).getSelection()))
-          return this.world.getTiles()[i][j]; 
+        if (this.world.getTiles()[i][j].contains(a))
+          return new Point(j, i); 
       } 
     } 
     return null;

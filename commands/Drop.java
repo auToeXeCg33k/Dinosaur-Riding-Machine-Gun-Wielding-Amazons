@@ -1,8 +1,9 @@
 package commands;
 
 import core.Data;
-import core.Report;
 import items.Item;
+import units.Point;
+import units.Report;
 
 public class Drop implements Command {
   public Report execute(String[] strs, Data data) {
@@ -19,7 +20,8 @@ public class Drop implements Command {
     Item dropped = ((Select)data.getCommands().get("select")).getSelection().dropFromInventory((Class)data.getItems().get(strs[1]));
     if (dropped == null)
       return new Report(((Select)data.getCommands().get("select")).getSelection().getNev() + " amazonnál nincs " + ((Select)data.getCommands().get("select")).getSelection().getNev() + ".", false); 
-    data.tileOfSelected().add(dropped);
+    Point p = data.location(((Select)data.getCommands().get("select")).getSelection());
+    data.getWorld().getTiles()[p.getY()][p.getX()].add(dropped);
     return new Report(strs[1] + "eldobva.\n" + strs[1], false);
   }
 }

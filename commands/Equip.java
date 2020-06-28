@@ -1,7 +1,7 @@
 package commands;
 
 import core.Data;
-import core.Report;
+import units.Report;
 
 public class Equip implements Command {
   public Report execute(String[] strs, Data data) {

@@ -2,9 +2,9 @@ package commands;
 
 import core.Data;
 import core.Player;
-import core.Report;
 import entities.Amazon;
 import java.util.Map;
+import units.Report;
 
 public class List implements Command {
   public Report execute(String[] strs, Data data) {

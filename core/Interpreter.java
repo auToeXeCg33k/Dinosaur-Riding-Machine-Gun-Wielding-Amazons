@@ -1,13 +1,14 @@
 package core;
 
 import commands.Command;
+import units.Report;
 
 public class Interpreter {
   private byte state = 0;
   
-  private Tracker tracker = new Tracker();
+  private final Tracker tracker = new Tracker();
   
-  private Data data = new Data();
+  private final Data data = new Data();
   
   public Report interpret(String input) {
     String[] words;

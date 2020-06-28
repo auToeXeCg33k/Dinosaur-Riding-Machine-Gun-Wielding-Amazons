@@ -1,7 +1,8 @@
 package commands;
 
 import core.Data;
-import core.Report;
+import units.Point;
+import units.Report;
 
 public class GetOff implements Command {
   public Report execute(String[] strs, Data data) {
@@ -17,7 +18,8 @@ public class GetOff implements Command {
       return new Report(((Select)data.getCommands().get("select")).getSelection().getNev() + " dinoszaurusza nem él. Hullákról már nem nagyon lehet hogy leszállni dik...\n", false); 
     if (!((Select)data.getCommands().get("select")).getSelection().isLovagol())
       return new Report(((Select)data.getCommands().get("select")).getSelection().getNev() + " nem is lovagol!\n", false); 
-    data.tileOfSelected().add(((Select)data.getCommands().get("select")).getSelection().getDinoszaurusz());
+    Point p = data.location(((Select)data.getCommands().get("select")).getSelection());
+    data.getWorld().getTiles()[p.getY()][p.getX()].add(((Select)data.getCommands().get("select")).getSelection().getDinoszaurusz());
     ((Select)data.getCommands().get("select")).getSelection().setLovagol(false);
     return new Report(((Select)data.getCommands().get("select")).getSelection().getNev() + " leszállt a dinoszauruszról.\n", false);
   }

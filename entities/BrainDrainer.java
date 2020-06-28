@@ -3,9 +3,9 @@ package entities;
 import java.util.Random;
 
 public class BrainDrainer {
-  private double minDMG = 60.0D;
+  private final double minDMG = 60.0D;
   
-  private double maxDMG = 90.0D;
+  private final double maxDMG = 90.0D;
   
   public String attack(Amazon amazon) {
     Random random = new Random();

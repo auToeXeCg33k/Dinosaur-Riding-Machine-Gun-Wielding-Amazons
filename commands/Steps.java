@@ -2,7 +2,7 @@ package commands;
 
 import core.Data;
 import core.Player;
-import core.Report;
+import units.Report;
 
 public class Steps implements Command {
   public Report execute(String[] strs, Data data) {

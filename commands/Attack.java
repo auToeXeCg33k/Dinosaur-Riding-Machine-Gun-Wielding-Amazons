@@ -2,7 +2,8 @@ package commands;
 
 import core.Data;
 import core.Player;
-import core.Report;
+import units.Point;
+import units.Report;
 
 public class Attack implements Command {
   public Report execute(String[] strs, Data data) {
@@ -18,7 +19,8 @@ public class Attack implements Command {
       return new Report("Nem tok durrogtatni, fasse fogok.\n", false); 
     if (!((Player)data.getPlayers().get(Boolean.valueOf(!data.getPlayerMarker()))).hasAmazon(strs[1]))
       return new Report(strs[1] + " nem is létezik.\n", false); 
-    if (!data.tileOfSelected().contains(((Player)data.getPlayers().get(Boolean.valueOf(!data.getPlayerMarker()))).getAmazon(strs[1])))
+    Point p = data.location(((Select)data.getCommands().get("select")).getSelection());
+    if (!data.getWorld().getTiles()[p.getY()][p.getX()].contains(((Player)data.getPlayers().get(Boolean.valueOf(!data.getPlayerMarker()))).getAmazon(strs[1])))
       return new Report(strs[1] + " nincs is rangeben.\n", false); 
     if (((Player)data.getPlayers().get(Boolean.valueOf(!data.getPlayerMarker()))).getAmazon(strs[1]).getHP() == 0.0D)
       return new Report(strs[1] + " is nem él.\n", false); 

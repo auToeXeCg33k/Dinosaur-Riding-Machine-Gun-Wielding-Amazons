@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Amazon implements Entity {
-  private String nev;
+  private final String nev;
   
   private double elet;
   
@@ -14,7 +14,7 @@ public class Amazon implements Entity {
   
   private boolean lovagol;
   
-  private HashMap<Class<?>, Item[]> inventory;
+  private final HashMap<Class<?>, Item[]> inventory;
   
   private GepFegyver gepFegyver;
   

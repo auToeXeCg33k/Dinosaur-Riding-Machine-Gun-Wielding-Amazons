@@ -135,3 +135,7 @@
 * New enemy: the Braindrainer
   * Spawns randomly, moves around the map after each turn, and attacks amazons moving onto their tile
 * Major code cleanup
+
+# ALPHA 1.2.1
+* Updated the help menu and made its existence more apparent
+* Optimizations

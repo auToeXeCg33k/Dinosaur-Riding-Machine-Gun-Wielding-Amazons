@@ -1,9 +1,9 @@
-package core;
+package units;
 
 public class Report {
-  private String print;
+  private final String print;
   
-  private boolean code;
+  private final boolean code;
   
   public Report(String print, boolean code) {
     this.print = print;

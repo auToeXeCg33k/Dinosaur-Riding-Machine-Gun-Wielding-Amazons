@@ -1,9 +1,9 @@
 package commands;
 
 import core.Data;
-import core.Report;
 import entities.BrainDrainer;
 import java.util.Random;
+import units.Report;
 
 public class End implements Command {
   public Report execute(String[] strs, Data data) {

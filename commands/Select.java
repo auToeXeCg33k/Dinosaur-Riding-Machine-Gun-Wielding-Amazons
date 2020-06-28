@@ -2,8 +2,8 @@ package commands;
 
 import core.Data;
 import core.Player;
-import core.Report;
 import entities.Amazon;
+import units.Report;
 
 public class Select implements Command {
   private Amazon selection;

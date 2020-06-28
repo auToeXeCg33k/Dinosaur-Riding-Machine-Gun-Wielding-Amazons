@@ -9,7 +9,7 @@ public class Player {
   
   private int actives = 0;
   
-  private HashMap<String, Amazon> amazonMap = new HashMap<>();
+  private final HashMap<String, Amazon> amazonMap = new HashMap<>();
   
   public int getSpawns() {
     return this.spawns;

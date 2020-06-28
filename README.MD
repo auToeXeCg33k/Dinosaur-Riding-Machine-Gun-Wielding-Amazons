@@ -120,3 +120,7 @@
 * Reworked the way taming works when multiple dinos are available
 * Improved outputs
 * Fixed a typo when listing amazons
+
+# ALPHA 1.1.1
+* Fixed a missing newline character in the output of the help command
+* Minor code cleanup

@@ -81,3 +81,17 @@
 * Fixed an issue where the tame command didn't throw an error when given a negative number
 * Improved some outputs
 * Micro-optimizations
+
+# ALPHA 1.0.0
+* New 2 player system:
+  * The game can now be played by 2 players
+  * New turn based mechanics
+  * The player who kills all of their opponent's possible spawns wins
+* New commands: steps, end, list
+* Movement system tweaked:
+  * Coordinates are now horizontal-vertical
+  * Limited movement to surrounding tiles
+* Improved some outputs
+* Players can now quit before generating a world
+* Fixed an exception when taming dinos
+* Micro-optimizations

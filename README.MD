@@ -124,3 +124,9 @@
 # ALPHA 1.1.1
 * Fixed a missing newline character in the output of the help command
 * Minor code cleanup
+
+# ALPHA 1.1.2
+* Already selected amazons can no longer be reselected
+* Fixed an OCD triggering asymetry in the end-of-turn markers
+* Fixed a bug causing multiple weapons to spawn on the same tile
+* Major code cleanup

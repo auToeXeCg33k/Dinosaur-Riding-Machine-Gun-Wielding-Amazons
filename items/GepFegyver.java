@@ -3,11 +3,11 @@ package items;
 import java.util.Random;
 
 public abstract class GepFegyver implements Item {
-  double minDMG;
+  protected double minDMG;
   
-  double maxDMG;
+  protected double maxDMG;
   
-  int rate;
+  protected int rate;
   
   public double getDMG() {
     Random rand = new Random();

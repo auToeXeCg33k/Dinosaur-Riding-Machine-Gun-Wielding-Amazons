@@ -14,15 +14,15 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 public class Window {
-  private JTextArea textArea = new JTextArea();
+  private JTextArea textArea;
   
-  private JTextField textField = new JTextField();
+  private JTextField textField;
   
-  private inputHandler inputHandler = new inputHandler();
+  private Interpreter interpreter = new Interpreter();
   
-  private String player1Content = "";
+  private Report lastReport;
   
-  private String player2Content = "";
+  private String savedScreen = "";
   
   public Window() {
     JFrame frame = new JFrame("Dinoszauruszon Lovagló Gépfegyveres Amazonok");
@@ -32,6 +32,7 @@ public class Window {
     panel.setBackground(Color.black);
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
+    this.textArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(this.textArea);
     scrollPane.setBorder((Border)null);
     this.textArea.setBackground(Color.black);
@@ -41,6 +42,7 @@ public class Window {
     this.textArea.setEnabled(false);
     Font font = new Font("font", 0, 16);
     this.textArea.setFont(font);
+    this.textField = new JTextField();
     this.textField.setBorder((Border)null);
     this.textField.setBackground(Color.black);
     this.textField.setForeground(Color.white);
@@ -48,9 +50,16 @@ public class Window {
     this.textField.requestFocus();
     this.textField.setFont(font);
     this.textField.addActionListener(actionEvent -> {
-          println(this.textField.getText());
-          this.textArea.append(this.inputHandler.handle(this));
+          this.textArea.append(this.textField.getText() + "\n");
+          this.lastReport = this.interpreter.interpret(this.textField.getText());
           this.textField.setText("");
+          if (this.lastReport.getCode()) {
+            String temp = this.savedScreen;
+            this.savedScreen = this.textArea.getText().concat("\n---End of turn---\n\n");
+            this.textArea.setText(temp);
+          } 
+          this.textArea.append(this.lastReport.getPrint());
+          this.textArea.setCaretPosition(this.textArea.getDocument().getLength());
         });
     gbc.gridx = 0;
     gbc.gridy = 0;
@@ -66,28 +75,7 @@ public class Window {
     frame.setVisible(true);
   }
   
-  public String getInput() {
-    return this.textField.getText();
-  }
-  
-  public void println(String str) {
-    this.textArea.append(str + "\n");
-    this.textArea.setCaretPosition(this.textArea.getDocument().getLength());
-  }
-  
   public void print(String str) {
     this.textArea.append(str);
-    this.textArea.setCaretPosition(this.textArea.getDocument().getLength());
-  }
-  
-  public void changeWindow(boolean b) {
-    if (b) {
-      this.player1Content = this.textArea.getText();
-      this.textArea.setText(this.player2Content);
-      return;
-    } 
-    this.player2Content = this.textArea.getText();
-    this.textArea.setText("");
-    this.textArea.setText(this.player1Content);
   }
 }

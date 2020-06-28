@@ -40,7 +40,7 @@ public class Tile {
   }
   
   public boolean spawnItem(Item i) {
-    if (this.dinoszauruszList.isEmpty()) {
+    if (this.itemList.isEmpty()) {
       this.itemList.add(i);
       return true;
     } 

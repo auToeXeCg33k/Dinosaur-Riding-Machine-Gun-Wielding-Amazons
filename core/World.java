@@ -11,31 +11,32 @@ import java.util.Random;
 public class World {
   private Tile[][] tiles;
   
-  private Size size;
+  private int size;
   
   public World(byte n) {
     int i;
     Random rand;
     short s;
+    int j;
     switch (n) {
       case 1:
-        this.size = new Size(5, 5);
+        this.size = 5;
         this.tiles = new Tile[5][5];
         for (i = 0; i < 5; i++) {
-          for (int j = 0; j < 5; j++)
-            this.tiles[i][j] = new Tile(); 
+          for (int k = 0; k < 5; k++)
+            this.tiles[i][k] = new Tile(); 
         } 
         rand = new Random();
-        while (!this.tiles[2][rand.nextInt(4)].spawnItem((Item)new MiniGun()));
-        while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnItem((Item)new GepKatana()));
-        while (!this.tiles[rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
-        while (!this.tiles[4 - rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
-        while (!this.tiles[0][rand.nextInt(4)].spawnItem((Item)new Pistol()));
-        while (!this.tiles[0][rand.nextInt(4)].spawnItem((Item)new Pistol()));
-        while (!this.tiles[4][rand.nextInt(4)].spawnItem((Item)new Pistol()));
-        while (!this.tiles[4][rand.nextInt(4)].spawnItem((Item)new Pistol()));
         for (s = 0; s < 6; s = (short)(s + 1))
           while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnDinoszaurusz(new Dinoszaurusz())); 
+        for (j = 0; j < 2; j++)
+          while (!this.tiles[4][rand.nextInt(4)].spawnItem((Item)new Pistol())); 
+        for (j = 0; j < 2; j++)
+          while (!this.tiles[0][rand.nextInt(4)].spawnItem((Item)new Pistol())); 
+        while (!this.tiles[rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
+        while (!this.tiles[4 - rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
+        while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnItem((Item)new GepKatana()));
+        while (!this.tiles[2][rand.nextInt(4)].spawnItem((Item)new MiniGun()));
         break;
     } 
   }
@@ -44,7 +45,7 @@ public class World {
     return this.tiles;
   }
   
-  public Size getSize() {
+  public int getSize() {
     return this.size;
   }
 }

@@ -5,11 +5,11 @@ import entities.Dinoszaurusz;
 
 public class Tame implements Command {
   public String execute(String[] strs, Data data) {
-    if (data.canDoAction()) {
+    if (data.getMaxMoves() > data.getMoves()) {
       if (strs.length == 1) {
-        if (((Select)data.getCommand("select")).getSelection() != null) {
-          if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D) {
-            if (((Select)data.getCommand("select")).getSelection().getDinoszaurusz() == null) {
+        if (((Select)data.getCommands().get("select")).getSelection() != null) {
+          if (((Select)data.getCommands().get("select")).getSelection().getHP() > 0.0D) {
+            if (((Select)data.getCommands().get("select")).getSelection().getDinoszaurusz() == null) {
               String ret;
               switch (data.tileOfSelected().getDinoszauruszList().size()) {
                 case 0:
@@ -17,7 +17,7 @@ public class Tame implements Command {
                 case 1:
                   if (((Dinoszaurusz)data.tileOfSelected().getDinoszauruszList().get(0)).getTamed())
                     return "Ez a dinó mán másé.\n"; 
-                  ((Select)data.getCommand("select")).getSelection().tame(data.tileOfSelected().getDinoszauruszList().get(0));
+                  ((Select)data.getCommands().get("select")).getSelection().tame(data.tileOfSelected().getDinoszauruszList().get(0));
                   ret = "Dinó beidomítva.\n";
                   return ret.concat(data.nextMove());
               } 
@@ -33,14 +33,14 @@ public class Tame implements Command {
                 } 
               } 
               if (temp != null) {
-                ((Select)data.getCommand("select")).getSelection().tame(temp);
+                ((Select)data.getCommands().get("select")).getSelection().tame(temp);
                 return "Dinó beidomítva.\n";
               } 
               return "Az összed dinó foglalt.\n";
             } 
-            return ((Select)data.getCommand("select")).getSelection().getNev() + " amazonnak mán van dinója.\n";
+            return ((Select)data.getCommands().get("select")).getSelection().getNev() + " amazonnak mán van dinója.\n";
           } 
-          return "" + ((Select)data.getCommand("select")).getSelection() + " nem is él.\n";
+          return "" + ((Select)data.getCommands().get("select")).getSelection() + " nem is él.\n";
         } 
         return "Válasszá ki valakit!\n";
       } 

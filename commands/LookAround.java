@@ -8,15 +8,15 @@ import items.Item;
 public class LookAround implements Command {
   public String execute(String[] strs, Data data) {
     if (strs.length == 1) {
-      if (((Select)data.getCommand("select")).getSelection() != null) {
-        if (((Select)data.getCommand("select")).getSelection().getHP() > 0.0D)
+      if (((Select)data.getCommands().get("select")).getSelection() != null) {
+        if (((Select)data.getCommands().get("select")).getSelection().getHP() > 0.0D)
           for (int i = 0; i < (data.getWorld().getTiles()).length; i++) {
             for (int j = 0; j < (data.getWorld().getTiles()[0]).length; j++) {
-              if (data.getWorld().getTiles()[i][j].containsAmazon(((Select)data.getCommand("select")).getSelection())) {
+              if (data.getWorld().getTiles()[i][j].containsAmazon(((Select)data.getCommands().get("select")).getSelection())) {
                 String ret = "";
                 String temp = "";
                 for (Amazon amazon : data.getWorld().getTiles()[i][j].getAmazonSet()) {
-                  if (amazon != ((Select)data.getCommand("select")).getSelection())
+                  if (amazon != ((Select)data.getCommands().get("select")).getSelection())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                 } 
                 for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i][j].getDinoszauruszList())
@@ -29,7 +29,7 @@ public class LookAround implements Command {
                   ret = ret.concat("Az aktuális mezőn: " + temp.substring(0, temp.length() - 2) + ".\n");
                   temp = "";
                 } 
-                if (i + 1 < data.getWorld().getSize().getX()) {
+                if (i + 1 < data.getWorld().getSize()) {
                   for (Amazon amazon : data.getWorld().getTiles()[i + 1][j].getAmazonSet())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                   for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j].getDinoszauruszList())
@@ -43,7 +43,7 @@ public class LookAround implements Command {
                     temp = "";
                   } 
                 } 
-                if (i + 1 < data.getWorld().getSize().getX() && j + 1 < data.getWorld().getSize().getY()) {
+                if (i + 1 < data.getWorld().getSize() && j + 1 < data.getWorld().getSize()) {
                   for (Amazon amazon : data.getWorld().getTiles()[i + 1][j + 1].getAmazonSet())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                   for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j + 1].getDinoszauruszList())
@@ -57,7 +57,7 @@ public class LookAround implements Command {
                     temp = "";
                   } 
                 } 
-                if (j + 1 < data.getWorld().getSize().getY()) {
+                if (j + 1 < data.getWorld().getSize()) {
                   for (Amazon amazon : data.getWorld().getTiles()[i][j + 1].getAmazonSet())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                   for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i][j + 1].getDinoszauruszList())
@@ -71,7 +71,7 @@ public class LookAround implements Command {
                     temp = "";
                   } 
                 } 
-                if (i - 1 >= 0 && j + 1 < data.getWorld().getSize().getY()) {
+                if (i - 1 >= 0 && j + 1 < data.getWorld().getSize()) {
                   for (Amazon amazon : data.getWorld().getTiles()[i - 1][j + 1].getAmazonSet())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                   for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i - 1][j + 1].getDinoszauruszList())
@@ -127,7 +127,7 @@ public class LookAround implements Command {
                     temp = "";
                   } 
                 } 
-                if (i + 1 < data.getWorld().getSize().getX() && j - 1 >= 0) {
+                if (i + 1 < data.getWorld().getSize() && j - 1 >= 0) {
                   for (Amazon amazon : data.getWorld().getTiles()[i + 1][j - 1].getAmazonSet())
                     temp = temp.concat("" + amazon + amazon + ", "); 
                   for (Dinoszaurusz dinoszaurusz : data.getWorld().getTiles()[i + 1][j - 1].getDinoszauruszList())
@@ -144,7 +144,7 @@ public class LookAround implements Command {
               } 
             } 
           }  
-        return ((Select)data.getCommand("select")).getSelection().getNev() + " nem is él!\n";
+        return ((Select)data.getCommands().get("select")).getSelection().getNev() + " nem is él!\n";
       } 
       return "Válasszá ki valakit!\n";
     } 

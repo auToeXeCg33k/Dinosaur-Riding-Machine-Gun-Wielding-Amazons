@@ -20,10 +20,11 @@ public class Amazon implements Entity {
   
   public Amazon(String nev) {
     this.nev = nev;
+    this.elet = 100.0D;
     this.dinoszaurusz = null;
     this.lovagol = false;
-    this.elet = 100.0D;
     this.inventory = (HashMap)new HashMap<>();
+    this.gepFegyver = null;
     this.inventory.put(GepFegyver.class, new GepFegyver[2]);
   }
   

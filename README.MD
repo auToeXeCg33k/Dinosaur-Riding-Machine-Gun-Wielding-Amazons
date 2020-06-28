@@ -130,3 +130,8 @@
 * Fixed an OCD triggering asymetry in the end-of-turn markers
 * Fixed a bug causing multiple weapons to spawn on the same tile
 * Major code cleanup
+
+# ALPHA 1.2.0
+* New enemy: the Braindrainer
+  * Spawns randomly, moves around the map after each turn, and attacks amazons moving onto their tile
+* Major code cleanup

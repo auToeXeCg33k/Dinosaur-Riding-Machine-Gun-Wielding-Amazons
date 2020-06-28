@@ -3,6 +3,7 @@ package core;
 import commands.Attack;
 import commands.Command;
 import commands.Drop;
+import commands.End;
 import commands.Equip;
 import commands.GetOff;
 import commands.GetOn;
@@ -60,6 +61,7 @@ public class Data {
     this.commands.put("equip", new Equip());
     this.commands.put("steps", new Steps());
     this.commands.put("list", new List());
+    this.commands.put("end", new End());
     this.items = new HashMap<>();
     this.items.put("pisztoly", Pistol.class);
     this.items.put("gépkatana", GepKatana.class);
@@ -134,9 +136,9 @@ public class Data {
   public String newAmazon(String name) {
     ((Player)this.players.get(Boolean.valueOf(this.playerMarker))).addAmazon(name);
     if (this.playerMarker) {
-      this.world.getTiles()[this.world.getSize() - 1][this.world.getSize() - 1].addAmazon(((Player)this.players.get(Boolean.valueOf(this.playerMarker))).getAmazon(name));
+      this.world.getTiles()[this.world.getSize() - 1][this.world.getSize() - 1].add(((Player)this.players.get(Boolean.valueOf(this.playerMarker))).getAmazon(name));
     } else {
-      this.world.getTiles()[0][0].addAmazon(((Player)this.players.get(Boolean.valueOf(this.playerMarker))).getAmazon(name));
+      this.world.getTiles()[0][0].add(((Player)this.players.get(Boolean.valueOf(this.playerMarker))).getAmazon(name));
     } 
     return name + " létrehozva az 1;1 mezőn.\n";
   }
@@ -144,7 +146,7 @@ public class Data {
   public Tile tileOfSelected() {
     for (int i = 0; i < (this.world.getTiles()).length; i++) {
       for (int j = 0; j < (this.world.getTiles()[0]).length; j++) {
-        if (this.world.getTiles()[i][j].containsAmazon(((Select)this.commands.get("select")).getSelection()))
+        if (this.world.getTiles()[i][j].contains(((Select)this.commands.get("select")).getSelection()))
           return this.world.getTiles()[i][j]; 
       } 
     } 

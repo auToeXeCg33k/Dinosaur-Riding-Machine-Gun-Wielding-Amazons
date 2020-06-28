@@ -28,15 +28,17 @@ public class World {
         } 
         rand = new Random();
         for (s = 0; s < 6; s = (short)(s + 1))
-          while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnDinoszaurusz(new Dinoszaurusz())); 
+          while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawn(new Dinoszaurusz())); 
         for (j = 0; j < 2; j++)
-          while (!this.tiles[4][rand.nextInt(4)].spawnItem((Item)new Pistol())); 
+          while (!this.tiles[4][rand.nextInt(4)].spawn((Item)new Pistol())); 
         for (j = 0; j < 2; j++)
-          while (!this.tiles[0][rand.nextInt(4)].spawnItem((Item)new Pistol())); 
-        while (!this.tiles[rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
-        while (!this.tiles[4 - rand.nextInt(1)][rand.nextInt(4)].spawnItem((Item)new ShotGun()));
-        while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnItem((Item)new GepKatana()));
-        while (!this.tiles[2][rand.nextInt(4)].spawnItem((Item)new MiniGun()));
+          while (!this.tiles[0][rand.nextInt(4)].spawn((Item)new Pistol())); 
+        while (!this.tiles[rand.nextInt(1)][rand.nextInt(4)].spawn((Item)new ShotGun()));
+        while (!this.tiles[4 - rand.nextInt(1)][rand.nextInt(4)].spawn((Item)new ShotGun()));
+        while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawn((Item)new GepKatana()));
+        while (!this.tiles[2][rand.nextInt(4)].spawn((Item)new MiniGun()));
+        for (j = 0; j < 2; j++)
+          while (!this.tiles[3 - rand.nextInt(2)][rand.nextInt(4)].spawn()); 
         break;
     } 
   }

@@ -11,8 +11,8 @@ public class Interpreter {
   
   public Report interpret(String input) {
     String[] words;
-    String feedback;
-    Report trackReport;
+    Report commandReport;
+    String temp;
     if (input.equalsIgnoreCase("exit"))
       System.exit(0); 
     switch (this.state) {
@@ -32,19 +32,17 @@ public class Interpreter {
           return new Report("Há, azé írhatná be valamit...\n", false); 
         if (words[0].equalsIgnoreCase("exit"))
           System.exit(0); 
-        if (words[0].equalsIgnoreCase("end")) {
-          this.data.turn();
-          return new Report("Player " + (this.data.getPlayerMarker() ? "2" : "1") + " parancsa:\n", true);
-        } 
         if (this.data.getCommands().get(words[0].toLowerCase()) == null)
           return new Report("Ilyen parancs nincs is bruh!\n", false); 
-        feedback = ((Command)this.data.getCommands().get(words[0].toLowerCase())).execute(words, this.data);
-        trackReport = this.tracker.track(this.data);
-        if (trackReport.getCode()) {
+        commandReport = ((Command)this.data.getCommands().get(words[0].toLowerCase())).execute(words, this.data);
+        if (commandReport.getCode())
+          return commandReport; 
+        temp = this.tracker.track(this.data);
+        if (temp != null) {
           this.state = (byte)(this.state + 1);
-          return new Report(feedback.concat(trackReport.getPrint()), false);
+          return new Report(commandReport.getPrint().concat(temp), false);
         } 
-        return new Report(feedback.concat("\nPlayer " + (this.data.getPlayerMarker() ? "2" : "1") + " parancsa:\n"), false);
+        return new Report(commandReport.getPrint().concat("\nPlayer " + (this.data.getPlayerMarker() ? "2" : "1") + " parancsa:\n"), false);
       case 2:
         System.exit(0);
         break;

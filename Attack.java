@@ -3,8 +3,8 @@ class Attack implements Command {
     if (strs.length == 2) {
       if (((Select)world.getCommandMap().get("select")).isSelected()) {
         if (((Select)world.getCommandMap().get("select")).getSelection() instanceof Amazon) {
-          if (world.getAmazonMap().containsKey(strs[2])) {
-            ((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).tamad(world.getAmazonMap().get(strs[2]));
+          if (world.getAmazonMap().containsKey(strs[1])) {
+            ((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).tamad(world.getAmazonMap().get(strs[1]));
           } else {
             System.out.println("ilyen amazon nincs - currently csak amazonokat lehet támadni");
           } 

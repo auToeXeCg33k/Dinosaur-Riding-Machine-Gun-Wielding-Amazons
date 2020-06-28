@@ -11,6 +11,8 @@ public class Move implements Command {
                 int temp2 = Integer.parseInt(strs[2]) - 1;
                 if (temp1 >= world.getX() || temp2 >= world.getY()) {
                   System.out.println("ilyen hely nincs is, a faszom se tudja idetenni");
+                } else if (temp1 == i && temp2 == j) {
+                  System.out.println("mán ott vagy fiam");
                 } else {
                   world.getTiles()[i][j].rmAmazon((Amazon)((Select)world.getCommandMap().get("select")).getSelection());
                   world.getTiles()[temp1][temp2].addAmazon((Amazon)((Select)world.getCommandMap().get("select")).getSelection());

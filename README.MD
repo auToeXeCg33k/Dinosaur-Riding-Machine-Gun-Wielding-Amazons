@@ -20,3 +20,7 @@
 
 # ALPHA 0.5.0
 * New command: lookaround
+
+# ALPHA 0.5.1
+* Fixed an issue that caused a crash when attacking
+* Fixed an issue that let an amazon move to the tile they were already on

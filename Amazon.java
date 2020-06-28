@@ -47,7 +47,7 @@ public class Amazon implements Entity {
   }
   
   public double getDMG() {
-    return StrictMath.random() * 20.0D + 5.0D;
+    return 2.0D * (StrictMath.random() * 20.0D + 5.0D);
   }
   
   public void tame(Dinoszaurusz d) {

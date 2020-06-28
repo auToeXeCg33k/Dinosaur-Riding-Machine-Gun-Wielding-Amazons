@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Random;
 
 public class World {
   Tile[][] tiles;
@@ -39,7 +40,8 @@ public class World {
   
   public void newDinoszaurusz(String str) {
     this.dinoszauruszMap.put(str, new Dinoszaurusz(str));
-    this.tiles[0][0].addDinoszaurusz(this.dinoszauruszMap.get(str));
+    Random rand = new Random();
+    while (!this.tiles[rand.nextInt(this.x - 1)][rand.nextInt(this.y - 1)].addDinoszaurusz(this.dinoszauruszMap.get(str)));
   }
   
   public void newAmazon(String str) {

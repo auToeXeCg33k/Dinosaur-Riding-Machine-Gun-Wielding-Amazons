@@ -1,40 +1,17 @@
 public class Select implements Command {
-  private boolean selected;
-  
-  private Entity selection;
+  private Amazon selection;
   
   public void execute(String[] strs, World world) {
-    if (strs.length == 3) {
-      if (strs[1].equals("amazon")) {
-        if (world.getAmazonMap().containsKey(strs[2])) {
-          this.selection = world.getAmazonMap().get(strs[2]);
-          this.selected = true;
-          System.out.println(strs[2] + ", az amazon, kiválasztva.");
-        } else if (world.getDinoszauruszMap().containsKey(strs[2])) {
-          this.selection = world.getDinoszauruszMap().get(strs[2]);
-          this.selected = true;
-          System.out.println(strs[2] + ", a dinoszaurusz, kiválasztva.");
-        } else {
-          this.selected = false;
-          System.out.println("ilyen névvel nincs amazon");
-        } 
-      } else if (strs[1].equals("dinoszaurusz")) {
-        if (world.getDinoszauruszMap().containsKey(strs[2])) {
-          this.selection = world.getDinoszauruszMap().get(strs[2]);
-          this.selected = true;
-          System.out.println(strs[2] + ", a dinoszaurusz, kiválasztva.");
-        } else {
-          this.selected = false;
-          System.out.println("ilyen névvel nincs dinoszaurusz");
-        } 
+    if (strs.length == 2) {
+      if (world.getAmazonMap().containsKey(strs[1])) {
+        this.selection = world.getAmazonMap().get(strs[1]);
+        System.out.println(strs[1] + " kiválasztva.");
       } else {
-        this.selected = false;
-        System.out.println("ilyen típus nincs");
+        this.selection = null;
+        System.out.println("ilyen névvel nincs amazon");
       } 
-    } else if (strs.length > 3) {
-      System.out.println("túl sok argumentum");
     } else {
-      System.out.println("nincs elég argumentum");
+      System.out.println("nem megfelelő argumentummennyiség");
     } 
   }
   
@@ -42,11 +19,7 @@ public class Select implements Command {
     return true;
   }
   
-  public Entity getSelection() {
+  public Amazon getSelection() {
     return this.selection;
-  }
-  
-  public boolean isSelected() {
-    return this.selected;
   }
 }

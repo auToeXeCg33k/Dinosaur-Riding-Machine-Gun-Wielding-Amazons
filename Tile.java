@@ -9,8 +9,11 @@ public class Tile {
     this.amazonSet.add(a);
   }
   
-  public void addDinoszaurusz(Dinoszaurusz d) {
+  public boolean addDinoszaurusz(Dinoszaurusz d) {
+    if (this.dinoszauruszSet.contains(d))
+      return false; 
     this.dinoszauruszSet.add(d);
+    return true;
   }
   
   public void rmAmazon(Amazon a) {

@@ -141,4 +141,8 @@ public class Amazon implements Entity {
     System.out.println(enemy.nev + " meghótt a gecibe.\n");
     return 1;
   }
+  
+  public String toString() {
+    return this.nev + "(" + this.nev + Math.round(this.elet);
+  }
 }

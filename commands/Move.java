@@ -20,7 +20,7 @@ public class Move implements Command {
                       temp1 = Integer.parseInt(strs[2]) - 1;
                       temp2 = Integer.parseInt(strs[1]) - 1;
                     } 
-                    if (temp1 >= world.getX() || temp2 >= world.getY()) {
+                    if (temp1 >= world.getX() || temp2 >= world.getY() || temp1 < 0 || temp2 < 0) {
                       System.out.println("Ilyen hely nincs is, a fasse tudja idetenni!\n");
                       return;
                     } 
@@ -31,10 +31,6 @@ public class Move implements Command {
                     if (temp1 > i + 1 || temp1 < i - 1 || temp2 > j + 1 || temp2 < j - 1) {
                       System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " csak környezö koordinátákra mehet!\n");
                       return;
-                    } 
-                    if (((Select)world.getCommandMap().get("select")).getSelection().isLovagol()) {
-                      world.getTiles()[i][j].rmDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz());
-                      world.getTiles()[temp1][temp2].addDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz());
                     } 
                     world.getTiles()[i][j].rmAmazon(((Select)world.getCommandMap().get("select")).getSelection());
                     world.getTiles()[temp1][temp2].addAmazon(((Select)world.getCommandMap().get("select")).getSelection());

@@ -97,7 +97,8 @@ public class World {
           System.exit(0);
           break;
       } 
-      System.out.println("Ilyen nincs bruh...\n");
+      System.out.println("Ilyen nincs bruh...");
+      System.out.print("Retry: ");
     } 
     this.commandMap = new HashMap<>();
     this.itemClassMap = new HashMap<>();

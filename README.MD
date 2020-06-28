@@ -95,3 +95,14 @@
 * Players can now quit before generating a world
 * Fixed an exception when taming dinos
 * Micro-optimizations
+
+# ALPHA 1.0.1
+* Changed the way listing is done
+* Gépkatana renamed to katana
+* Changed the way how dino movement is handled
+* How amazon spawn is handled is now specified in help
+* Fixed a bug that caused a walking amazon to be able to get off her dino
+* Fixed a bug that caused a riding amazon to be able to get on her dino
+* Fixed a bug that caused dinos to never appear on tiles after getting ridden
+* Fixed a crash when trying to move to a coordinate containing 0
+* Removed some legacy code

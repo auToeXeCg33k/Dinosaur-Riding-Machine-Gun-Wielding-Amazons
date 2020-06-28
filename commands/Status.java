@@ -17,14 +17,18 @@ public class Status implements Command {
               System.out.println(((((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz() != null) ? "Van" : "Nincs") + " dinoszaurusza.");
               System.out.println(((Select)world.getCommandMap().get("select")).getSelection().isLovagol() ? "Lovagol." : "Nem lovagol.");
               System.out.println("A(z) " + (world.getActivePlayer() ? ("" + world.getY() - j + ";" + world.getY() - j) : ("" + j + 1 + ";" + j + 1)) + " koordinátán áll.");
-              System.out.print("Az itemjei: ");
+              String string = "";
               for (Map.Entry<Class<?>, Item[]> entry : (Iterable<Map.Entry<Class<?>, Item[]>>)((Select)world.getCommandMap().get("select")).getSelection().getInventory().entrySet()) {
                 for (int k = 0; k < ((Item[])entry.getValue()).length; k++) {
                   if (((Item[])entry.getValue())[k] != null)
-                    System.out.print("" + ((Item[])entry.getValue())[k] + " "); 
+                    string = string.concat("" + ((Item[])entry.getValue())[k] + ", "); 
                 } 
               } 
-              System.out.println("\n");
+              if (string.equals("")) {
+                System.out.println("Nincsenek itemjei.\n");
+                return;
+              } 
+              System.out.println("Az itemjei: " + string.substring(0, string.length() - 2) + ".\n");
               return;
             } 
           } 

@@ -13,7 +13,7 @@ public class Help implements Command {
     System.out.println("Az gyöz, aki nem veszít.");
     System.out.println("A játékban minden tevékenység parancsokkal végezhető.\nAz elérhetö parancsok az alábbiak:");
     System.out.println("exit: most magyarázzam?");
-    System.out.println("new [név]: létrehoz egy amazont a megadott névvel.");
+    System.out.println("new [név]: létrehoz egy amazont a megadott névvel. Az amazonok játékosnak megfelelően a világ átellenes sarkaiban spawnolnak.");
     System.out.println("select [név]: kiválasztja a megadott amazont.");
     System.out.println("attack [név]: a kiválaszott amazon megtámadja a megadott amazont.");
     System.out.println("move [x] [y]: a kiválasztott amazon a megadott koordinátára mozdul.");

@@ -34,6 +34,6 @@ public class Dinoszaurusz implements Entity {
   }
   
   public String toString() {
-    return "Dinoszaurusz: " + Math.round(this.elet) + " élet," + (this.tamed ? " idomított. " : " idomítatlan.");
+    return "Dinoszaurusz(" + Math.round(this.elet) + (this.tamed ? "HP, idomított)" : "HP, idomítatlan)");
   }
 }

@@ -4,7 +4,7 @@ public class Main {
   public static void main(String[] args) {
     WorldGen generator = new WorldGen();
     World world = generator.createWorld();
-    System.out.println("have fun! for some help, type... well... i guess... help....");
+    System.out.println("segítségért írd be, hogy help");
     Scanner sc = new Scanner(System.in);
     boolean repeat = true;
     while (repeat) {

@@ -8,89 +8,89 @@ public class LookAround implements Command {
               System.out.println("Amazonok az aktuális koordinátán:");
               for (Amazon amazon : world.getTiles()[i][j].getAmazonSet()) {
                 if (amazon != ((Select)world.getCommandMap().get("select")).getSelection())
-                  System.out.println(amazon.toString()); 
+                  System.out.println(amazon.getNev()); 
               } 
               System.out.println("Dinoszauruszok az aktuális koordinátán:");
               for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j].getDinoszauruszSet())
-                System.out.println(dinoszaurusz.toString()); 
+                System.out.println(dinoszaurusz.getNev()); 
               try {
                 if (world.getTiles()[i + 1][j].exists()) {
                   System.out.println("Amazonok északra:");
                   for (Amazon amazon : world.getTiles()[i + 1][j].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok északra:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i + 1][j + 1].exists()) {
                   System.out.println("Amazonok az észak-keletre:");
                   for (Amazon amazon : world.getTiles()[i + 1][j + 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok észak-keletre:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j + 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i][j + 1].exists()) {
                   System.out.println("Amazonok keletre:");
                   for (Amazon amazon : world.getTiles()[i][j + 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok keletre:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j + 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i - 1][j + 1].exists()) {
                   System.out.println("Amazonok dél-keletre:");
                   for (Amazon amazon : world.getTiles()[i - 1][j + 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok dél-keletre:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j + 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i - 1][j].exists()) {
                   System.out.println("Amazonok délre:");
                   for (Amazon amazon : world.getTiles()[i - 1][j].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok délre");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i - 1][j - 1].exists()) {
                   System.out.println("Amazonok dél-nyugatra:");
                   for (Amazon amazon : world.getTiles()[i - 1][j - 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok dél-nyugatra:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i][j - 1].exists()) {
                   System.out.println("Amazonok nyugatra:");
                   for (Amazon amazon : world.getTiles()[i][j - 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok nyugatra:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
                 if (world.getTiles()[i + 1][j - 1].exists()) {
                   System.out.println("Amazonok észak-nyugatra:");
                   for (Amazon amazon : world.getTiles()[i + 1][j - 1].getAmazonSet())
-                    System.out.println(amazon.toString()); 
+                    System.out.println(amazon.getNev()); 
                   System.out.println("Dinoszauruszok észak-nyugatra:");
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.toString()); 
+                    System.out.println(dinoszaurusz.getNev()); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
             } 

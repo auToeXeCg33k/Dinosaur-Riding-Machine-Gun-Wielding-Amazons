@@ -24,3 +24,7 @@
 # ALPHA 0.5.1
 * Fixed an issue that caused a crash when attacking
 * Fixed an issue that let an amazon move to the tile they were already on
+
+# ALPHA 0.6.0
+* Handling of dinosaurs reworked
+* New commands: tame, geton, getoff

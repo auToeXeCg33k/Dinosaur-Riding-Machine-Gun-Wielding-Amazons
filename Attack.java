@@ -6,10 +6,10 @@ class Attack implements Command {
           if (world.getAmazonMap().containsKey(strs[1])) {
             ((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).tamad(world.getAmazonMap().get(strs[1]));
           } else {
-            System.out.println("ilyen amazon nincs - currently csak amazonokat lehet támadni");
+            System.out.println("ilyen amazon nincs");
           } 
         } else if (((Select)world.getCommandMap().get("select")).getSelection() instanceof Dinoszaurusz) {
-          System.out.println("a dínók egyenlőre nem tudnak támadni");
+          System.out.println("csak amazonok tudnak támadni");
         } 
       } else {
         System.out.println("válasszá valami buzit");

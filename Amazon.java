@@ -3,7 +3,7 @@ public class Amazon implements Entity {
   
   private boolean gepfegyver;
   
-  private boolean dinoszaurusz;
+  private Dinoszaurusz dinoszaurusz;
   
   private boolean lovagol;
   
@@ -11,16 +11,11 @@ public class Amazon implements Entity {
   
   private boolean alive;
   
-  public Amazon(String nev, boolean fegyo, boolean dino, boolean lovagol) {
+  public Amazon(String nev) {
     this.nev = nev;
-    this.gepfegyver = fegyo;
-    if (lovagol) {
-      this.dinoszaurusz = lovagol;
-      this.lovagol = lovagol;
-    } else {
-      this.dinoszaurusz = dino;
-      this.lovagol = lovagol;
-    } 
+    this.gepfegyver = true;
+    this.dinoszaurusz = null;
+    this.lovagol = false;
     this.elet = 100.0D;
     this.alive = true;
   }
@@ -29,22 +24,21 @@ public class Amazon implements Entity {
     return this.nev;
   }
   
-  public void incHP(double n) {
-    if (this.elet + n <= 100.0D) {
-      this.elet += n;
+  public void incHP(double r) {
+    if (this.elet + r <= 100.0D) {
+      this.elet += r;
     } else {
       this.elet = 100.0D;
     } 
     this.alive = true;
   }
   
-  public void decHP(double n) {
-    if (this.elet - n >= 0.0D) {
-      this.elet -= n;
+  public void decHP(double r) {
+    if (this.elet - r >= 0.0D) {
+      this.elet -= r;
     } else {
       this.elet = 0.0D;
       this.alive = false;
-      setDino(false);
     } 
   }
   
@@ -56,48 +50,51 @@ public class Amazon implements Entity {
     return StrictMath.random() * 20.0D + 5.0D;
   }
   
-  public boolean hasDino() {
-    return this.dinoszaurusz;
-  }
-  
-  public void setDino(boolean ertek) {
-    if (this.alive)
-      if (!ertek) {
-        this.dinoszaurusz = ertek;
-        this.lovagol = ertek;
+  public void tame(Dinoszaurusz d) {
+    if (this.alive) {
+      if (this.dinoszaurusz == null) {
+        if (!d.getTamed()) {
+          this.dinoszaurusz = d;
+          d.setTamed(true);
+          System.out.println("a dínó beidomítva");
+        } else {
+          System.out.println("ez a dínó mán másé");
+        } 
       } else {
-        this.dinoszaurusz = ertek;
-      }  
+        System.out.println("mán van dínóm");
+      } 
+    } else {
+      System.out.println("nem is élek geci");
+    } 
   }
   
   public boolean isLovagol() {
     return this.lovagol;
   }
   
-  public void setLovagol(boolean ertek) {
-    if (this.dinoszaurusz)
-      this.lovagol = ertek; 
+  public void setLovagol(boolean b) {
+    this.lovagol = b;
   }
   
-  public void leszall() {
-    this.lovagol = false;
-    System.out.println("Leszalltam a dinoszauruszról xd");
-  }
-  
-  public void felszall() {
-    if (this.dinoszaurusz = true)
-      this.lovagol = true; 
+  public Dinoszaurusz getDinoszaurusz() {
+    return this.dinoszaurusz;
   }
   
   public void tamad(Amazon enemy) {
     if (this.alive) {
       if (!this.nev.equals(enemy.getNev())) {
-        if (enemy.getHP() != 0.0D) {
+        if (enemy.alive) {
           if (!this.gepfegyver) {
             System.out.println("nem is tok durrogtatni, nincs is gépfegyverem");
           } else if (enemy.isLovagol()) {
-            enemy.setDino(false);
-            System.out.println(enemy.nev + " dínója megdöglött.");
+            double temp = getDMG();
+            enemy.getDinoszaurusz().decHP(temp);
+            if (enemy.getDinoszaurusz().isAlive()) {
+              System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
+            } else {
+              enemy.setLovagol(false);
+              System.out.println(enemy.nev + " dinszoaurusza meghalt.");
+            } 
           } else {
             double temp = getDMG();
             enemy.decHP(temp);
@@ -112,9 +109,5 @@ public class Amazon implements Entity {
     } else {
       System.out.println("nem is élek geci");
     } 
-  }
-  
-  public String toString() {
-    return this.nev;
   }
 }

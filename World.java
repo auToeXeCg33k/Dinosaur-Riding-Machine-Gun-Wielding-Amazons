@@ -32,6 +32,9 @@ public class World {
     this.commandMap.put("where", new Where());
     this.commandMap.put("move", new Move());
     this.commandMap.put("lookaround", new LookAround());
+    this.commandMap.put("tame", new Tame());
+    this.commandMap.put("geton", new GetOn());
+    this.commandMap.put("getoff", new GetOff());
   }
   
   public void newDinoszaurusz(String str) {
@@ -40,7 +43,7 @@ public class World {
   }
   
   public void newAmazon(String str) {
-    this.amazonMap.put(str, new Amazon(str, true, true, true));
+    this.amazonMap.put(str, new Amazon(str));
     this.tiles[0][0].addAmazon(this.amazonMap.get(str));
   }
   

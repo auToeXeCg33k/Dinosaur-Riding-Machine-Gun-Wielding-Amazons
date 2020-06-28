@@ -16,7 +16,7 @@ public class Move implements Command {
                 } else {
                   world.getTiles()[i][j].rmAmazon((Amazon)((Select)world.getCommandMap().get("select")).getSelection());
                   world.getTiles()[temp1][temp2].addAmazon((Amazon)((Select)world.getCommandMap().get("select")).getSelection());
-                  System.out.println("Az amazon elmozdult a(z) " + temp1 + 1 + ";" + temp2 + 1 + " koordinátákra.");
+                  System.out.println(((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).getNev() + " elmozdult a(z) " + ((Amazon)((Select)world.getCommandMap().get("select")).getSelection()).getNev() + ";" + temp1 + 1 + " koordinátákra.");
                 } 
                 repeat = false;
               } catch (NumberFormatException ex) {
@@ -36,7 +36,7 @@ public class Move implements Command {
                 } else {
                   world.getTiles()[i][j].rmDinoszaurusz((Dinoszaurusz)((Select)world.getCommandMap().get("select")).getSelection());
                   world.getTiles()[temp1][temp2].addDinoszaurusz((Dinoszaurusz)((Select)world.getCommandMap().get("select")).getSelection());
-                  System.out.println("A dinoszaurusz elmozdult a(z) " + temp1 + 1 + ";" + temp2 + 1 + " koordinátákra.");
+                  System.out.println(((Dinoszaurusz)((Select)world.getCommandMap().get("select")).getSelection()).getNev() + " elmozdult a(z) " + ((Dinoszaurusz)((Select)world.getCommandMap().get("select")).getSelection()).getNev() + ";" + temp1 + 1 + " koordinátákra.");
                 } 
                 repeat = false;
               } catch (NumberFormatException ex) {

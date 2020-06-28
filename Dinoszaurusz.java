@@ -1,42 +1,24 @@
 public class Dinoszaurusz implements Entity {
-  private int id;
+  private boolean alive = true;
   
-  private double elet;
+  private double elet = 150.0D;
   
-  private boolean alive;
-  
-  private boolean tamed;
-  
-  public Dinoszaurusz(int id) {
-    this.id = id;
-    this.alive = true;
-    this.elet = 150.0D;
-    this.tamed = false;
-  }
-  
-  public int getId() {
-    return this.id;
-  }
+  private boolean tamed = false;
   
   public boolean isAlive() {
     return this.alive;
   }
   
-  public void setTamed(boolean b) {
-    this.tamed = b;
+  public double getHP() {
+    return this.elet;
   }
   
   public boolean getTamed() {
     return this.tamed;
   }
   
-  public void decHP(double r) {
-    if (this.elet - r >= 0.0D) {
-      this.elet -= r;
-    } else {
-      this.elet = 0.0D;
-      this.alive = false;
-    } 
+  public void setTamed(boolean b) {
+    this.tamed = b;
   }
   
   public void incHP(double r) {
@@ -48,8 +30,13 @@ public class Dinoszaurusz implements Entity {
     this.alive = true;
   }
   
-  public double getHP() {
-    return this.elet;
+  public void decHP(double r) {
+    if (this.elet - r >= 0.0D) {
+      this.elet -= r;
+    } else {
+      this.elet = 0.0D;
+      this.alive = false;
+    } 
   }
   
   public String toString() {

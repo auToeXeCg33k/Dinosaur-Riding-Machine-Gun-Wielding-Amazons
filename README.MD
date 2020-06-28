@@ -62,3 +62,12 @@
 * New command: pickup
 * The new command no longer requires a type argument
 * Status command extended to accomodate the new features
+
+# ALPHA 0.8.0
+* Inventory system:
+  * Amazons now have an inventory. Every item picked up by the amazons is stored here.
+  * Different items have different quantity limits
+  * Picked up guns have to be equipped before they can be used
+* New commands: equip, drop
+* Fixed a bug that caused the pickup command to not throw an error when using it without selecting an amazon first
+* Fixed a bug causing dinos to not move with the amazons riding them

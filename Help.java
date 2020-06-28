@@ -16,6 +16,8 @@ class Help implements Command {
     System.out.println("getoff: a kiválasztott amazon leszáll a dinoszauruszáról.");
     System.out.println("status: a kiválasztott amazon aktuális adatai.");
     System.out.println("pickup [itemnév]: a kiválasztott amazon felveszi a megadott tárgyat,");
+    System.out.println("drop [itemnév]: a kiválasztott amazon eldobja a megadott tárgyat");
+    System.out.println("equip [fegyvernév]: a kiválasztott amazon kézbe veszi a megadott fegyvert");
     return true;
   }
 }

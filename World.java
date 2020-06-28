@@ -17,6 +17,8 @@ public class World {
   
   private int y;
   
+  private HashMap<String, Class<?>> itemClassMap;
+  
   public World() {
     Scanner sc = new Scanner(System.in);
     System.out.println("add meg a gecit (jelenleg csak a geci1 érhető el):");
@@ -28,9 +30,9 @@ public class World {
         int i;
         Random rand;
         short s;
+        System.out.println("initializing world");
         switch (dimenziok[0]) {
           case "geci1":
-            System.out.println("initializing world");
             this.x = 5;
             this.y = 5;
             this.activeMax = 3;
@@ -50,8 +52,11 @@ public class World {
             while (!this.tiles[4][rand.nextInt(4)].spawnItem(new Pistol()));
             while (!this.tiles[4][rand.nextInt(4)].spawnItem(new Pistol()));
             for (s = 0; s < 6; s = (short)(s + 1))
-              while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnDinoszaurusz(new Dinoszaurusz(s))); 
+              while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnDinoszaurusz(new Dinoszaurusz())); 
             repeat = false;
+            continue;
+          case "geci2":
+            System.out.println("hidden feature - ez még nem ready");
             continue;
         } 
         System.out.println("ilyen nincs bruh");
@@ -61,6 +66,7 @@ public class World {
     } 
     this.amazonMap = new HashMap<>();
     this.commandMap = new HashMap<>();
+    this.itemClassMap = new HashMap<>();
     this.commandMap.put("select", new Select());
     this.commandMap.put("exit", new Exit());
     this.commandMap.put("new", new New());
@@ -73,6 +79,13 @@ public class World {
     this.commandMap.put("getoff", new GetOff());
     this.commandMap.put("status", new Status());
     this.commandMap.put("pickup", new PickUp());
+    this.commandMap.put("drop", new Drop());
+    this.commandMap.put("equip", new Equip());
+    this.itemClassMap.put("pistol", Pistol.class);
+    this.itemClassMap.put("katana", GepKatana.class);
+    this.itemClassMap.put("shotgun", ShotGun.class);
+    this.itemClassMap.put("minigun", MiniGun.class);
+    this.itemClassMap.put("rocketlauncher", RocketLauncher.class);
     System.out.println("world initialized");
   }
   
@@ -91,6 +104,10 @@ public class World {
   
   public Tile[][] getTiles() {
     return this.tiles;
+  }
+  
+  public HashMap<String, Class<?>> getItemClassMap() {
+    return this.itemClassMap;
   }
   
   public int getX() {

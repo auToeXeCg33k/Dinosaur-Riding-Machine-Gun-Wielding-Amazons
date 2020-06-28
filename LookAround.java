@@ -17,14 +17,8 @@ public class LookAround implements Command {
               } 
               System.out.print("\nItemek az aktuális koordinátán: ");
               for (Item item : world.getTiles()[i][j].getItemList()) {
-                if (item != ((Select)world.getCommandMap().get("select")).getSelection().getGepfegyver()) {
-                  if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                    if (!((GepFegyver)item).isHeld())
-                      System.out.print(item); 
-                    continue;
-                  } 
-                  System.out.print(item);
-                } 
+                if (item != ((Select)world.getCommandMap().get("select")).getSelection().getGepFegyver())
+                  System.out.print(item); 
               } 
               try {
                 if (world.getTiles()[i + 1][j].exists()) {
@@ -35,14 +29,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek északra: ");
-                  for (Item item : world.getTiles()[i + 1][j].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i + 1][j].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -54,14 +42,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j + 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek észak-keletre: ");
-                  for (Item item : world.getTiles()[i + 1][j + 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i + 1][j + 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -73,14 +55,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j + 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek keletre: ");
-                  for (Item item : world.getTiles()[i][j + 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i][j + 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -92,14 +68,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j + 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek dél-keletre: ");
-                  for (Item item : world.getTiles()[i - 1][j + 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i - 1][j + 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -111,14 +81,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek délre: ");
-                  for (Item item : world.getTiles()[i - 1][j].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i - 1][j].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -130,14 +94,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek dél-nyugatra: ");
-                  for (Item item : world.getTiles()[i - 1][j - 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i - 1][j - 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -149,14 +107,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek nyugatra: ");
-                  for (Item item : world.getTiles()[i][j - 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i][j - 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -168,14 +120,8 @@ public class LookAround implements Command {
                   for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszList())
                     System.out.print(dinoszaurusz); 
                   System.out.print("\nItemek észak-nyugatra: ");
-                  for (Item item : world.getTiles()[i + 1][j - 1].getItemList()) {
-                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
-                      if (!((GepFegyver)item).isHeld())
-                        System.out.print(item); 
-                      continue;
-                    } 
-                    System.out.print(item);
-                  } 
+                  for (Item item : world.getTiles()[i + 1][j - 1].getItemList())
+                    System.out.print(item); 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               System.out.println();

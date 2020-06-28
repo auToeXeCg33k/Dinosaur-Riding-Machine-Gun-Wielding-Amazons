@@ -1,28 +1,64 @@
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 
 public class World {
-  Tile[][] tiles;
+  private int spawnMax;
   
-  private HashMap<String, Dinoszaurusz> dinoszauruszMap;
+  private int activeMax;
+  
+  private Tile[][] tiles;
   
   private HashMap<String, Amazon> amazonMap;
   
   private HashMap<String, Command> commandMap;
   
-  int x;
+  private int x;
   
-  int y;
+  private int y;
   
-  public World(int x, int y) {
-    this.x = x;
-    this.y = y;
-    this.tiles = new Tile[x][y];
-    for (int i = 0; i < x; i++) {
-      for (int j = 0; j < y; j++)
-        this.tiles[i][j] = new Tile(); 
+  public World() {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("add meg a gecit (jelenleg csak a geci1 érhető el):");
+    boolean repeat = true;
+    while (repeat) {
+      String input = sc.nextLine();
+      String[] dimenziok = input.split(" ");
+      if (dimenziok.length == 1) {
+        int i;
+        Random rand;
+        short s;
+        switch (dimenziok[0]) {
+          case "geci1":
+            System.out.println("initializing world");
+            this.x = 5;
+            this.y = 5;
+            this.activeMax = 3;
+            this.spawnMax = 10;
+            this.tiles = new Tile[5][5];
+            for (i = 0; i < 5; i++) {
+              for (int j = 0; j < 5; j++)
+                this.tiles[i][j] = new Tile(); 
+            } 
+            rand = new Random();
+            while (!this.tiles[2][rand.nextInt(4)].spawnItem(new MiniGun()));
+            while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnItem(new GepKatana()));
+            while (!this.tiles[rand.nextInt(1)][rand.nextInt(4)].spawnItem(new ShotGun()));
+            while (!this.tiles[4 - rand.nextInt(1)][rand.nextInt(4)].spawnItem(new ShotGun()));
+            while (!this.tiles[0][rand.nextInt(4)].spawnItem(new Pistol()));
+            while (!this.tiles[0][rand.nextInt(4)].spawnItem(new Pistol()));
+            while (!this.tiles[4][rand.nextInt(4)].spawnItem(new Pistol()));
+            while (!this.tiles[4][rand.nextInt(4)].spawnItem(new Pistol()));
+            for (s = 0; s < 6; s = (short)(s + 1))
+              while (!this.tiles[rand.nextInt(4)][rand.nextInt(4)].spawnDinoszaurusz(new Dinoszaurusz(s))); 
+            repeat = false;
+            continue;
+        } 
+        System.out.println("ilyen nincs bruh");
+        continue;
+      } 
+      System.out.println("ez túl sok faszság");
     } 
-    this.dinoszauruszMap = new HashMap<>();
     this.amazonMap = new HashMap<>();
     this.commandMap = new HashMap<>();
     this.commandMap.put("select", new Select());
@@ -36,12 +72,8 @@ public class World {
     this.commandMap.put("geton", new GetOn());
     this.commandMap.put("getoff", new GetOff());
     this.commandMap.put("status", new Status());
-  }
-  
-  public void newDinoszaurusz(String str) {
-    this.dinoszauruszMap.put(str, new Dinoszaurusz(str));
-    Random rand = new Random();
-    while (!this.tiles[rand.nextInt(this.x - 1)][rand.nextInt(this.y - 1)].addDinoszaurusz(this.dinoszauruszMap.get(str)));
+    this.commandMap.put("pickup", new PickUp());
+    System.out.println("world initialized");
   }
   
   public void newAmazon(String str) {
@@ -51,10 +83,6 @@ public class World {
   
   public HashMap<String, Amazon> getAmazonMap() {
     return this.amazonMap;
-  }
-  
-  public HashMap<String, Dinoszaurusz> getDinoszauruszMap() {
-    return this.dinoszauruszMap;
   }
   
   public HashMap<String, Command> getCommandMap() {

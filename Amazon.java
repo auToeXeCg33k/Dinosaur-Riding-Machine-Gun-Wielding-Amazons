@@ -1,7 +1,7 @@
 public class Amazon implements Entity {
   private String nev;
   
-  private boolean gepfegyver;
+  private GepFegyver gepfegyver;
   
   private Dinoszaurusz dinoszaurusz;
   
@@ -13,7 +13,7 @@ public class Amazon implements Entity {
   
   public Amazon(String nev) {
     this.nev = nev;
-    this.gepfegyver = true;
+    this.gepfegyver = null;
     this.dinoszaurusz = null;
     this.lovagol = false;
     this.elet = 100.0D;
@@ -46,22 +46,14 @@ public class Amazon implements Entity {
     return this.elet;
   }
   
-  public double getDMG() {
-    return 2.0D * (StrictMath.random() * 20.0D + 5.0D);
-  }
-  
   public void tame(Dinoszaurusz d) {
     if (this.alive) {
-      if (this.dinoszaurusz == null) {
-        if (!d.getTamed()) {
-          this.dinoszaurusz = d;
-          d.setTamed(true);
-          System.out.println("a dínó beidomítva");
-        } else {
-          System.out.println("ez a dínó mán másé");
-        } 
+      if (!d.getTamed()) {
+        this.dinoszaurusz = d;
+        d.setTamed(true);
+        System.out.println("a dínó beidomítva");
       } else {
-        System.out.println("mán van dínóm");
+        System.out.println("ez a dínó mán másé");
       } 
     } else {
       System.out.println("nem is élek geci");
@@ -84,10 +76,10 @@ public class Amazon implements Entity {
     if (this.alive) {
       if (!this.nev.equals(enemy.getNev())) {
         if (enemy.alive) {
-          if (!this.gepfegyver) {
+          if (this.gepfegyver == null) {
             System.out.println("nem is tok durrogtatni, nincs is gépfegyverem");
           } else if (enemy.isLovagol()) {
-            double temp = getDMG();
+            double temp = this.gepfegyver.getDMG();
             enemy.getDinoszaurusz().decHP(temp);
             if (enemy.getDinoszaurusz().isAlive()) {
               System.out.println(enemy.nev + " dinoszauruszának élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
@@ -96,7 +88,7 @@ public class Amazon implements Entity {
               System.out.println(enemy.nev + " dinoszaurusza meghalt.");
             } 
           } else {
-            double temp = getDMG();
+            double temp = this.gepfegyver.getDMG();
             enemy.decHP(temp);
             if (enemy.alive) {
               System.out.println(enemy.nev + " élete " + enemy.nev + " ponttal csökkent. A megmaradt élete: " + Math.round(temp));
@@ -115,7 +107,11 @@ public class Amazon implements Entity {
     } 
   }
   
-  public boolean getGepfegyver() {
+  public GepFegyver getGepfegyver() {
     return this.gepfegyver;
+  }
+  
+  public void setGepfegyver(GepFegyver g) {
+    this.gepfegyver = g;
   }
 }

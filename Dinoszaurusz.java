@@ -1,5 +1,5 @@
 public class Dinoszaurusz implements Entity {
-  private String nev;
+  private int id;
   
   private double elet;
   
@@ -7,14 +7,15 @@ public class Dinoszaurusz implements Entity {
   
   private boolean tamed;
   
-  public Dinoszaurusz(String nev) {
-    this.nev = nev;
+  public Dinoszaurusz(int id) {
+    this.id = id;
     this.alive = true;
     this.elet = 150.0D;
+    this.tamed = false;
   }
   
-  public String getNev() {
-    return this.nev;
+  public int getId() {
+    return this.id;
   }
   
   public boolean isAlive() {
@@ -27,10 +28,6 @@ public class Dinoszaurusz implements Entity {
   
   public boolean getTamed() {
     return this.tamed;
-  }
-  
-  public String toString() {
-    return this.nev;
   }
   
   public void decHP(double r) {
@@ -53,5 +50,9 @@ public class Dinoszaurusz implements Entity {
   
   public double getHP() {
     return this.elet;
+  }
+  
+  public String toString() {
+    return "Dinoszaurusz: " + Math.round(this.elet) + " élet," + (this.tamed ? " idomított. " : " idomítatlan. ");
   }
 }

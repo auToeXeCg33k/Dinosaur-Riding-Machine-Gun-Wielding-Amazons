@@ -49,3 +49,16 @@
 * The lookaround command now informs the player whether the selected amazon is on a dino
 * Made the required world size format clearer
 * Made the default spawn location for entities in help clearer
+
+# ALPHA 0.7.0
+* World generation reworked:
+  * Instead of inputting size, players can now choose from world presets
+  * Dinos now auto-spawn on random tiles depending on the preset
+  * World size also depends on the chosen preset
+* Weapon system reworked:
+  * Weapons now auto-spawn on random tiles
+  * They can be picked up by amazons
+  * Weapons are now organized into different categories: pistol, shotgun, etc.
+* New command: pickup
+* The new command no longer requires a type argument
+* Status command extended to accomodate the new features

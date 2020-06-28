@@ -14,9 +14,10 @@ public class Move implements Command {
                 } else if (temp1 == i && temp2 == j) {
                   System.out.println("mán ott vagy fiam");
                 } else {
-                  if (((Select)world.getCommandMap().get("select")).getSelection().isLovagol()) {
-                    world.getTiles()[i][j].rmDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz());
-                    world.getTiles()[temp1][temp2].addDinoszaurusz(((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz());
+                  if (((Select)world.getCommandMap().get("select")).getSelection().isLovagol());
+                  if (((Select)world.getCommandMap().get("select")).getSelection().getGepfegyver() != null) {
+                    world.getTiles()[i][j].rmItem(((Select)world.getCommandMap().get("select")).getSelection().getGepfegyver());
+                    world.getTiles()[temp1][temp2].addItem(((Select)world.getCommandMap().get("select")).getSelection().getGepfegyver());
                   } 
                   world.getTiles()[i][j].rmAmazon(((Select)world.getCommandMap().get("select")).getSelection());
                   world.getTiles()[temp1][temp2].addAmazon(((Select)world.getCommandMap().get("select")).getSelection());

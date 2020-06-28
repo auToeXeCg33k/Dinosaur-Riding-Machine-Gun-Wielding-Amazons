@@ -11,16 +11,38 @@ public class LookAround implements Command {
                   System.out.print(amazon.getNev() + amazon.getNev()); 
               } 
               System.out.print("\nDinoszauruszok az aktuális koordinátán: ");
-              for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j].getDinoszauruszSet())
-                System.out.print(dinoszaurusz.getNev() + " "); 
+              for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j].getDinoszauruszList()) {
+                if (dinoszaurusz != ((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz())
+                  System.out.print(dinoszaurusz); 
+              } 
+              System.out.print("\nItemek az aktuális koordinátán: ");
+              for (Item item : world.getTiles()[i][j].getItemList()) {
+                if (item != ((Select)world.getCommandMap().get("select")).getSelection().getGepfegyver()) {
+                  if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                    if (!((GepFegyver)item).isHeld())
+                      System.out.print(item); 
+                    continue;
+                  } 
+                  System.out.print(item);
+                } 
+              } 
               try {
                 if (world.getTiles()[i + 1][j].exists()) {
                   System.out.print("\nAmazonok északra: ");
                   for (Amazon amazon : world.getTiles()[i + 1][j].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok északra: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek északra: ");
+                  for (Item item : world.getTiles()[i + 1][j].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -29,8 +51,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i + 1][j + 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok észak-keletre: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j + 1].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j + 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek észak-keletre: ");
+                  for (Item item : world.getTiles()[i + 1][j + 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -39,8 +70,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i][j + 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok keletre: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j + 1].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j + 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek keletre: ");
+                  for (Item item : world.getTiles()[i][j + 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -48,9 +88,18 @@ public class LookAround implements Command {
                   System.out.print("\nAmazonok dél-keletre: ");
                   for (Amazon amazon : world.getTiles()[i - 1][j + 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
-                  System.out.println("\nDinoszauruszok dél-keletre: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j + 1].getDinoszauruszSet())
-                    System.out.println(dinoszaurusz.getNev() + " "); 
+                  System.out.print("\nDinoszauruszok dél-keletre: ");
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j + 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek dél-keletre: ");
+                  for (Item item : world.getTiles()[i - 1][j + 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -59,8 +108,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i - 1][j].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok délre: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek délre: ");
+                  for (Item item : world.getTiles()[i - 1][j].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -69,8 +127,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i - 1][j - 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok dél-nyugatra: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i - 1][j - 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek dél-nyugatra: ");
+                  for (Item item : world.getTiles()[i - 1][j - 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -79,8 +146,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i][j - 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok nyugatra: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i][j - 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek nyugatra: ");
+                  for (Item item : world.getTiles()[i][j - 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               try {
@@ -89,8 +165,17 @@ public class LookAround implements Command {
                   for (Amazon amazon : world.getTiles()[i + 1][j - 1].getAmazonSet())
                     System.out.print(amazon.getNev() + amazon.getNev()); 
                   System.out.print("\nDinoszauruszok észak-nyugatra: ");
-                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszSet())
-                    System.out.print(dinoszaurusz.getNev() + " "); 
+                  for (Dinoszaurusz dinoszaurusz : world.getTiles()[i + 1][j - 1].getDinoszauruszList())
+                    System.out.print(dinoszaurusz); 
+                  System.out.print("\nItemek észak-nyugatra: ");
+                  for (Item item : world.getTiles()[i + 1][j - 1].getItemList()) {
+                    if (item.getClass().isAssignableFrom(GepFegyver.class)) {
+                      if (!((GepFegyver)item).isHeld())
+                        System.out.print(item); 
+                      continue;
+                    } 
+                    System.out.print(item);
+                  } 
                 } 
               } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {}
               System.out.println();

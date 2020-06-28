@@ -2,8 +2,7 @@ import java.util.Scanner;
 
 public class Main {
   public static void main(String[] args) {
-    WorldGen generator = new WorldGen();
-    World world = generator.createWorld();
+    World world = new World();
     System.out.println("segítségért írd be, hogy help");
     Scanner sc = new Scanner(System.in);
     boolean repeat = true;

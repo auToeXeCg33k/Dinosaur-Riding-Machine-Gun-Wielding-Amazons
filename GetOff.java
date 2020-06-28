@@ -5,7 +5,7 @@ public class GetOff implements Command {
         if (((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz() != null) {
           if (((Select)world.getCommandMap().get("select")).getSelection().getDinoszaurusz().isAlive()) {
             ((Select)world.getCommandMap().get("select")).getSelection().setLovagol(false);
-            System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " leszállt " + ((Select)world.getCommandMap().get("select")).getSelection().getNev() + " dinoszauruszról.");
+            System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " leszállt a dinoszauruszról.");
           } else {
             System.out.println(((Select)world.getCommandMap().get("select")).getSelection().getNev() + " dinoszaurusza nem él. hullákról már nem nagyon lehet hogy leszállni dik");
           } 

@@ -10,6 +10,7 @@ class Help implements Command {
     System.out.println("attack [név]: a kiválaszott amazon megtámadja a megadott amazont");
     System.out.println("where: a kiválasztott entitás tartózkodási helye");
     System.out.println("move [x] [y]: a kiválasztott entitás a megadott koordinátára mozdul");
+    System.out.println("lookaround: a kiválasztott entitás megvizsgálja környezetét");
     return true;
   }
 }

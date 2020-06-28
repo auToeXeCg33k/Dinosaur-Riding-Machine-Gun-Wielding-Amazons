@@ -113,4 +113,8 @@ public class Amazon implements Entity {
       System.out.println("nem is élek geci");
     } 
   }
+  
+  public String toString() {
+    return this.nev;
+  }
 }

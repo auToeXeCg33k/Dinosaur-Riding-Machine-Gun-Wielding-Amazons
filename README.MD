@@ -17,3 +17,6 @@
 # ALPHA 0.4.0
 * New command: move
 * Minor tweaks
+
+# ALPHA 0.5.0
+* New command: lookaround

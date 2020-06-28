@@ -31,6 +31,7 @@ public class World {
     this.commandMap.put("attack", new Attack());
     this.commandMap.put("where", new Where());
     this.commandMap.put("move", new Move());
+    this.commandMap.put("lookaround", new LookAround());
   }
   
   public void newDinoszaurusz(String str) {

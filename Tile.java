@@ -36,4 +36,8 @@ public class Tile {
   public HashSet<Dinoszaurusz> getDinoszauruszSet() {
     return this.dinoszauruszSet;
   }
+  
+  public boolean exists() {
+    return true;
+  }
 }

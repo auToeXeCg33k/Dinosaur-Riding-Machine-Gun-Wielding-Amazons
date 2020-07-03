@@ -2,67 +2,29 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <unordered_set>
 #include <random>
 #include <memory>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::getline;
-using std::string;
-using std::vector;
-using std::unordered_map;
-using std::unordered_set;
-using std::unique_ptr;
-using std::move;
+using namespace std;
 
 
 
 
-constexpr char G_TYPE_NUMBER = 1;
-
-
-
-
-enum TYPE : bool
-{
-	GUN
-};
-
-
-
-
-const unordered_map<string, TYPE> G_GET_TYPE
-{
-	{"pistol", TYPE::GUN},
-	{"shotgun", TYPE::GUN},
-	{"katana", TYPE::GUN},
-	{"minigun", TYPE::GUN},
-	{"rocketlauncher", TYPE::GUN}
-};
-
-
-
-
-const unordered_map<TYPE, char> G_TYPE_SIZE
-{
-	{TYPE::GUN, 2}
-};
-
-
-
-
-struct point
+struct Point
 {
 	const char x;
 	const char y;
-	point(char x, char y) noexcept : x(x), y(y) {}
-	bool operator==(const point& p) const noexcept
+
+	Point(char x, char y) : x(x), y(y) {}
+
+	bool operator==(Point p) const
 	{
 		return x == p.x && y == p.y;
 	}
-	bool operator!=(const point& p) const noexcept
+
+	bool operator!=(Point p) const
 	{
 		return x != p.x || y != p.y;
 	}
@@ -70,15 +32,20 @@ struct point
 
 
 
+enum class ItemType { gun };
+
+
+
 
 class Item
 {
 protected:
-	const string name;
-	Item(const string& name) noexcept : name(name) {}
+	string name;
+
+	Item(string name) : name(name) {}
 
 public:
-	const string& get_name() const noexcept
+	string get_name()
 	{
 		return name;
 	}
@@ -89,69 +56,83 @@ public:
 
 class Gun : public Item
 {
-protected:
-	const double min;
-	const double max;
-	const char rate;
-	Gun(const string& name, const double& min, const double& max, const int& rate) noexcept : Item(name), min(min), max(max), rate(rate) {}
+private:
+	double min;
+	double max;
+	char rate;
 
 public:
-	const double get_dmg() const noexcept
+	Gun(string name, double min, double max, int rate) : Item(name), min(min), max(max), rate(rate) {}
+
+	double get_dmg()
 	{
 		std::random_device rd;
 		std::mt19937_64 mt(rd());
 		std::uniform_real_distribution<> dist(0, 1);
+
 		double dmg = 0.0;
-		char i = 0;
-		while (i++ < rate)
+
+		for (int i = 0; i < rate; i++)
 			dmg += (max - min) * dist(mt) + min;
+
 		return dmg;
 	}
 };
 
 
-
-
-class Pistol : public Gun
+class ItemFactory
 {
+private:
+	inline static const map<ItemType, vector<string>> types
+	{
+		{ItemType::gun, {"pistol", "shotgun", "katana", "minigun", "rocket"}}
+	};
+
+	inline static const map<ItemType, int> typeLimits
+	{
+		{ItemType::gun, 2}
+	};
+
 public:
-	Pistol() noexcept : Gun("pistol", 15.0f, 20.0f, 2) {}
-};
+	static ItemType lookUp(string name)
+	{
+		for (auto x : types)
+			for (auto y : x.second)
+				if (y == name)
+					return x.first;
+	}
 
+	static bool isValid(string name)
+	{
+		for (auto x : types)
+			for (auto y : x.second)
+				if (y == name)
+					return true;
+		return false;
+	}
 
+	static int typeLimit(ItemType type)
+	{
+		return typeLimits.at(type);
+	}
 
+	static unique_ptr<Item> CreateGun(string name)
+	{
+		if (name == "pistol")
+			return unique_ptr<Item>(new Gun("pistol", 15.0, 20.0, 2));
 
-class Shotgun : public Gun
-{
-public:
-	Shotgun() noexcept : Gun("shotgun", 50.0f, 75.0f, 1) {}
-};
+		if (name == "shotgun")
+			return unique_ptr<Item>(new Gun("shotgun", 50.0, 75.0, 1));
 
+		if (name == "katana")
+			return unique_ptr<Item>(new Gun("katana", 20.0, 30.0, 3));
 
+		if (name == "minigun")
+			return unique_ptr<Item>(new Gun("minigun", 1.5, 5.0, 30));
 
-
-class Gepkatana : public Gun
-{
-public:
-	Gepkatana() noexcept : Gun("katana", 20.0f, 30.0f, 3) {}
-};
-
-
-
-
-class Minigun : public Gun
-{
-public:
-	Minigun() noexcept : Gun("minigun", 1.5f, 5.0f, 30) {}
-};
-
-
-
-
-class Rocketlauncher : public Gun
-{
-public:
-	Rocketlauncher() noexcept : Gun("rocket", 90.0f, 120.0f, 1) {}
+		if (name == "rocket")
+			return unique_ptr<Item>(new Gun("rocket", 90.0, 120.0, 1));
+	}
 };
 
 
@@ -161,8 +142,9 @@ class Dino
 {
 private:
 	double hp;
+
 public:
-	double& get_hp() noexcept
+	double& get_hp()
 	{
 		return hp;
 	}
@@ -174,63 +156,84 @@ public:
 class Amazon
 {
 private:
-	const string name;
-	unique_ptr<Dino> dino;
-	const unique_ptr<vector<unique_ptr<const Item>>[]> inventory;
-	const Gun* held;
+	string name;
 	double hp;
 
-public:
-	Amazon(const string& name) noexcept : name(name), hp(100.0f), inventory(new vector<unique_ptr<const Item>>[G_TYPE_NUMBER]), dino(nullptr), held(nullptr) {}
+	map<ItemType, vector<unique_ptr<Item>>> inventory;
+	Gun* held;
 
-	const string& get_name() const noexcept
+	unique_ptr<Dino> dino;
+	
+	
+public:
+	Amazon(string name) : name(name), hp(100.0), dino(nullptr), held(nullptr)
+	{
+		inventory.emplace(pair<ItemType, vector<unique_ptr<Item>>>(ItemType::gun, vector<unique_ptr<Item>>()));
+	}
+
+
+	bool hasFreeSlot(ItemType type)
+	{
+		return inventory.at(type).size() < ItemFactory::typeLimit(type);
+	}
+
+
+	bool hasItem(string name)
+	{
+		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
+			if (x->get_name() == name)
+				return true;
+		return false;
+	}
+
+
+	void take(unique_ptr<Item> item)
+	{
+		inventory.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
+	}
+
+
+	unique_ptr<Item> remove(string name)
+	{
+		for (int i = 0; i < inventory.at(ItemFactory::lookUp(name)).size(); i++)
+			if (inventory.at(ItemFactory::lookUp(name)).at(i)->get_name() == name)
+			{
+				unique_ptr<Item> ret(move(inventory.at(ItemFactory::lookUp(name)).at(i)));
+				inventory.at(ItemFactory::lookUp(name)).erase(inventory.at(ItemFactory::lookUp(name)).begin() + i);
+				return ret;
+			}
+	}
+
+
+	Item* item(string name)
+	{
+		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
+			if (x->get_name() == name)
+				return x.get();
+	}
+	
+	
+	string get_name()
 	{
 		return name;
 	}
 
-	double& get_hp() noexcept
+
+	double& get_hp()
 	{
 		return hp;
 	}
 
-	const Gun*& get_gun() noexcept
+
+	Gun*& hand()
 	{
 		return held;
 	}
 
-	Dino* get_dino() noexcept
+
+	Dino* get_dino()
 	{
 		return dino.get();
-	}
-
-	bool inventory_put(const TYPE& type, unique_ptr<const Item>& item) const noexcept
-	{
-		if (inventory[type].size() < G_TYPE_SIZE.at(type))
-		{
-			inventory[type].push_back(move(item));
-			return true;
-		}
-		return false;
-	}
-
-	unique_ptr<const Item> inventory_drop(const TYPE& type, const string& name) const noexcept
-	{
-		for (auto i = 0; i < inventory[type].size(); i++)
-			if (inventory[type][i]->get_name() == name)
-			{
-				unique_ptr<const Item> item(move(inventory[type][i]));
-				inventory[type].erase(inventory[type].begin() + i);
-				return item;
-			}
-		return nullptr;
-	}
-
-	const Item* inventory_retrieve(const TYPE& type, const string& name) const noexcept
-	{
-		for (auto i = 0; i < inventory[type].size(); i++)
-			if (inventory[type][i]->get_name() == name)
-				return inventory[type][i].get();
-		return nullptr;
 	}
 };
 
@@ -242,70 +245,77 @@ class Tile
 private:
 	unordered_set<Amazon*> amazons;
 	unordered_set<unique_ptr<Dino>> dinos;
-	const unique_ptr<vector<unique_ptr<const Item>>[]> items;
+	map<ItemType, vector<unique_ptr<Item>>> items;
+
 
 public:
-	Tile() noexcept : items(new vector<unique_ptr<const Item>>[G_TYPE_NUMBER]) {}
-
-	const unordered_set<Amazon*>& get_amazons() const noexcept
+	Tile()
 	{
-		return amazons;
+		items.emplace(pair<ItemType, vector<unique_ptr<Item>>>(ItemType::gun, vector<unique_ptr<Item>>()));
 	}
 
-	const unordered_set<unique_ptr<Dino>>& get_dinos() const noexcept
+
+	bool has(string name)
 	{
-		return dinos;
+		for (auto& x : items.at(ItemFactory::lookUp(name)))
+			if (x->get_name() == name)
+				return true;
+		return false;
 	}
 
-	const unique_ptr<vector<unique_ptr<const Item>>[]>& get_items() const noexcept
+
+	void add(unique_ptr<Item> item)
 	{
-		return items;
+		items.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
 	}
 
-	bool spawn(unique_ptr<Dino>& dino) noexcept
+
+	unique_ptr<Item> remove(string name)
+	{
+		for (int i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
+			if (items.at(ItemFactory::lookUp(name)).at(i)->get_name() == name)
+			{
+				unique_ptr<Item> ret(move(items.at(ItemFactory::lookUp(name)).at(i)));
+				items.at(ItemFactory::lookUp(name)).erase(items.at(ItemFactory::lookUp(name)).begin() + i);
+				return ret;
+			}
+	}
+
+
+	bool spawn(unique_ptr<Dino> dino)
 	{
 		if (dinos.size() != 0)
-			return true;
+			return false;
+
 		dinos.insert(move(dino));
-		return false;
+		return true;
 	}
+	
 
-	bool spawn(const TYPE& type, unique_ptr<const Item>& item) const noexcept
+
+	bool spawn(unique_ptr<Item> item)
 	{
-		if (items[type].size() != 0)
-			return true;
-		items[type].push_back(move(item));
-		return false;
+		if (items.at(ItemFactory::lookUp(item->get_name())).size() != 0)
+			return false;
+
+		items.at(ItemFactory::lookUp(item->get_name())).emplace_back(unique_ptr<Item>(move(item)));
+		return true;
 	}
 
-	void place(Amazon* const& amazon) noexcept
+
+	void place(Amazon* amazon)
 	{
 		amazons.insert(amazon);
 	}
 
-	void place(const TYPE& type, unique_ptr<const Item>& item) const noexcept
-	{
-		items[type].push_back(move(item));
-	}
 
-	void remove(Amazon* const& amazon)
+	void remove(Amazon* amazon)
 	{
 		amazons.erase(amazon);
 	}
 
-	unique_ptr<const Item> remove(const TYPE& type, const string& name) const noexcept
-	{
-		for (auto i = 0; i < items[type].size(); i++)
-			if (items[type][i]->get_name() == name)
-			{
-				unique_ptr<const Item> temp(move(items[type][i]));
-				items[type].erase(items[type].begin() + i);
-				return temp;
-			}
-		return nullptr;
-	}
 
-	bool is_here(Amazon* const& amazon) const noexcept
+	bool is_here(Amazon* amazon)
 	{
 		if (amazons.find(amazon) != amazons.end())
 			return true;
@@ -319,8 +329,8 @@ public:
 class Map
 {
 private:
-	std::unordered_map<string, const unique_ptr<Amazon>> amazons;
-	unique_ptr<unique_ptr<Tile[]>[]> tiles;
+	unordered_map<string, unique_ptr<Amazon>> amazons;
+	vector<vector<unique_ptr<Tile>>> tiles;
 	Amazon* selected;
 	int size;
 
@@ -332,79 +342,74 @@ public:
 		case 1:
 		{
 			size = 5;
-			tiles = unique_ptr<unique_ptr<Tile[]>[]>(new unique_ptr<Tile[]>[5]);
-			for (auto i = 0; i < 5; i++)
-				tiles[i] = unique_ptr<Tile[]>(new Tile[5]);
+			for (int i = 0; i < 5; i++)
+			{
+				tiles.emplace_back(vector<unique_ptr<Tile>>());
+				for (int j = 0; j < 5; j++)
+					tiles.at(i).emplace_back(unique_ptr<Tile>(new Tile()));
+			}
+			
 			std::random_device rd;
 			std::mt19937_64 mt(rd());
+
 			std::uniform_int_distribution<> dist1(0, 4);
-			int i = 5;
-			unique_ptr<Dino> dino;
-			while (i--)
+			
+			for (int i = 0; i < 5; i++)
+				while (!tiles.at(dist1(mt)).at(dist1(mt))->spawn(unique_ptr<Dino>(new Dino())));
+
+			for (int i = 0; i < 2; i++)
 			{
-				dino = unique_ptr<Dino>(new Dino());
-				while (tiles[dist1(mt)][dist1(mt)].spawn(dino));
+				while (!tiles.at(0).at(dist1(mt))->spawn(ItemFactory::CreateGun("pistol")));
+				while (!tiles.at(4).at(dist1(mt))->spawn(ItemFactory::CreateGun("pistol")));
 			}
 
-			i = 2;
-			unique_ptr<Item const> item;
-			while (i--)
-			{
-				item = unique_ptr<const Item>(new Pistol());
-				while (tiles[0][dist1(mt)].spawn(TYPE::GUN, item));
-				item = unique_ptr<const Item>(new Pistol());
-				while (tiles[4][dist1(mt)].spawn(TYPE::GUN, item));
-			}
 			std::uniform_int_distribution<> dist2(0, 1);
-			item = unique_ptr<const Item>(new Shotgun());
-			while (tiles[dist2(mt)][dist1(mt)].spawn(TYPE::GUN, item));
-			item = unique_ptr<const Item>(new Shotgun());
-			while (tiles[4 - dist2(mt)][dist1(mt)].spawn(TYPE::GUN, item));
-			item = unique_ptr<const Item>(new Gepkatana());
-			while (tiles[dist1(mt)][dist1(mt)].spawn(TYPE::GUN, item));
-			item = unique_ptr<const Item>(new Minigun());
-			while (tiles[2][dist1(mt)].spawn(TYPE::GUN, item));
-			break;
+
+			while (!tiles.at(dist2(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("shotgun")));
+			while (!tiles.at(4 - dist2(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("shotgun")));
+			while (!tiles.at(dist1(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("katana")));
+			while (!tiles.at(2).at(dist1(mt))->spawn(ItemFactory::CreateGun("minigun")));
+			return;
 		}
 
 		default:
-			throw std::invalid_argument("Unknown gamemode.");
+			throw std::invalid_argument("Invalid gamemode.");
 		}
 	}
 
-	Tile& get_tile(const char& y, const char& x) const noexcept
+	Tile& get_tile(char y, char x)
 	{
-		return tiles[y][x];
+		return *tiles.at(y).at(x);
 	}
 
-	int const& get_size() const noexcept
+	int get_size()
 	{
 		return size;
 	}
 
-	Amazon* get_amazon(string name) const noexcept
+	Amazon* get_amazon(string name)
 	{
 		if (amazons.find(name) != amazons.end())
 			return amazons.at(name).get();
 		return nullptr;
 	}
 
-	Amazon*& get_selected() noexcept
+	Amazon*& get_selected()
 	{
 		return selected;
 	}
 
-	void new_amazon(const string& name) noexcept
+	void new_amazon(string name)
 	{
 		amazons.emplace(name, new Amazon(name));
 	}
 
-	point location(Amazon* const& amazon) const noexcept
+	Point location(Amazon* amazon)
 	{
 		for (int i = 0; i < this->size; i++)
 			for (int j = 0; j < this->size; j++)
-				if (this->tiles[i][j].is_here(amazon))
-					return point(j, i);
+				if (this->tiles[i][j]->is_here(amazon))
+					return Point(j, i);
 	}
 };
 
@@ -414,7 +419,7 @@ public:
 class Command
 {
 public:
-	virtual string exec(const vector<string>& vec, Map& map) noexcept = 0;
+	virtual string exec(vector<string> vec, Map& map) = 0;
 };
 
 
@@ -423,7 +428,7 @@ public:
 class New : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 2)
 			return "Incorrect arguments.\n";
@@ -441,7 +446,7 @@ public:
 class Select : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 2)
 			return "Incorrect arguments.\n";
@@ -460,7 +465,7 @@ public:
 class Move : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 3)
 			return "Incorrect arguments.\n";
@@ -472,7 +477,7 @@ public:
 		{
 			int x = std::stoi(vec[1]) - 1;
 			int y = std::stoi(vec[2]) - 1;
-			point p = map.location(map.get_selected());
+			Point p = map.location(map.get_selected());
 
 			if (x < 0 || y < 0 || x >= map.get_size() || y >= map.get_size())
 				return "Target tile does not exist.\n";
@@ -498,7 +503,7 @@ public:
 class Help : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		return "Available commands:\n"
 			"\"new <name>\"\n"
@@ -520,7 +525,7 @@ public:
 class Look : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 1)
 			return "Incorrect arguments.\n";
@@ -528,10 +533,10 @@ public:
 			return "Select an amazon first!\n";
 		if (map.get_selected()->get_hp() == 0.0f)
 			return map.get_selected()->get_name() + " is dead.\n";
-		point loc = map.location(map.get_selected());
+		Point loc = map.location(map.get_selected());
 		string ret;
 		string temp;
-
+		/*
 		for (const auto& am : map.get_tile(loc.y, loc.x).get_amazons())
 			if (am != map.get_selected())
 				temp += am->get_name() + ", ";
@@ -691,7 +696,7 @@ public:
 				temp = "";
 			}
 		}
-		return ret;
+		return ret;*/
 	}
 };
 
@@ -701,7 +706,7 @@ public:
 class Attack : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 2)
 			return "Incorrect arguments.\n";
@@ -709,23 +714,24 @@ public:
 			return "Select an amazon first!\n";
 		if (map.get_selected()->get_hp() == 0.0f)
 			return map.get_selected()->get_name() + " is dead.\n";
-		if (!map.get_selected()->get_gun())
+		if (!map.get_selected()->hand())
 			return map.get_selected()->get_name() + " is not holding any weapon.\n";
 		if (!map.get_amazon(vec[1]))
 			return vec[1] + " does not exist.\n";
 		if (map.get_amazon(vec[1]) == map.get_selected())
 			return vec[1] + " cannot attack themselves.\n";
 
-		const point selected = map.location(map.get_selected());
-		const point found = map.location(map.get_amazon(vec[1]));
+		Point selected = map.location(map.get_selected());
+		Point found = map.location(map.get_amazon(vec[1]));
 		if (selected != found)
 		if (map.location(map.get_selected()) != map.location(map.get_amazon(vec[1])))
 			return vec[1] + " is out of range.\n";
 		if (map.get_amazon(vec[1])->get_hp() == 0.0f)
 			return vec[1] + " is already dead.\n";
 
-		Dino* const dino(map.get_amazon(vec[1])->get_dino());
-		const double dmg = map.get_selected()->get_gun()->get_dmg();
+		double dmg = map.get_selected()->hand()->get_dmg();
+
+		Dino* dino(map.get_amazon(vec[1])->get_dino());
 		if (dino && dino->get_hp() != 0.0f)
 		{
 			dino->get_hp() -= dmg;
@@ -747,26 +753,30 @@ public:
 class Pickup : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map) 
 	{
 		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
+			return "Invalid arguments.\n";
+
 		if (!map.get_selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0f)
+
+		if (map.get_selected()->get_hp() == 0.0)
 			return map.get_selected()->get_name() + " is dead.\n";
-		if (G_GET_TYPE.find(vec[1]) == G_GET_TYPE.end())
+
+		if (!ItemFactory::isValid(vec[1]))
 			return "Unknown item.\n";
 
-		const point p = map.location(map.get_selected());
-		unique_ptr<const Item> i(map.get_tile(p.y, p.x).remove(G_GET_TYPE.at(vec[1]), vec[1]));
-		if (!i)
+		Point p = map.location(map.get_selected());
+		
+		if (!map.get_tile(p.y, p.x).has(vec[1]))
 			return vec[1] + " cannot be found on the current tile.\n";
-		if (!map.get_selected()->inventory_put(G_GET_TYPE.at(vec[1]), i))
-		{
-			map.get_tile(p.y, p.x).place(G_GET_TYPE.at(vec[1]), i);
-			return "Can't pick up " + vec[1] + ".\n";
-		}
+
+		if (!map.get_selected()->hasFreeSlot(ItemFactory::lookUp(vec[1])))
+			return "Can't pick up " + vec[1] + ". " + map.get_selected()->get_name() + "'s inventory is full.\n";
+		
+		map.get_selected()->take(map.get_tile(p.y, p.x).remove(vec[1]));
+
 		return "Picked up " + vec[1] + ".\n";
 	}
 };
@@ -777,26 +787,27 @@ public:
 class Drop : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
+			return "Invalid arguments.\n";
+
 		if (!map.get_selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0f)
+
+		if (map.get_selected()->get_hp() == 0.0)
 			return map.get_selected()->get_name() + " is dead.\n";
-		if (G_GET_TYPE.find(vec[1]) == G_GET_TYPE.end())
+
+		if (!ItemFactory::isValid(vec[1]))
 			return "Unknown item.\n";
 
-		const point p = map.location(map.get_selected());
-		unique_ptr<const Item> i = map.get_selected()->inventory_drop(G_GET_TYPE.at(vec[1]), vec[1]);
-		if (!i)
-		{
-			if (i.get() == map.get_selected()->get_gun())//tesztelendő hogy szükséges-e
-				map.get_selected()->get_gun() = nullptr;
+		if (!map.get_selected()->hasItem(vec[1]))
 			return vec[1] + " cannot be found in " + map.get_selected()->get_name() + "'s inventory.\n";
-		}	
-		map.get_tile(p.y, p.x).place(G_GET_TYPE.at(vec[1]), i);
+
+		Point p = map.location(map.get_selected());
+
+		map.get_tile(p.y, p.x).add(map.get_selected()->remove(vec[1]));
+
 		return vec[1] + " dropped.\n";
 	}
 };
@@ -807,20 +818,25 @@ public:
 class Equip : public Command
 {
 public:
-	string exec(const vector<string>& vec, Map& map) noexcept
+	string exec(vector<string> vec, Map& map)
 	{
 		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
+			return "Invalid arguments.\n";
+
 		if (!map.get_selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0f)
+
+		if (map.get_selected()->get_hp() == 0.0)
 			return map.get_selected()->get_name() + " is dead.\n";
-		if (G_GET_TYPE.find(vec[1]) == G_GET_TYPE.end() || G_GET_TYPE.at(vec[1]) != TYPE::GUN)
+
+		if (!ItemFactory::isValid(vec[1]) || ItemFactory::lookUp(vec[1]) != ItemType::gun)
 			return "Unknown weapon type.\n";
-		const Item* item = map.get_selected()->inventory_retrieve(G_GET_TYPE.at(vec[1]), vec[1]);
-		if (!item)
+
+		if (!map.get_selected()->hasItem(vec[1]))
 			return vec[1] + " cannot be found in " + map.get_selected()->get_name() + "'s inventory.\n";
-		map.get_selected()->get_gun() = ((Gun*)item);
+
+		map.get_selected()->hand() = static_cast<Gun*>(map.get_selected()->item(vec[1]));
+
 		return vec[1] + " equipped.\n";
 	}
 };
@@ -831,10 +847,10 @@ public:
 class Interpreter
 {
 private:
-	unordered_map<string, const unique_ptr<Command>> commands;
+	unordered_map<string, unique_ptr<Command>> commands;
 
 public:
-	Interpreter() noexcept
+	Interpreter()
 	{
 		commands.emplace("new", unique_ptr<Command>(new New()));
 		commands.emplace("select", unique_ptr<Command>(new Select()));
@@ -847,10 +863,12 @@ public:
 		commands.emplace("equip", unique_ptr<Command>(new Equip()));
 	}
 
-	string interpret(const vector<string>& vec, Map& map) const noexcept
+
+	string interpret(vector<string> vec, Map& map)
 	{
 		if (commands.find(vec[0]) == commands.end())
 			return "Unknown command.\n";
+
 		return commands.at(vec[0])->exec(vec, map);
 	}
 };
@@ -858,34 +876,25 @@ public:
 
 
 
-int main()
+Map InitMap()
 {
-
 	cout << "Enter gamemode number: ";
-
-
 	string input;
-
-
-	unique_ptr<Map> map;
-
 
 	while (1)
 	{
 		getline(cin, input);
-		if (input == "exit")
-			return 0;
-
-
 		try
 		{
-			int i = std::stoi(input);
+			int i = stoi(input);
 			try
 			{
-				map = unique_ptr<Map>(new Map(i));
-				cout << "Map of size " << map->get_size() << "x" << map->get_size() << " created." << endl
-					<< "Type \"help\" for the list of available commands!\n" << endl;
-				break;
+				Map m(i);
+
+				cout << "Map of size " << m.get_size() << "x" << m.get_size() << " created.\n"
+					"Type \"help\" for the list of available commands!\n" << endl;
+
+				return m;
 			}
 			catch (std::invalid_argument& e)
 			{
@@ -897,26 +906,24 @@ int main()
 			cout << "Not a number. Try again: ";
 		}
 	}
+}
 
 
 
 
-	const Interpreter interpreter;
-
-
-
+int main()
+{
+	Map map = InitMap();
+	Interpreter interpreter;
+	string input;
 
 	while (1)
 	{
 		cout << "Command: ";
-
-
 		getline(cin, input);
-
 
 		string word;
 		vector<string> words;
-
 
 		for (int i = 0; i < input.length(); i++)
 		{
@@ -934,20 +941,12 @@ int main()
 			}
 		}
 
-
 		if (words.size() == 0)
 			continue;
 
-
 		if (words[0] == "exit")
-			break;
+			return 0;
 
-
-		cout << interpreter.interpret(words, *map) << endl;
+		cout << interpreter.interpret(words, map) << endl;
 	}
-
-
-
-
-	return 0;
 }

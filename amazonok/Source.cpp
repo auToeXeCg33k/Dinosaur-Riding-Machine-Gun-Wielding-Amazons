@@ -17,14 +17,17 @@ struct Point
 	const char x;
 	const char y;
 
-	Point(char x, char y) : x(x), y(y) {}
 
-	bool operator==(Point p) const
+	Point(const char& x, const char& y) : x(x), y(y) {}
+
+
+	bool operator==(const Point& p) const
 	{
 		return x == p.x && y == p.y;
 	}
 
-	bool operator!=(Point p) const
+
+	bool operator!=(const Point& p) const
 	{
 		return x != p.x || y != p.y;
 	}
@@ -40,12 +43,12 @@ enum class ItemType { gun };
 class Item
 {
 protected:
-	string name;
+	const string name;
+	Item(const string& name) : name(name) {}
 
-	Item(string name) : name(name) {}
 
 public:
-	string get_name()
+	const string& get_name()
 	{
 		return name;
 	}
@@ -57,14 +60,14 @@ public:
 class Gun : public Item
 {
 private:
-	double min;
-	double max;
-	char rate;
+	const double min;
+	const double max;
+	const char rate;
 
 public:
-	Gun(string name, double min, double max, int rate) : Item(name), min(min), max(max), rate(rate) {}
+	Gun(const string& name, const double& min, const double& max, const int& rate) : Item(name), min(min), max(max), rate(rate) {}
 
-	double get_dmg()
+	const double& get_dmg()
 	{
 		random_device rd;
 		mt19937_64 mt(rd());
@@ -88,10 +91,12 @@ private:
 		{ItemType::gun, {"pistol", "shotgun", "katana", "minigun", "rocket"}}
 	};
 
+
 	inline static const map<ItemType, int> typeLimits
 	{
 		{ItemType::gun, 2}
 	};
+
 
 public:
 	static ItemType lookUp(string name)
@@ -102,6 +107,7 @@ public:
 					return x.first;
 	}
 
+
 	static bool isValid(string name)
 	{
 		for (auto x : types)
@@ -111,12 +117,14 @@ public:
 		return false;
 	}
 
+
 	static int typeLimit(ItemType type)
 	{
 		return typeLimits.at(type);
 	}
 
-	static unique_ptr<Item> CreateGun(string name)
+
+	static unique_ptr<Item> CreateItem(string name)
 	{
 		if (name == "pistol")
 			return make_unique<Gun>("pistol", 15.0, 20.0, 2);
@@ -144,6 +152,9 @@ private:
 	double hp;
 
 public:
+	Dino() : hp(100.0) {}
+
+
 	double& get_hp()
 	{
 		return hp;
@@ -156,7 +167,7 @@ public:
 class Amazon
 {
 private:
-	string name;
+	const string name;
 	double hp;
 
 	map<ItemType, vector<unique_ptr<Item>>> inventory;
@@ -166,19 +177,19 @@ private:
 	
 	
 public:
-	Amazon(string name) : name(name), hp(100.0), dino(nullptr), held(nullptr)
+	Amazon(const string& name) : name(name), hp(100.0), dino(nullptr), held(nullptr)
 	{
-		inventory.emplace(pair<ItemType, vector<unique_ptr<Item>>>(ItemType::gun, vector<unique_ptr<Item>>()));
+		inventory.emplace(ItemType::gun, vector<unique_ptr<Item>>());
 	}
 
 
-	bool hasFreeSlot(ItemType type)
+	bool hasFreeSlot(const ItemType& type)
 	{
 		return inventory.at(type).size() < ItemFactory::typeLimit(type);
 	}
 
 
-	bool hasItem(string name)
+	bool hasItem(const string& name)
 	{
 		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -189,11 +200,11 @@ public:
 
 	void take(unique_ptr<Item>&& item)
 	{
-		inventory.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
+		inventory.at(ItemFactory::lookUp(item->get_name())).emplace_back(move(item));
 	}
 
 
-	unique_ptr<Item> remove(string name)
+	unique_ptr<Item> remove(const string& name)
 	{
 		unique_ptr<Item> ret;
 		int pos;
@@ -218,7 +229,7 @@ public:
 	}
 
 
-	Item* item(string name)
+	Item* item(const string& name)
 	{
 		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -226,7 +237,7 @@ public:
 	}
 	
 	
-	string get_name()
+	const string& get_name()
 	{
 		return name;
 	}
@@ -264,14 +275,14 @@ private:
 public:
 	Tile()
 	{
-		items.emplace(pair<ItemType, vector<unique_ptr<Item>>>(ItemType::gun, vector<unique_ptr<Item>>()));
+		items.emplace(ItemType::gun, vector<unique_ptr<Item>>());
 	}
 
 
 	Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)) {}
 
 
-	bool has(string name)
+	bool has(const string& name)
 	{
 		for (auto& x : items.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -282,11 +293,11 @@ public:
 
 	void add(unique_ptr<Item>&& item)
 	{
-		items.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
+		items.at(ItemFactory::lookUp(item->get_name())).emplace_back(move(item));
 	}
 
 
-	unique_ptr<Item> remove(string name)
+	unique_ptr<Item> remove(const string& name)
 	{
 		for (int i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
 			if (items.at(ItemFactory::lookUp(name)).at(i)->get_name() == name)
@@ -298,23 +309,23 @@ public:
 	}
 
 
-	bool spawn(unique_ptr<Dino>&& dino)
+	bool spawnDino()
 	{
 		if (dinos.size() != 0)
 			return false;
 
-		dinos.insert(move(dino));
+		dinos.emplace();
 		return true;
 	}
 	
 
 
-	bool spawn(unique_ptr<Item>&& item)
+	bool spawnItem(const string& name)
 	{
-		if (items.at(ItemFactory::lookUp(item->get_name())).size() != 0)
+		if (items.at(ItemFactory::lookUp(name)).size() != 0)
 			return false;
 
-		items.at(ItemFactory::lookUp(item->get_name())).emplace_back(unique_ptr<Item>(move(item)));
+		items.at(ItemFactory::lookUp(name)).emplace_back(ItemFactory::CreateItem(name));
 		return true;
 	}
 
@@ -349,7 +360,7 @@ private:
 	int size;
 
 public:
-	Map(int i)
+	Map(const int& i)
 	{
 		switch (i)
 		{
@@ -369,20 +380,20 @@ public:
 			uniform_int_distribution<> dist1(0, 4);
 			
 			for (int i = 0; i < 5; i++)
-				while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(make_unique<Dino>()));
+				while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnDino());
 
 			for (int i = 0; i < 2; i++)
 			{
-				while (!tiles.at(0).at(dist1(mt)).spawn(ItemFactory::CreateGun("pistol")));
-				while (!tiles.at(4).at(dist1(mt)).spawn(ItemFactory::CreateGun("pistol")));
+				while (!tiles.at(0).at(dist1(mt)).spawnItem("pistol"));
+				while (!tiles.at(4).at(dist1(mt)).spawnItem("pistol"));
 			}
 
 			uniform_int_distribution<> dist2(0, 1);
 
-			while (!tiles.at(dist2(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("shotgun")));
-			while (!tiles.at(4 - dist2(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("shotgun")));
-			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("katana")));
-			while (!tiles.at(2).at(dist1(mt)).spawn(ItemFactory::CreateGun("minigun")));
+			while (!tiles.at(dist2(mt)).at(dist1(mt)).spawnItem("shotgun"));
+			while (!tiles.at(4 - dist2(mt)).at(dist1(mt)).spawnItem("shotgun"));
+			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnItem("katana"));
+			while (!tiles.at(2).at(dist1(mt)).spawnItem("minigun"));
 			return;
 		}
 
@@ -392,13 +403,13 @@ public:
 	}
 
 
-	Tile& tile(char y, char x)
+	Tile& tile(const char& y, const char& x)
 	{
 		return tiles.at(y).at(x);
 	}
 
 
-	int get_size()
+	const int& get_size()
 	{
 		return size;
 	}
@@ -419,7 +430,7 @@ public:
 class Player
 {
 private:
-	string sName;
+	const string sName;
 
 	int nActions;
 
@@ -428,10 +439,10 @@ private:
 
 
 public:
-	Player(string name) : sName(name), nActions(0), pSelected(nullptr) {}
+	Player(const string& name) : sName(name), nActions(0), pSelected(nullptr) {}
 
 
-	string name()
+	const string& name()
 	{
 		return sName;
 	}
@@ -443,19 +454,19 @@ public:
 	}
 
 
-	bool ExistsAmazon(string name)
+	bool ExistsAmazon(const string& name)
 	{
 		return amazon_map.find(name) != amazon_map.end();
 	}
 
 
-	void CreateAmazon(string name)
+	void CreateAmazon(const string& name)
 	{
-		amazon_map.emplace(make_pair(name, make_unique<Amazon>(name)));
+		amazon_map.emplace(name, make_unique<Amazon>(name));
 	}
 
 
-	Amazon& GetAmazon(string name)
+	Amazon& GetAmazon(const string& name)
 	{
 		return *amazon_map.at(name);
 	}
@@ -476,7 +487,7 @@ private:
 	Player p1;
 	Player p2;
 	bool active;
-	int nMaxActions;
+	const int nMaxActions;
 
 
 public:
@@ -495,7 +506,7 @@ public:
 	}
 
 
-	int MaxActions()
+	const int& MaxActions()
 	{
 		return nMaxActions;
 	}
@@ -514,7 +525,7 @@ public:
 class Command
 {
 public:
-	virtual string exec(vector<string> v, Map& map, GameData& data) = 0;
+	virtual string exec(const vector<string>& v, Map& map, GameData& data) = 0;
 };
 
 
@@ -523,7 +534,7 @@ public:
 class New : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		if (v.size() != 2)
 			return "Invalid arguments.\n";
@@ -547,7 +558,7 @@ public:
 class Select : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		if (v.size() != 2)
 			return "Invalid arguments.\n";
@@ -570,7 +581,7 @@ public:
 class Move : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		if (v.size() != 3)
 			return "Invalid arguments.\n";
@@ -616,7 +627,7 @@ public:
 class Help : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		return "Available commands:\n"
 			"\"new <name>\"\n"
@@ -638,7 +649,7 @@ public:
 class Look : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		if (v.size() != 1)
 			return "Invalid arguments.\n";
@@ -822,7 +833,7 @@ public:
 class Attack : public Command
 {
 public:
-	string exec(vector<string> v, Map& map, GameData& data)
+	string exec(const vector<string>& v, Map& map, GameData& data)
 	{
 		if (v.size() != 2)
 			return "Invalid arguments.\n";
@@ -881,7 +892,7 @@ public:
 class Pickup : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map, GameData& data)
+	string exec(const vector<string>& vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
@@ -917,7 +928,7 @@ public:
 class Drop : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map, GameData& data)
+	string exec(const vector<string>& vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
@@ -955,7 +966,7 @@ public:
 class Equip : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map, GameData& data)
+	string exec(const vector<string>& vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
@@ -984,7 +995,7 @@ public:
 class Interpreter
 {
 private:
-	unordered_map<string, unique_ptr<Command>> commands;
+	unordered_map<string, const unique_ptr<Command>> commands;
 
 public:
 	Interpreter()
@@ -1001,7 +1012,7 @@ public:
 	}
 
 
-	string interpret(vector<string> vec, Map& map, GameData& data)
+	string interpret(const vector<string>& vec, Map& map, GameData& data)
 	{
 		if (commands.find(vec[0]) == commands.end())
 			return "Invalid command.\n";

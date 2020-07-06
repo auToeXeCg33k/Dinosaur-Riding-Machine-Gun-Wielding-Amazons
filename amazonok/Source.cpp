@@ -7,6 +7,9 @@
 #include <random>
 #include <memory>
 
+
+
+
 using namespace std;
 
 
@@ -18,20 +21,21 @@ struct Point
 	const char y;
 
 
-	Point(const char& x, const char& y) : x(x), y(y) {}
+	Point(const char x, const char y) : x(x), y(y) {}
 
 
-	bool operator==(const Point& p) const
+	bool operator==(const Point p) const
 	{
 		return x == p.x && y == p.y;
 	}
 
 
-	bool operator!=(const Point& p) const
+	bool operator!=(const Point p) const
 	{
 		return x != p.x || y != p.y;
 	}
 };
+
 
 
 
@@ -44,7 +48,7 @@ class Item
 {
 protected:
 	const string name;
-	Item(const string& name) : name(name) {}
+	Item(string_view name) : name(name) {}
 
 
 public:
@@ -64,10 +68,11 @@ private:
 	const double max;
 	const char rate;
 
-public:
-	Gun(const string& name, const double& min, const double& max, const int& rate) : Item(name), min(min), max(max), rate(rate) {}
 
-	const double& get_dmg()
+public:
+	Gun(string_view name, const double min, const double max, const int rate) : Item(name), min(min), max(max), rate(rate) {}
+
+	double get_dmg()
 	{
 		random_device rd;
 		mt19937_64 mt(rd());
@@ -81,6 +86,8 @@ public:
 		return dmg;
 	}
 };
+
+
 
 
 class ItemFactory
@@ -99,7 +106,7 @@ private:
 
 
 public:
-	static ItemType lookUp(string name)
+	static ItemType lookUp(string_view name)
 	{
 		for (auto x : types)
 			for (auto y : x.second)
@@ -108,7 +115,7 @@ public:
 	}
 
 
-	static bool isValid(string name)
+	static bool isValid(string_view name)
 	{
 		for (auto x : types)
 			for (auto y : x.second)
@@ -118,13 +125,13 @@ public:
 	}
 
 
-	static int typeLimit(ItemType type)
+	static int typeLimit(const ItemType type)
 	{
 		return typeLimits.at(type);
 	}
 
 
-	static unique_ptr<Item> CreateItem(string name)
+	static unique_ptr<Item> CreateItem(string_view name)
 	{
 		if (name == "pistol")
 			return make_unique<Gun>("pistol", 15.0, 20.0, 2);
@@ -151,6 +158,7 @@ class Dino
 private:
 	double hp;
 
+
 public:
 	Dino() : hp(100.0) {}
 
@@ -169,27 +177,25 @@ class Amazon
 private:
 	const string name;
 	double hp;
-
 	map<ItemType, vector<unique_ptr<Item>>> inventory;
 	Gun* held;
-
 	unique_ptr<Dino> dino;
 	
 	
 public:
-	Amazon(const string& name) : name(name), hp(100.0), dino(nullptr), held(nullptr)
+	Amazon(string_view name) : name(name), hp(100.0), dino(nullptr), held(nullptr)
 	{
 		inventory.emplace(ItemType::gun, vector<unique_ptr<Item>>());
 	}
 
 
-	bool hasFreeSlot(const ItemType& type)
+	bool hasFreeSlot(ItemType type)
 	{
 		return inventory.at(type).size() < ItemFactory::typeLimit(type);
 	}
 
 
-	bool hasItem(const string& name)
+	bool hasItem(string_view name)
 	{
 		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -204,7 +210,7 @@ public:
 	}
 
 
-	unique_ptr<Item> remove(const string& name)
+	unique_ptr<Item> remove(string_view name)
 	{
 		unique_ptr<Item> ret;
 		int pos;
@@ -229,7 +235,7 @@ public:
 	}
 
 
-	Item* item(const string& name)
+	Item* item(string_view name)
 	{
 		for (auto& x : inventory.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -282,7 +288,7 @@ public:
 	Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)) {}
 
 
-	bool has(const string& name)
+	bool has(string_view name)
 	{
 		for (auto& x : items.at(ItemFactory::lookUp(name)))
 			if (x->get_name() == name)
@@ -297,7 +303,7 @@ public:
 	}
 
 
-	unique_ptr<Item> remove(const string& name)
+	unique_ptr<Item> remove(string_view name)
 	{
 		for (int i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
 			if (items.at(ItemFactory::lookUp(name)).at(i)->get_name() == name)
@@ -320,7 +326,7 @@ public:
 	
 
 
-	bool spawnItem(const string& name)
+	bool spawnItem(string_view name)
 	{
 		if (items.at(ItemFactory::lookUp(name)).size() != 0)
 			return false;
@@ -359,8 +365,9 @@ private:
 	vector<vector<Tile>> tiles;
 	int size;
 
+
 public:
-	Map(const int& i)
+	Map(const int i)
 	{
 		switch (i)
 		{
@@ -403,13 +410,13 @@ public:
 	}
 
 
-	Tile& tile(const char& y, const char& x)
+	Tile& tile(const char y, const char x)
 	{
 		return tiles.at(y).at(x);
 	}
 
 
-	const int& get_size()
+	int get_size()
 	{
 		return size;
 	}
@@ -431,15 +438,13 @@ class Player
 {
 private:
 	const string sName;
-
 	int nActions;
-
 	unordered_map<string, unique_ptr<Amazon>> amazon_map;
 	Amazon* pSelected;
 
 
 public:
-	Player(const string& name) : sName(name), nActions(0), pSelected(nullptr) {}
+	Player(string_view name) : sName(name), nActions(0), pSelected(nullptr) {}
 
 
 	const string& name()
@@ -460,7 +465,7 @@ public:
 	}
 
 
-	void CreateAmazon(const string& name)
+	void CreateAmazon(string_view name)
 	{
 		amazon_map.emplace(name, make_unique<Amazon>(name));
 	}
@@ -506,7 +511,7 @@ public:
 	}
 
 
-	const int& MaxActions()
+	int MaxActions()
 	{
 		return nMaxActions;
 	}

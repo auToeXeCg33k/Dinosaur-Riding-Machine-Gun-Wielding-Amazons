@@ -66,9 +66,9 @@ public:
 
 	double get_dmg()
 	{
-		std::random_device rd;
-		std::mt19937_64 mt(rd());
-		std::uniform_real_distribution<> dist(0, 1);
+		random_device rd;
+		mt19937_64 mt(rd());
+		uniform_real_distribution<> dist(0, 1);
 
 		double dmg = 0.0;
 
@@ -187,7 +187,7 @@ public:
 	}
 
 
-	void take(unique_ptr<Item> item)
+	void take(unique_ptr<Item>&& item)
 	{
 		inventory.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
 	}
@@ -195,13 +195,26 @@ public:
 
 	unique_ptr<Item> remove(string name)
 	{
+		unique_ptr<Item> ret;
+		int pos;
+
 		for (int i = 0; i < inventory.at(ItemFactory::lookUp(name)).size(); i++)
 			if (inventory.at(ItemFactory::lookUp(name)).at(i)->get_name() == name)
 			{
-				unique_ptr<Item> ret(move(inventory.at(ItemFactory::lookUp(name)).at(i)));
+				ret = move(inventory.at(ItemFactory::lookUp(name)).at(i));
+
+				if (ret.get() == held)
+				{
+					pos = i;
+					continue;
+				}
+					
 				inventory.at(ItemFactory::lookUp(name)).erase(inventory.at(ItemFactory::lookUp(name)).begin() + i);
 				return ret;
 			}
+
+		inventory.at(ItemFactory::lookUp(name)).erase(inventory.at(ItemFactory::lookUp(name)).begin() + pos);
+		return ret;
 	}
 
 
@@ -255,6 +268,9 @@ public:
 	}
 
 
+	Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)) {}
+
+
 	bool has(string name)
 	{
 		for (auto& x : items.at(ItemFactory::lookUp(name)))
@@ -264,7 +280,7 @@ public:
 	}
 
 
-	void add(unique_ptr<Item> item)
+	void add(unique_ptr<Item>&& item)
 	{
 		items.at(ItemFactory::lookUp(item->get_name())).push_back(move(item));
 	}
@@ -282,7 +298,7 @@ public:
 	}
 
 
-	bool spawn(unique_ptr<Dino> dino)
+	bool spawn(unique_ptr<Dino>&& dino)
 	{
 		if (dinos.size() != 0)
 			return false;
@@ -293,7 +309,7 @@ public:
 	
 
 
-	bool spawn(unique_ptr<Item> item)
+	bool spawn(unique_ptr<Item>&& item)
 	{
 		if (items.at(ItemFactory::lookUp(item->get_name())).size() != 0)
 			return false;
@@ -329,13 +345,11 @@ public:
 class Map
 {
 private:
-	unordered_map<string, unique_ptr<Amazon>> amazons;
-	vector<vector<unique_ptr<Tile>>> tiles;
-	Amazon* selected;
+	vector<vector<Tile>> tiles;
 	int size;
 
 public:
-	Map(const int& i) : selected(nullptr)
+	Map(int i)
 	{
 		switch (i)
 		{
@@ -344,71 +358,56 @@ public:
 			size = 5;
 			for (int i = 0; i < 5; i++)
 			{
-				tiles.emplace_back(vector<unique_ptr<Tile>>());
-				for (int j = 0; j < 5; j++)
-					tiles.at(i).emplace_back(unique_ptr<Tile>(new Tile()));
+				tiles.emplace_back();
+				tiles.at(i).emplace_back();
 			}
 			
-			std::random_device rd;
-			std::mt19937_64 mt(rd());
+			random_device rd;
+			mt19937_64 mt(rd());
 
-			std::uniform_int_distribution<> dist1(0, 4);
+			uniform_int_distribution<> dist1(0, 4);
 			
 			for (int i = 0; i < 5; i++)
-				while (!tiles.at(dist1(mt)).at(dist1(mt))->spawn(unique_ptr<Dino>(new Dino())));
+				while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(unique_ptr<Dino>(new Dino())));
 
 			for (int i = 0; i < 2; i++)
 			{
-				while (!tiles.at(0).at(dist1(mt))->spawn(ItemFactory::CreateGun("pistol")));
-				while (!tiles.at(4).at(dist1(mt))->spawn(ItemFactory::CreateGun("pistol")));
+				while (!tiles.at(0).at(dist1(mt)).spawn(ItemFactory::CreateGun("pistol")));
+				while (!tiles.at(4).at(dist1(mt)).spawn(ItemFactory::CreateGun("pistol")));
 			}
 
-			std::uniform_int_distribution<> dist2(0, 1);
+			uniform_int_distribution<> dist2(0, 1);
 
-			while (!tiles.at(dist2(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("shotgun")));
-			while (!tiles.at(4 - dist2(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("shotgun")));
-			while (!tiles.at(dist1(mt)).at(dist1(mt))->spawn(ItemFactory::CreateGun("katana")));
-			while (!tiles.at(2).at(dist1(mt))->spawn(ItemFactory::CreateGun("minigun")));
+			while (!tiles.at(dist2(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("shotgun")));
+			while (!tiles.at(4 - dist2(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("shotgun")));
+			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(ItemFactory::CreateGun("katana")));
+			while (!tiles.at(2).at(dist1(mt)).spawn(ItemFactory::CreateGun("minigun")));
 			return;
 		}
 
 		default:
-			throw std::invalid_argument("Invalid gamemode.");
+			throw invalid_argument("Invalid gamemode.");
 		}
 	}
 
-	Tile& get_tile(char y, char x)
+
+	Tile& tile(char y, char x)
 	{
-		return *tiles.at(y).at(x);
+		return tiles.at(y).at(x);
 	}
+
 
 	int get_size()
 	{
 		return size;
 	}
 
-	Amazon* get_amazon(string name)
-	{
-		if (amazons.find(name) != amazons.end())
-			return amazons.at(name).get();
-		return nullptr;
-	}
-
-	Amazon*& get_selected()
-	{
-		return selected;
-	}
-
-	void new_amazon(string name)
-	{
-		amazons.emplace(name, new Amazon(name));
-	}
 
 	Point location(Amazon* amazon)
 	{
 		for (int i = 0; i < this->size; i++)
 			for (int j = 0; j < this->size; j++)
-				if (this->tiles[i][j]->is_here(amazon))
+				if (this->tiles.at(i).at(j).is_here(amazon))
 					return Point(j, i);
 	}
 };
@@ -416,10 +415,105 @@ public:
 
 
 
+class Player
+{
+private:
+	string sName;
+
+	int nActions;
+
+	unordered_map<string, unique_ptr<Amazon>> amazon_map;
+	Amazon* pSelected;
+
+
+public:
+	Player(string name) : sName(name), nActions(0), pSelected(nullptr) {}
+
+
+	string name()
+	{
+		return sName;
+	}
+
+
+	int& actions()
+	{
+		return nActions;
+	}
+
+
+	bool ExistsAmazon(string name)
+	{
+		return amazon_map.find(name) != amazon_map.end();
+	}
+
+
+	void CreateAmazon(string name)
+	{
+		amazon_map.emplace(make_pair(name, unique_ptr<Amazon>(new Amazon(name))));
+	}
+
+
+	Amazon& GetAmazon(string name)
+	{
+		return *amazon_map.at(name);
+	}
+
+
+	Amazon*& selected()
+	{
+		return pSelected;
+	}
+};
+
+
+
+
+class GameData
+{
+private:
+	Player p1;
+	Player p2;
+	bool active;
+	int nMaxActions;
+
+
+public:
+	GameData() : p1("Player 1"), p2("Player 2"), active(false), nMaxActions(3) {}
+
+
+	Player& CurrentPlayer()
+	{
+		return active ? p2 : p1;
+	}
+
+
+	Player& OtherPlayer()
+	{
+		return active ? p1 : p2;
+	}
+
+
+	int MaxActions()
+	{
+		return nMaxActions;
+	}
+
+
+	void turn()
+	{
+		active = !active;
+	}
+};
+
+
+
+
+
 class Command
 {
 public:
-	virtual string exec(vector<string> vec, Map& map) = 0;
+	virtual string exec(vector<string> v, Map& map, GameData& data) = 0;
 };
 
 
@@ -428,15 +522,21 @@ public:
 class New : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
-		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
-		if (map.get_amazon(vec[1]))
-			return vec[1] + " already exists.\n";
-		map.new_amazon(vec[1]);
-		map.get_tile(0, 0).place(map.get_amazon(vec[1]));
-		return vec[1] + " created.\n";
+		if (v.size() != 2)
+			return "Invalid arguments.\n";
+
+		if (data.CurrentPlayer().ExistsAmazon(v[1]))
+			return v[1] + " already exists.\n";
+
+		data.CurrentPlayer().CreateAmazon(v[1]);
+
+		map.tile(0, 0).place(&data.CurrentPlayer().GetAmazon(v[1]));
+
+		data.CurrentPlayer().actions()++;
+
+		return v[1] + " created.\n";
 	}
 };
 
@@ -446,16 +546,20 @@ public:
 class Select : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
-		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
-		if (!map.get_amazon(vec[1]))
-			return vec[1] + " does not exist.\n";
-		if (map.get_selected() == map.get_amazon(vec[1]))
-			return vec[1] + " is already selected.\n";
-		map.get_selected() = map.get_amazon(vec[1]);
-		return vec[1] + " selected.\n";
+		if (v.size() != 2)
+			return "Invalid arguments.\n";
+
+		if (!data.CurrentPlayer().ExistsAmazon(v[1]))
+			return v[1] + " does not exist.\n";
+
+		if (data.CurrentPlayer().selected()->get_name() == v[1])
+			return v[1] + " is already selected.\n";
+
+		data.CurrentPlayer().selected() = &data.CurrentPlayer().GetAmazon(v[1]);
+
+		return v[1] + " selected.\n";
 	}
 };
 
@@ -465,32 +569,40 @@ public:
 class Move : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
-		if (vec.size() != 3)
-			return "Incorrect arguments.\n";
-		if (!map.get_selected())
+		if (v.size() != 3)
+			return "Invalid arguments.\n";
+
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0)
-			return map.get_selected()->get_name() + " is dead.\n";
+
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+
 		try
 		{
-			int x = std::stoi(vec[1]) - 1;
-			int y = std::stoi(vec[2]) - 1;
-			Point p = map.location(map.get_selected());
+			int x = stoi(v[1]) - 1;
+			int y = stoi(v[2]) - 1;
+			Point p = map.location(data.CurrentPlayer().selected());
 
 			if (x < 0 || y < 0 || x >= map.get_size() || y >= map.get_size())
 				return "Target tile does not exist.\n";
+
 			if (p.x + 1 < x || p.x - 1 > x || p.y + 1 < y || p.y - 1 > y)
 				return "Target tile is too far.\n";
+
 			if (p.x == x && p.y == y)
 				return "Target tile matches the current one.\n";
 
-			map.get_tile(p.y, p.x).remove(map.get_selected());
-			map.get_tile(y, x).place(map.get_selected());
-			return map.get_selected()->get_name() + " moved to " + vec[1] + ";" + vec[2] + ".\n";
+			map.tile(p.y, p.x).remove(data.CurrentPlayer().selected());
+			map.tile(y, x).place(data.CurrentPlayer().selected());
+
+			data.CurrentPlayer().actions()++;
+
+			return data.CurrentPlayer().selected()->get_name() + " moved to " + v[1] + ";" + v[2] + ".\n";
 		}
-		catch (std::invalid_argument&)
+		catch (invalid_argument&)
 		{
 			return "Incorrect arguments.\n";
 		}
@@ -503,7 +615,7 @@ public:
 class Help : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
 		return "Available commands:\n"
 			"\"new <name>\"\n"
@@ -525,25 +637,28 @@ public:
 class Look : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
-		if (vec.size() != 1)
-			return "Incorrect arguments.\n";
-		if (!map.get_selected())
+		if (v.size() != 1)
+			return "Invalid arguments.\n";
+
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0f)
-			return map.get_selected()->get_name() + " is dead.\n";
-		Point loc = map.location(map.get_selected());
+
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+
+		Point loc = map.location(data.CurrentPlayer().selected());
 		string ret;
 		string temp;
 		/*
-		for (const auto& am : map.get_tile(loc.y, loc.x).get_amazons())
-			if (am != map.get_selected())
+		for (const auto& am : map.tile(loc.y, loc.x).get_amazons())
+			if (am != data.CurrentPlayer().selected())
 				temp += am->get_name() + ", ";
-		for (const auto& din : map.get_tile(loc.y, loc.x).get_dinos())
+		for (const auto& din : map.tile(loc.y, loc.x).get_dinos())
 			temp += "dino, ";
 		for (auto i = 0; i < G_TYPE_NUMBER; i++)
-			for (const auto& item : map.get_tile(loc.y, loc.x).get_items()[i])
+			for (const auto& item : map.tile(loc.y, loc.x).get_items()[i])
 				temp += item->get_name() + ", ";
 		if (temp == "")
 			ret += "Current tile empty.\n";
@@ -555,12 +670,12 @@ public:
 
 		if (loc.y + 1 < map.get_size())
 		{
-			for (const auto& am : map.get_tile(loc.y + 1, loc.x).get_amazons())
+			for (const auto& am : map.tile(loc.y + 1, loc.x).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y + 1, loc.x).get_dinos())
+			for (const auto& din : map.tile(loc.y + 1, loc.x).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y + 1, loc.x).get_items()[i])
+				for (const auto& item : map.tile(loc.y + 1, loc.x).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Northern tile empty.\n";
@@ -573,12 +688,12 @@ public:
 
 		if (loc.y + 1 < map.get_size() && loc.x + 1 < map.get_size())
 		{
-			for (const auto& am : map.get_tile(loc.y + 1, loc.x + 1).get_amazons())
+			for (const auto& am : map.tile(loc.y + 1, loc.x + 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y + 1, loc.x + 1).get_dinos())
+			for (const auto& din : map.tile(loc.y + 1, loc.x + 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y + 1, loc.x + 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y + 1, loc.x + 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Northeastern tile empty.\n";
@@ -591,12 +706,12 @@ public:
 
 		if (loc.x + 1 < map.get_size())
 		{
-			for (const auto& am : map.get_tile(loc.y, loc.x + 1).get_amazons())
+			for (const auto& am : map.tile(loc.y, loc.x + 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y, loc.x + 1).get_dinos())
+			for (const auto& din : map.tile(loc.y, loc.x + 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y, loc.x + 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y, loc.x + 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Eastern tile empty.\n";
@@ -609,12 +724,12 @@ public:
 
 		if (loc.x + 1 < map.get_size() && loc.y - 1 >= 0)
 		{
-			for (const auto& am : map.get_tile(loc.y - 1, loc.x + 1).get_amazons())
+			for (const auto& am : map.tile(loc.y - 1, loc.x + 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y - 1, loc.x + 1).get_dinos())
+			for (const auto& din : map.tile(loc.y - 1, loc.x + 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y - 1, loc.x + 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y - 1, loc.x + 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Southeastern tile empty.\n";
@@ -627,12 +742,12 @@ public:
 
 		if (loc.y - 1 >= 0)
 		{
-			for (const auto am : map.get_tile(loc.y - 1, loc.x).get_amazons())
+			for (const auto am : map.tile(loc.y - 1, loc.x).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y - 1, loc.x).get_dinos())
+			for (const auto& din : map.tile(loc.y - 1, loc.x).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y - 1, loc.x).get_items()[i])
+				for (const auto& item : map.tile(loc.y - 1, loc.x).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Southern tile empty.\n";
@@ -645,12 +760,12 @@ public:
 
 		if (loc.y - 1 >= 0 && loc.x - 1 >= 0)
 		{
-			for (const auto& am : map.get_tile(loc.y - 1, loc.x - 1).get_amazons())
+			for (const auto& am : map.tile(loc.y - 1, loc.x - 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y - 1, loc.x - 1).get_dinos())
+			for (const auto& din : map.tile(loc.y - 1, loc.x - 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y - 1, loc.x - 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y - 1, loc.x - 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Southwestern tile empty.\n";
@@ -663,12 +778,12 @@ public:
 
 		if (loc.x - 1 >= 0)
 		{
-			for (const auto& am : map.get_tile(loc.y, loc.x - 1).get_amazons())
+			for (const auto& am : map.tile(loc.y, loc.x - 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y, loc.x - 1).get_dinos())
+			for (const auto& din : map.tile(loc.y, loc.x - 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y, loc.x - 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y, loc.x - 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Western tile empty.\n";
@@ -681,12 +796,12 @@ public:
 
 		if (loc.y + 1 < map.get_size() && loc.x - 1 >= 0)
 		{
-			for (const auto& am : map.get_tile(loc.y + 1, loc.x - 1).get_amazons())
+			for (const auto& am : map.tile(loc.y + 1, loc.x - 1).get_amazons())
 				temp += am->get_name() + ", ";
-			for (const auto& din : map.get_tile(loc.y + 1, loc.x - 1).get_dinos())
+			for (const auto& din : map.tile(loc.y + 1, loc.x - 1).get_dinos())
 				temp += "dino, ";
 			for (auto i = 0; i < G_TYPE_NUMBER; i++)
-				for (const auto& item : map.get_tile(loc.y + 1, loc.x - 1).get_items()[i])
+				for (const auto& item : map.tile(loc.y + 1, loc.x - 1).get_items()[i])
 					temp += item->get_name() + ", ";
 			if (temp == "")
 				ret += "Northwestern tile empty.\n";
@@ -706,44 +821,56 @@ public:
 class Attack : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> v, Map& map, GameData& data)
 	{
-		if (vec.size() != 2)
-			return "Incorrect arguments.\n";
-		if (!map.get_selected())
+		if (v.size() != 2)
+			return "Invalid arguments.\n";
+
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
-		if (map.get_selected()->get_hp() == 0.0f)
-			return map.get_selected()->get_name() + " is dead.\n";
-		if (!map.get_selected()->hand())
-			return map.get_selected()->get_name() + " is not holding any weapon.\n";
-		if (!map.get_amazon(vec[1]))
-			return vec[1] + " does not exist.\n";
-		if (map.get_amazon(vec[1]) == map.get_selected())
-			return vec[1] + " cannot attack themselves.\n";
 
-		Point selected = map.location(map.get_selected());
-		Point found = map.location(map.get_amazon(vec[1]));
-		if (selected != found)
-		if (map.location(map.get_selected()) != map.location(map.get_amazon(vec[1])))
-			return vec[1] + " is out of range.\n";
-		if (map.get_amazon(vec[1])->get_hp() == 0.0f)
-			return vec[1] + " is already dead.\n";
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
-		double dmg = map.get_selected()->hand()->get_dmg();
+		if (!data.CurrentPlayer().selected()->hand())
+			return data.CurrentPlayer().selected()->get_name() + " is not holding any weapon.\n";
 
-		Dino* dino(map.get_amazon(vec[1])->get_dino());
-		if (dino && dino->get_hp() != 0.0f)
+		if (!data.OtherPlayer().ExistsAmazon(v[1]))
+			return "Enemy " + v[1] + " does not exist.\n";
+
+		if (map.location(data.CurrentPlayer().selected()) != map.location(&data.OtherPlayer().GetAmazon(v[1])))
+			return v[1] + " is out of range.\n";
+
+		if (data.OtherPlayer().GetAmazon(v[1]).get_hp() == 0.0)
+			return v[1] + " is already dead.\n";
+
+		double dmg = data.CurrentPlayer().selected()->hand()->get_dmg();
+		Dino* dino(data.OtherPlayer().GetAmazon(v[1]).get_dino());
+
+		data.CurrentPlayer().actions()++;
+
+		if (dino && dino->get_hp() != 0.0)
 		{
-			dino->get_hp() -= dmg;
-			if (dino->get_hp() == 0.0f)
-				return vec[1] + "'s dino died.\n";
-			return vec[1] + "'s dino suffered " + std::to_string(dmg) + " points of damage.\n";
+			if (dino->get_hp() - dmg < 0.0)
+				dino->get_hp() = 0.0;
+			else
+				dino->get_hp() -= dmg;
+
+			if (dino->get_hp() == 0.0)
+				return v[1] + "'s dino died.\n";
+
+			return v[1] + "'s dino suffered " + to_string(dmg) + " points of damage.\n";
 		}
 
-		map.get_amazon(vec[1])->get_hp() -= dmg;
-		if (map.get_amazon(vec[1])->get_hp() == 0.0f)
-			return vec[1] + " died.\n";
-		return vec[1] + " suffered " + std::to_string(dmg) + " points of damage.\n";
+		if (data.OtherPlayer().GetAmazon(v[1]).get_hp() - dmg < 0.0)
+			data.OtherPlayer().GetAmazon(v[1]).get_hp() = 0.0;
+		else
+			data.OtherPlayer().GetAmazon(v[1]).get_hp() -= dmg;
+
+		if (data.OtherPlayer().GetAmazon(v[1]).get_hp() == 0.0)
+			return v[1] + " died.\n";
+
+		return v[1] + " suffered " + to_string(dmg) + " points of damage.\n";
 	}
 };
 
@@ -753,29 +880,31 @@ public:
 class Pickup : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map) 
+	string exec(vector<string> vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
 
-		if (!map.get_selected())
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
 
-		if (map.get_selected()->get_hp() == 0.0)
-			return map.get_selected()->get_name() + " is dead.\n";
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
 		if (!ItemFactory::isValid(vec[1]))
-			return "Unknown item.\n";
+			return "Invalid item type.\n";
 
-		Point p = map.location(map.get_selected());
+		Point p = map.location(data.CurrentPlayer().selected());
 		
-		if (!map.get_tile(p.y, p.x).has(vec[1]))
+		if (!map.tile(p.y, p.x).has(vec[1]))
 			return vec[1] + " cannot be found on the current tile.\n";
 
-		if (!map.get_selected()->hasFreeSlot(ItemFactory::lookUp(vec[1])))
-			return "Can't pick up " + vec[1] + ". " + map.get_selected()->get_name() + "'s inventory is full.\n";
+		if (!data.CurrentPlayer().selected()->hasFreeSlot(ItemFactory::lookUp(vec[1])))
+			return "Can't pick up " + vec[1] + ". " + data.CurrentPlayer().selected()->get_name() + "'s inventory is full.\n";
 		
-		map.get_selected()->take(map.get_tile(p.y, p.x).remove(vec[1]));
+		data.CurrentPlayer().selected()->take(map.tile(p.y, p.x).remove(vec[1]));
+
+		data.CurrentPlayer().actions()++;
 
 		return "Picked up " + vec[1] + ".\n";
 	}
@@ -787,26 +916,33 @@ public:
 class Drop : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
 
-		if (!map.get_selected())
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
 
-		if (map.get_selected()->get_hp() == 0.0)
-			return map.get_selected()->get_name() + " is dead.\n";
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
 		if (!ItemFactory::isValid(vec[1]))
-			return "Unknown item.\n";
+			return "Invalid item type.\n";
 
-		if (!map.get_selected()->hasItem(vec[1]))
-			return vec[1] + " cannot be found in " + map.get_selected()->get_name() + "'s inventory.\n";
+		if (!data.CurrentPlayer().selected()->hasItem(vec[1]))
+			return vec[1] + " cannot be found in " + data.CurrentPlayer().selected()->get_name() + "'s inventory.\n";
 
-		Point p = map.location(map.get_selected());
+		Point p = map.location(data.CurrentPlayer().selected());
 
-		map.get_tile(p.y, p.x).add(map.get_selected()->remove(vec[1]));
+		unique_ptr<Item> item(data.CurrentPlayer().selected()->remove(vec[1]));
+
+		if (item.get() == data.CurrentPlayer().selected()->hand())
+			data.CurrentPlayer().selected()->hand() = nullptr;
+
+		map.tile(p.y, p.x).add(move(item));
+
+		data.CurrentPlayer().actions()++;
 
 		return vec[1] + " dropped.\n";
 	}
@@ -818,24 +954,24 @@ public:
 class Equip : public Command
 {
 public:
-	string exec(vector<string> vec, Map& map)
+	string exec(vector<string> vec, Map& map, GameData& data)
 	{
 		if (vec.size() != 2)
 			return "Invalid arguments.\n";
 
-		if (!map.get_selected())
+		if (!data.CurrentPlayer().selected())
 			return "Select an amazon first!\n";
 
-		if (map.get_selected()->get_hp() == 0.0)
-			return map.get_selected()->get_name() + " is dead.\n";
+		if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+			return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
 		if (!ItemFactory::isValid(vec[1]) || ItemFactory::lookUp(vec[1]) != ItemType::gun)
-			return "Unknown weapon type.\n";
+			return "Invalid weapon type.\n";
 
-		if (!map.get_selected()->hasItem(vec[1]))
-			return vec[1] + " cannot be found in " + map.get_selected()->get_name() + "'s inventory.\n";
+		if (!data.CurrentPlayer().selected()->hasItem(vec[1]))
+			return vec[1] + " cannot be found in " + data.CurrentPlayer().selected()->get_name() + "'s inventory.\n";
 
-		map.get_selected()->hand() = static_cast<Gun*>(map.get_selected()->item(vec[1]));
+		data.CurrentPlayer().selected()->hand() = static_cast<Gun*>(data.CurrentPlayer().selected()->item(vec[1]));
 
 		return vec[1] + " equipped.\n";
 	}
@@ -864,12 +1000,12 @@ public:
 	}
 
 
-	string interpret(vector<string> vec, Map& map)
+	string interpret(vector<string> vec, Map& map, GameData& data)
 	{
 		if (commands.find(vec[0]) == commands.end())
-			return "Unknown command.\n";
+			return "Invalid command.\n";
 
-		return commands.at(vec[0])->exec(vec, map);
+		return commands.at(vec[0])->exec(vec, map, data);
 	}
 };
 
@@ -896,12 +1032,12 @@ Map InitMap()
 
 				return m;
 			}
-			catch (std::invalid_argument& e)
+			catch (invalid_argument& e)
 			{
 				cout << e.what() << " Try again: ";
 			}
 		}
-		catch (std::invalid_argument&)
+		catch (invalid_argument&)
 		{
 			cout << "Not a number. Try again: ";
 		}
@@ -913,13 +1049,14 @@ Map InitMap()
 
 int main()
 {
-	Map map = InitMap();
+	GameData data;
+	Map map(InitMap());
 	Interpreter interpreter;
 	string input;
 
 	while (1)
 	{
-		cout << "Command: ";
+		cout << data.CurrentPlayer().name() + ": ";
 		getline(cin, input);
 
 		string word;
@@ -947,6 +1084,9 @@ int main()
 		if (words[0] == "exit")
 			return 0;
 
-		cout << interpreter.interpret(words, map) << endl;
+		cout << interpreter.interpret(words, map, data) << endl;
+		
+		if (data.CurrentPlayer().actions() == data.MaxActions())
+			data.turn();
 	}
 }

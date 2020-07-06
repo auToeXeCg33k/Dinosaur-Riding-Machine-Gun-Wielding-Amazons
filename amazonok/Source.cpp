@@ -119,19 +119,19 @@ public:
 	static unique_ptr<Item> CreateGun(string name)
 	{
 		if (name == "pistol")
-			return unique_ptr<Item>(new Gun("pistol", 15.0, 20.0, 2));
+			return make_unique<Gun>("pistol", 15.0, 20.0, 2);
 
 		if (name == "shotgun")
-			return unique_ptr<Item>(new Gun("shotgun", 50.0, 75.0, 1));
+			return make_unique<Gun>("shotgun", 50.0, 75.0, 1);
 
 		if (name == "katana")
-			return unique_ptr<Item>(new Gun("katana", 20.0, 30.0, 3));
+			return make_unique<Gun>("katana", 20.0, 30.0, 3);
 
 		if (name == "minigun")
-			return unique_ptr<Item>(new Gun("minigun", 1.5, 5.0, 30));
+			return make_unique<Gun>("minigun", 1.5, 5.0, 30);
 
 		if (name == "rocket")
-			return unique_ptr<Item>(new Gun("rocket", 90.0, 120.0, 1));
+			return make_unique<Gun>("rocket", 90.0, 120.0, 1);
 	}
 };
 
@@ -369,7 +369,7 @@ public:
 			uniform_int_distribution<> dist1(0, 4);
 			
 			for (int i = 0; i < 5; i++)
-				while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(unique_ptr<Dino>(new Dino())));
+				while (!tiles.at(dist1(mt)).at(dist1(mt)).spawn(make_unique<Dino>()));
 
 			for (int i = 0; i < 2; i++)
 			{
@@ -451,7 +451,7 @@ public:
 
 	void CreateAmazon(string name)
 	{
-		amazon_map.emplace(make_pair(name, unique_ptr<Amazon>(new Amazon(name))));
+		amazon_map.emplace(make_pair(name, make_unique<Amazon>(name)));
 	}
 
 
@@ -989,15 +989,15 @@ private:
 public:
 	Interpreter()
 	{
-		commands.emplace("new", unique_ptr<Command>(new New()));
-		commands.emplace("select", unique_ptr<Command>(new Select()));
-		commands.emplace("move", unique_ptr<Command>(new Move()));
-		commands.emplace("help", unique_ptr<Command>(new Help()));
-		commands.emplace("attack", unique_ptr<Command>(new Attack()));
-		commands.emplace("look", unique_ptr<Command>(new Look()));
-		commands.emplace("pickup", unique_ptr<Command>(new Pickup()));
-		commands.emplace("drop", unique_ptr<Command>(new Drop()));
-		commands.emplace("equip", unique_ptr<Command>(new Equip()));
+		commands.emplace("new", make_unique<New>());
+		commands.emplace("select", make_unique<Select>());
+		commands.emplace("move", make_unique<Move>());
+		commands.emplace("help", make_unique<Help>());
+		commands.emplace("attack", make_unique<Attack>());
+		commands.emplace("look", make_unique<Look>());
+		commands.emplace("pickup", make_unique<Pickup>());
+		commands.emplace("drop", make_unique<Drop>());
+		commands.emplace("equip", make_unique<Equip>());
 	}
 
 

@@ -359,7 +359,8 @@ public:
 			for (int i = 0; i < 5; i++)
 			{
 				tiles.emplace_back();
-				tiles.at(i).emplace_back();
+				for (int j = 0; j < 5; j++)
+					tiles.at(i).emplace_back();
 			}
 			
 			random_device rd;
@@ -554,7 +555,7 @@ public:
 		if (!data.CurrentPlayer().ExistsAmazon(v[1]))
 			return v[1] + " does not exist.\n";
 
-		if (data.CurrentPlayer().selected()->get_name() == v[1])
+		if (data.CurrentPlayer().selected() && data.CurrentPlayer().selected()->get_name() == v[1])
 			return v[1] + " is already selected.\n";
 
 		data.CurrentPlayer().selected() = &data.CurrentPlayer().GetAmazon(v[1]);

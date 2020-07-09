@@ -6,6 +6,7 @@
 #include <forward_list>
 #include <memory>
 #include <random>
+#include <cmath>
 
 using namespace std;
 
@@ -325,7 +326,7 @@ public:
 		if (dinos.size() != 0)
 			return false;
 
-		dinos.emplace();
+		dinos.emplace(make_unique<Dino>());
 		return true;
 	}
 	
@@ -361,12 +362,12 @@ public:
 	}
 
 
-	//lots of copying. needs a rework
+	//lots of copying - needs a rework
 	forward_list<Amazon*> amazon_list() const
 	{
 		forward_list<Amazon*> ret;
 
-		for (auto x : amazons)
+		for (const auto& x : amazons)
 			ret.push_front(x);
 
 		return ret;
@@ -377,7 +378,7 @@ public:
 	{
 		forward_list<Dino*> ret;
 
-		for (auto& x : dinos)
+		for (const auto& x : dinos)
 			ret.push_front(x.get());
 
 		return ret;
@@ -388,7 +389,7 @@ public:
 	{
 		forward_list<Item*> ret;;
 
-		for (auto& x : items)
+		for (const auto& x : items)
 			for (auto& y : x.second)
 				ret.push_front(y.get());
 
@@ -756,15 +757,15 @@ public:
 		string ret;
 		string temp;
 		
-		/*for (const auto& x : map.tile(loc.y, loc.x).amazon_list())
+		for (const auto& x : map.tile(loc.y, loc.x).amazon_list())
 			if (x != data.CurrentPlayer().selected())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 		for (const auto& x : map.tile(loc.y, loc.x).dino_list())
-			temp += "dino(" + to_string(x->get_hp()) + "), ";
+			temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 		for (const auto& x : map.tile(loc.y, loc.x).item_list())
-				temp += x->get_name() + ", ";
+			temp.append(x->get_name() + ", ");
 
 		if (temp.empty())
 			ret.append("Current tile empty.\n");
@@ -779,13 +780,13 @@ public:
 		if (loc.y + 1 < map.get_size())
 		{
 			for (const auto& x : map.tile(loc.y + 1, loc.x).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Northern tile empty.\n");
@@ -801,13 +802,13 @@ public:
 		if (loc.y + 1 < map.get_size() && loc.x + 1 < map.get_size())
 		{
 			for (const auto& x : map.tile(loc.y + 1, loc.x + 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x + 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x + 1).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Northeastern tile empty.\n");
@@ -823,13 +824,13 @@ public:
 		if (loc.x + 1 < map.get_size())
 		{
 			for (const auto& x : map.tile(loc.y, loc.x + 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y, loc.x + 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y, loc.x + 1).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Eastern tile empty.\n");
@@ -845,13 +846,13 @@ public:
 		if (loc.x + 1 < map.get_size() && loc.y - 1 >= 0)
 		{
 			for (const auto& x : map.tile(loc.y - 1, loc.x + 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x + 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x + 1).item_list())
-					temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Southeastern tile empty.\n");
@@ -867,13 +868,13 @@ public:
 		if (loc.y - 1 >= 0)
 		{
 			for (const auto& x : map.tile(loc.y - 1, loc.x).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Southern tile empty.\n");
@@ -889,13 +890,13 @@ public:
 		if (loc.y - 1 >= 0 && loc.x - 1 >= 0)
 		{
 			for (const auto& x : map.tile(loc.y - 1, loc.x - 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x - 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y - 1, loc.x - 1).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Southwestern tile empty.\n");
@@ -911,13 +912,13 @@ public:
 		if (loc.x - 1 >= 0)
 		{
 			for (const auto& x : map.tile(loc.y, loc.x - 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y, loc.x - 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y, loc.x - 1).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Western tile empty.\n");
@@ -933,13 +934,13 @@ public:
 		if (loc.y + 1 < map.get_size() && loc.x - 1 >= 0)
 		{
 			for (const auto& x : map.tile(loc.y + 1, loc.x - 1).amazon_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x - 1).dino_list())
-				temp += "dino(" + to_string(x->get_hp()) + "), ";
+				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
 			for (const auto& x : map.tile(loc.y + 1, loc.x - 1).item_list())
-				temp += x->get_name() + ", ";
+				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append("Northwestern tile empty.\n");
@@ -949,7 +950,7 @@ public:
 				ret.append("North West: " + temp.substr(0, temp.length() - 2) + ".\n");
 				temp.clear();
 			}
-		}*/
+		}
 		return ret;
 	}
 };
@@ -1002,7 +1003,7 @@ public:
 			if (dino->get_hp() == 0.0)
 				return v[1] + "'s dino died.\n";
 
-			return v[1] + "'s dino suffered " + to_string(dmg) + " points of damage.\n";
+			return v[1] + "'s dino suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 		}
 
 		if (data.OtherPlayer().GetAmazon(v[1]).get_hp() - dmg < 0.0)
@@ -1016,7 +1017,7 @@ public:
 			return v[1] + " died.\n";
 		}
 
-		return v[1] + " suffered " + to_string(dmg) + " points of damage.\n";
+		return v[1] + " suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 	}
 };
 
@@ -1282,6 +1283,6 @@ int main()
 		if (words.at(0) == "exit")
 			return 0;
 
-		cout << interpreter.interpret(words, map, data) << endl;
+		cout << '\n' << interpreter.interpret(words, map, data) << endl;
 	}
 }

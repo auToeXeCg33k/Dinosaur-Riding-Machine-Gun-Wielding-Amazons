@@ -1,0 +1,41 @@
+#include "interpreter.h"
+#include "utility.h"
+#include <iostream>
+
+using namespace std;
+
+
+int main()
+{
+	const int gameMode(ReadGameMode());
+
+	const Interpreter interpreter;
+	GameData data(gameMode);
+	Map map(gameMode);
+
+	cout << "\nMap size is " << map.get_size() << "x" << map.get_size() << ".\n"
+		"The maximum number of actions per turn is " << data.MaxActions() << ".\n"
+		"The maximum number of spawns is " << data.MaxSpawns() << ".\n"
+		"The maximum number of living amazons is " << data.MaxAlive() << ".\n\n";
+
+	string input;
+	vector<string> words;
+
+	while (1)
+	{
+		cout << data.CurrentPlayer().name() << ": ";
+		getline(cin, input);
+
+		words.clear();
+
+		ProcessInput(input, words);
+
+		if (words.size() == 0)
+			continue;
+
+		if (words.at(0) == "exit")
+			return 0;
+
+		cout << '\n' << interpreter.interpret(words, map, data) << endl;
+	}
+}

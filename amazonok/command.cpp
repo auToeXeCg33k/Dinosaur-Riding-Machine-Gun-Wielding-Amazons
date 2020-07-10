@@ -112,15 +112,6 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 }
 
 
-struct Offset : public Point
-{
-	string adj;
-	string noun;
-
-	Offset(const char x, const char y, string_view adj, string_view noun) : Point(x, y), adj(adj), noun(noun) {}
-};
-
-
 string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
@@ -132,9 +123,15 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
 		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
-	static const Offset offsets[]
+	static const struct Offset : public Point
 	{
-		{0,0, "Current", "Current tile"},
+		string adj;
+		string noun;
+
+		Offset(const char x, const char y, string_view adj, string_view noun) : Point(x, y), adj(adj), noun(noun) {}
+	} offsets[]
+	{
+		{0, 0, "Current", "Current tile"},
 		{0, 1,"Northern", "North"},
 		{1, 1, "Northeastern", "North East"},
 		{1, 0, "Eastern", "East"},
@@ -145,7 +142,7 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 		{-1, 1, "Northwestern", "North West"}
 	};
 
-	Point p = map.location(data.CurrentPlayer().selected());
+	Point p(map.location(data.CurrentPlayer().selected()));
 	string ret;
 	string temp;
 

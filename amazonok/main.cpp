@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "utility.h"
+#include "wincheck.h"
 #include <iostream>
 
 using namespace std;
@@ -37,5 +38,16 @@ int main()
 			return 0;
 
 		cout << '\n' << interpreter.interpret(words, map, data) << endl;
+
+		switch (CheckWin(data))
+		{
+		case 2:
+			cout << data.CurrentPlayer().name() << " won! GG" << endl;
+			return 0;
+
+		case 1:
+			cout << data.OtherPlayer().name() << " won! GG" << endl;
+			return 0;
+		}
 	}
 }

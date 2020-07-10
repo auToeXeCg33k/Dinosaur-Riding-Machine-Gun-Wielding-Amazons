@@ -149,14 +149,14 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 	for (const auto& offset : offsets)
 		if (p.x + offset.x >= 0 && p.x + offset.x < map.get_size() && p.y + offset.y >= 0 && p.y + offset.y < map.get_size())
 		{
-			for (const auto& x : map.tile(Point(p.y + offset.y , p.x + offset.x)).amazon_list())
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).amazon_list())
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->get_name() + ", ");
 
-			for (const auto& x : map.tile(Point(p.y + offset.y, p.x + offset.x)).dino_list())
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).dino_list())
 				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
-			for (const auto& x : map.tile(Point(p.y + offset.y, p.x + offset.x)).item_list())
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).item_list())
 				temp.append(x->get_name() + ", ");
 
 			if (temp.empty())
@@ -224,7 +224,7 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 
 	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() == 0.0)
 	{
-		data.CurrentPlayer().alive()--;
+		data.OtherPlayer().alive()--;
 		return v[1] + " died.\n";
 	}
 

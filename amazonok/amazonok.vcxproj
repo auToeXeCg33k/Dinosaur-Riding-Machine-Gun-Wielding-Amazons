@@ -156,6 +156,7 @@
     <ClCompile Include="point.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="utility.cpp" />
+    <ClCompile Include="wincheck.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="amazon.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="point.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="utility.h" />
+    <ClInclude Include="wincheck.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

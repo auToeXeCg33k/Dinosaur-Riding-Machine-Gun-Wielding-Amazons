@@ -96,35 +96,19 @@ bool Tile::has(string_view name)
 }
 
 
-forward_list<Amazon*> Tile::amazon_list() const
+const unordered_set<Amazon*>& Tile::AmazonContainer() const
 {
-	forward_list<Amazon*> ret;
-
-	for (const auto& x : amazons)
-		ret.push_front(x);
-
-	return ret;
+	return amazons;
 }
 
 
-forward_list<Dino*> Tile::dino_list() const
+const vector<unique_ptr<Dino>>& Tile::DinoContainer() const
 {
-	forward_list<Dino*> ret;
-
-	for (const auto& x : dinos)
-		ret.push_front(x.get());
-
-	return ret;
+	return dinos;
 }
 
 
-forward_list<Item*> Tile::item_list() const
+const unordered_map<ItemType, vector<unique_ptr<Item>>>& Tile::ItemContainer() const
 {
-	forward_list<Item*> ret;;
-
-	for (const auto& x : items)
-		for (auto& y : x.second)
-			ret.push_front(y.get());
-
-	return ret;
+	return items;
 }

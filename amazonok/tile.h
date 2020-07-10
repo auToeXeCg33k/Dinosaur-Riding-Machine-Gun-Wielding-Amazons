@@ -1,7 +1,6 @@
 #pragma once
 #include "amazon.h"
 #include <unordered_set>
-#include <forward_list>
 
 class Tile
 {
@@ -23,7 +22,7 @@ public:
 	bool has(std::string_view name);
 	bool spawnDino();
 	bool spawnItem(std::string_view name);
-	std::forward_list<Amazon*> amazon_list() const;
-	std::forward_list<Dino*> dino_list() const;
-	std::forward_list<Item*> item_list() const;
+	const std::unordered_set<Amazon*>& AmazonContainer() const;
+	const std::vector<std::unique_ptr<Dino>>& DinoContainer() const;
+	const std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>>& ItemContainer() const;
 };

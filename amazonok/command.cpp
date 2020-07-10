@@ -149,15 +149,16 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 	for (const auto& offset : offsets)
 		if (p.x + offset.x >= 0 && p.x + offset.x < map.get_size() && p.y + offset.y >= 0 && p.y + offset.y < map.get_size())
 		{
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).amazon_list())
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->get_name() + ", ");
 
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).dino_list())
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).DinoContainer())
 				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
 
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).item_list())
-				temp.append(x->get_name() + ", ");
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
+				for (const auto& y : x.second)
+					temp.append(y->get_name() + ", ");
 
 			if (temp.empty())
 				ret.append(offset.adj + " tile empty.\n");
@@ -351,16 +352,16 @@ string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	if (data.CurrentPlayer().selected()->get_dino())
 		return data.CurrentPlayer().selected()->get_name() + " already has a dino.\n";
 
-	auto dinos(map.tile(map.location(data.CurrentPlayer().selected())).dino_list());
+	const auto& dinos(map.tile(map.location(data.CurrentPlayer().selected())).DinoContainer());
 
 	if (dinos.empty())
 		return "There are no dinos nearby.\n";
 
-	Dino* temp(dinos.front());
+	Dino* temp(dinos.front().get());
 
-	for (auto x : dinos)
+	for (const auto& x : dinos)
 		if (x->get_hp() >= temp->get_hp() && !x->tamed())
-			temp = x;
+			temp = x.get();
 
 	if (temp->tamed())
 		return "There are no free dinos nearby.\n";

@@ -11,18 +11,39 @@ Tile::Tile()
 Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)) {}
 
 
-bool Tile::has(string_view name)
+void Tile::add(Amazon* amazon)
 {
-	for (auto& x : items.at(ItemFactory::lookUp(name)))
-		if (x->get_name() == name)
-			return true;
-	return false;
+	amazons.insert(amazon);
+}
+
+
+void Tile::add(unique_ptr<Dino>&& dino)
+{
+	dinos.emplace_back(move(dino));
 }
 
 
 void Tile::add(unique_ptr<Item>&& item)
 {
 	items.at(ItemFactory::lookUp(item->get_name())).emplace_back(move(item));
+}
+
+
+void Tile::remove(Amazon* amazon)
+{
+	amazons.erase(amazon);
+}
+
+
+unique_ptr<Dino> Tile::remove(Dino* dino)
+{
+	for (int i = 0; i < dinos.size(); i++)
+		if (dino == dinos.at(i).get())
+		{
+			auto ret(move(dinos.at(i)));
+			dinos.erase(dinos.begin() + i);
+			return ret;
+		}
 }
 
 
@@ -43,7 +64,7 @@ bool Tile::spawnDino()
 	if (dinos.size() != 0)
 		return false;
 
-	dinos.emplace(make_unique<Dino>());
+	dinos.emplace_back(make_unique<Dino>());
 	return true;
 }
 
@@ -58,22 +79,19 @@ bool Tile::spawnItem(string_view name)
 }
 
 
-void Tile::place(Amazon* amazon)
-{
-	amazons.insert(amazon);
-}
-
-
-void Tile::remove(Amazon* amazon)
-{
-	amazons.erase(amazon);
-}
-
-
 bool Tile::is_here(Amazon* amazon)
 {
 	if (amazons.find(amazon) != amazons.end())
 		return true;
+	return false;
+}
+
+
+bool Tile::has(string_view name)
+{
+	for (const auto& x : items.at(ItemFactory::lookUp(name)))
+		if (x->get_name() == name)
+			return true;
 	return false;
 }
 

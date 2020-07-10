@@ -78,3 +78,10 @@ class End : public Command
 public:
 	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 };
+
+
+class Tame : public Command
+{
+public:
+	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
+};

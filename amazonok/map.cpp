@@ -48,6 +48,12 @@ Tile& Map::tile(const char y, const char x)
 }
 
 
+Tile& Map::tile(const Point p)
+{
+	return tiles.at(p.y).at(p.x);
+}
+
+
 int Map::get_size()
 {
 	return size;

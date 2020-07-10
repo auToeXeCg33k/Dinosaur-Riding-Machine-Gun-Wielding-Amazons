@@ -11,6 +11,7 @@ private:
 public:
 	Map(const int i);
 	Tile& tile(const char y, const char x);
+	Tile& tile(const Point p);
 	int get_size();
 	Point location(Amazon* amazon);
 };

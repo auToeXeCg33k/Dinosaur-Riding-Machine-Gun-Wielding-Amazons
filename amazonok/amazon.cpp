@@ -85,3 +85,9 @@ Dino* Amazon::get_dino()
 {
 	return dino.get();
 }
+
+
+void Amazon::setDino(unique_ptr<Dino>&& dino)
+{
+	this->dino = move(dino);
+}

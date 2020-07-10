@@ -15,6 +15,7 @@ Interpreter::Interpreter()
 	commands.emplace("drop", make_unique<const Drop>());
 	commands.emplace("equip", make_unique<const Equip>());
 	commands.emplace("end", make_unique<const End>());
+	commands.emplace("tame", make_unique<const Tame>());
 }
 
 

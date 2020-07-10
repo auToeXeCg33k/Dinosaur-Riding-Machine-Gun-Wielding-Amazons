@@ -23,7 +23,7 @@ string New::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 
 	data.CurrentPlayer().CreateAmazon(v[1]);
 
-	map.tile(0, 0).place(&data.CurrentPlayer().GetAmazon(v[1]));
+	map.tile(0, 0).add(&data.CurrentPlayer().GetAmazon(v[1]));
 
 	data.CurrentPlayer().alive()++;
 	data.CurrentPlayer().actions()++;
@@ -79,7 +79,7 @@ string Move::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 			return "Target tile matches the current one.\n";
 
 		map.tile(p.y, p.x).remove(data.CurrentPlayer().selected());
-		map.tile(y, x).place(data.CurrentPlayer().selected());
+		map.tile(y, x).add(data.CurrentPlayer().selected());
 
 		data.CurrentPlayer().actions()++;
 
@@ -100,6 +100,7 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 		"\"select <name>\"\n"
 		"\"move <x> <y>\"\n"
 		"\"lookaround\"\n"
+		"\"tame\"\n"
 		"\"pickup <item>\"\n"
 		"\"drop <item>\"\n"
 		"\"equip <item>\"\n"
@@ -481,4 +482,41 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 	data.turn();
 
 	return "\n### END OF TURN ###\n";
+}
+
+
+string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+{
+	if (v.size() != 1)
+		return "Ivalid arguments.\n";
+
+	if (data.CurrentPlayer().actions() == data.MaxActions())
+		return "Maximum number of actions reached.\n";
+
+	if (!data.CurrentPlayer().selected())
+		return "Select an amazon first!\n";
+
+	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+
+	if (data.CurrentPlayer().selected()->get_dino())
+		return data.CurrentPlayer().selected()->get_name() + " already has a dino.\n";
+
+	auto dinos(map.tile(map.location(data.CurrentPlayer().selected())).dino_list());
+
+	if (dinos.empty())
+		return "There are no dinos nearby.\n";
+
+	Dino* temp(dinos.front());
+
+	for (auto x : dinos)
+		if (x->get_hp() >= temp->get_hp() && !x->tamed())
+			temp = x;
+
+	if (temp->tamed())
+		return "There are no free dinos nearby.\n";
+
+	data.CurrentPlayer().selected()->setDino(map.tile(map.location(data.CurrentPlayer().selected())).remove(temp));
+
+	return "Dino (" + to_string(static_cast<int>(round(temp->get_hp()))) + " HP) tamed.\n";
 }

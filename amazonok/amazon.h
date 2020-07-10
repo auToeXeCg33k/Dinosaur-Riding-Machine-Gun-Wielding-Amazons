@@ -23,4 +23,5 @@ public:
 	double& get_hp();
 	Gun*& hand();
 	Dino* get_dino();
+	void setDino(std::unique_ptr<Dino>&& dino);
 };

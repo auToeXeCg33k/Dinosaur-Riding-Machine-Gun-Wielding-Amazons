@@ -153,7 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="point.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>

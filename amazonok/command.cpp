@@ -101,7 +101,7 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 		"\"select <name>\"\n"
 		"\"move <x> <y>\"\n"
 		"\"lookaround\"\n"
-		//"\"tame\"\n"
+		"\"tame\"\n"
 		"\"pickup <item>\"\n"
 		"\"drop <item>\"\n"
 		"\"equip <item>\"\n"
@@ -153,6 +153,9 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->get_name() + ", ");
 
+			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).DinoContainer())
+				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
+
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
 				for (const auto& y : x.second)
 					temp.append(y->get_name() + ", ");
@@ -200,6 +203,25 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 	double dmg = data.CurrentPlayer().selected()->hand()->get_dmg();
 
 	data.CurrentPlayer().actions()++;
+
+	if (data.OtherPlayer().GetAmazon(v[1]).GetRiding())
+	{
+		if (data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() - dmg < 0.0)
+			data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() = 0.0;
+		else
+			data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() -= dmg;
+
+		if (data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() == 0.0)
+		{
+			data.OtherPlayer().GetAmazon(v[1]).GetRiding();
+			map.tile(map.location(&data.OtherPlayer().GetAmazon(v[1]))).add(move(data.OtherPlayer().GetAmazon(v[1]).GetRiding()));
+			return v[1] + "'s dino died.\n";
+		}
+
+		return v[1] + "'s dino suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
+	}
+		
+		
 
 	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() - dmg < 0.0)
 		data.OtherPlayer().GetAmazon(v[1]).get_hp() = 0.0;
@@ -318,7 +340,7 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 }
 
 
-/*string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Ivalid arguments.\n";
@@ -332,7 +354,7 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
 		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
 
-	if (data.CurrentPlayer().selected()->get_dino())
+	if (data.CurrentPlayer().selected()->GetDino())
 		return data.CurrentPlayer().selected()->get_name() + " already has a dino.\n";
 
 	const auto& dinos(map.tile(map.location(data.CurrentPlayer().selected())).DinoContainer());
@@ -349,7 +371,8 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 	if (temp->tamed())
 		return "There are no free dinos nearby.\n";
 
-	data.CurrentPlayer().selected()->setDino(map.tile(map.location(data.CurrentPlayer().selected())).remove(temp));
+	data.CurrentPlayer().selected()->GetDino() = temp;
+	temp->tamed() = !temp->tamed();
 
 	return "Dino (" + to_string(static_cast<int>(round(temp->get_hp()))) + " HP) tamed.\n";
-}*/
+}

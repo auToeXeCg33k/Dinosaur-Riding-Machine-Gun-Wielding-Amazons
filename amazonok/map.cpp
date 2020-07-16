@@ -22,8 +22,8 @@ Map::Map(const int i)
 
 		uniform_int_distribution<> dist1(0, 4);
 
-		/*for (int i = 0; i < 5; i++)
-			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnDino());*/
+		for (int i = 0; i < 5; i++)
+			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnDino());
 
 		for (int i = 0; i < 2; i++)
 		{

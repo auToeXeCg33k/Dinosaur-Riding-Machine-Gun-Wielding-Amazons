@@ -3,7 +3,7 @@
 using namespace std;
 
 
-Amazon::Amazon(string_view name) : name(name), hp(100.0), held(nullptr)
+Amazon::Amazon(string_view name) : name(name), hp(100.0), held(nullptr), dino(nullptr), riding(nullptr)
 {
 	inventory.emplace(ItemType::gun, std::vector<std::unique_ptr<Item>>());
 }
@@ -78,4 +78,15 @@ double& Amazon::get_hp()
 Gun*& Amazon::hand()
 {
 	return held;
+}
+
+Dino*& Amazon::GetDino()
+{
+	return dino;
+}
+
+
+unique_ptr<Dino>& Amazon::GetRiding()
+{
+	return riding;
 }

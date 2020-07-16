@@ -8,18 +8,12 @@ Tile::Tile()
 }
 
 
-Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)) {}
+Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), items(move(other.items)) {}
 
 
 void Tile::add(Amazon* amazon)
 {
 	amazons.insert(amazon);
-}
-
-
-void Tile::add(unique_ptr<Dino>&& dino)
-{
-	dinos.emplace_back(move(dino));
 }
 
 
@@ -35,18 +29,6 @@ void Tile::remove(Amazon* amazon)
 }
 
 
-unique_ptr<Dino> Tile::remove(Dino* dino)
-{
-	for (int i = 0; i < dinos.size(); i++)
-		if (dino == dinos.at(i).get())
-		{
-			auto ret(move(dinos.at(i)));
-			dinos.erase(dinos.begin() + i);
-			return ret;
-		}
-}
-
-
 unique_ptr<Item> Tile::remove(string_view name)
 {
 	for (int i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
@@ -56,16 +38,6 @@ unique_ptr<Item> Tile::remove(string_view name)
 			items.at(ItemFactory::lookUp(name)).erase(items.at(ItemFactory::lookUp(name)).begin() + i);
 			return ret;
 		}
-}
-
-
-bool Tile::spawnDino()
-{
-	if (dinos.size() != 0)
-		return false;
-
-	dinos.emplace_back(make_unique<Dino>());
-	return true;
 }
 
 
@@ -99,12 +71,6 @@ bool Tile::has(string_view name)
 const unordered_set<Amazon*>& Tile::AmazonContainer() const
 {
 	return amazons;
-}
-
-
-const vector<unique_ptr<Dino>>& Tile::DinoContainer() const
-{
-	return dinos;
 }
 
 

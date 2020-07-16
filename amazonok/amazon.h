@@ -10,7 +10,6 @@ private:
 	double hp;
 	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inventory;
 	Gun* held;
-	std::unique_ptr<Dino> dino;
 
 public:
 	Amazon(std::string_view name);
@@ -22,6 +21,4 @@ public:
 	const std::string& get_name();
 	double& get_hp();
 	Gun*& hand();
-	Dino* get_dino();
-	void setDino(std::unique_ptr<Dino>&& dino);
 };

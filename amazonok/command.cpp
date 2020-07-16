@@ -101,7 +101,7 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 		"\"select <name>\"\n"
 		"\"move <x> <y>\"\n"
 		"\"lookaround\"\n"
-		"\"tame\"\n"
+		//"\"tame\"\n"
 		"\"pickup <item>\"\n"
 		"\"drop <item>\"\n"
 		"\"equip <item>\"\n"
@@ -153,9 +153,6 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->get_name() + ", ");
 
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).DinoContainer())
-				temp.append("dino(" + to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
-
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
 				for (const auto& y : x.second)
 					temp.append(y->get_name() + ", ");
@@ -201,22 +198,8 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 		return v[1] + " is already dead.\n";
 
 	double dmg = data.CurrentPlayer().selected()->hand()->get_dmg();
-	Dino* dino(data.OtherPlayer().GetAmazon(v[1]).get_dino());
 
 	data.CurrentPlayer().actions()++;
-
-	if (dino && dino->get_hp() != 0.0)
-	{
-		if (dino->get_hp() - dmg < 0.0)
-			dino->get_hp() = 0.0;
-		else
-			dino->get_hp() -= dmg;
-
-		if (dino->get_hp() == 0.0)
-			return v[1] + "'s dino died.\n";
-
-		return v[1] + "'s dino suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
-	}
 
 	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() - dmg < 0.0)
 		data.OtherPlayer().GetAmazon(v[1]).get_hp() = 0.0;
@@ -335,7 +318,7 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 }
 
 
-string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+/*string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Ivalid arguments.\n";
@@ -369,4 +352,4 @@ string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	data.CurrentPlayer().selected()->setDino(map.tile(map.location(data.CurrentPlayer().selected())).remove(temp));
 
 	return "Dino (" + to_string(static_cast<int>(round(temp->get_hp()))) + " HP) tamed.\n";
-}
+}*/

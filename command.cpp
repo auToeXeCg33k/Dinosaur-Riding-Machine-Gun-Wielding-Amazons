@@ -1,8 +1,12 @@
 #include "command.h"
 #include <stdexcept>
 #include <array>
+#include <cmath>
 
 using namespace std;
+
+
+Command::~Command() {}
 
 
 string New::exec(const vector<string>& v, Map& map, GameData& data) const noexcept

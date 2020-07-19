@@ -7,6 +7,7 @@ class Command
 {
 public:
 	virtual std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept = 0;
+	virtual ~Command();
 };
 
 

@@ -18,7 +18,8 @@ public:
 	void remove(Amazon* amazon);
 	std::unique_ptr<Dino> remove(Dino* dino);
 	std::unique_ptr<Item> remove(std::string_view name);
-	bool is_here(Amazon* amazon);
+	bool is_here(Amazon* const amazon);
+	bool is_here(Dino* const dino);
 	bool has(std::string_view name);
 	bool spawnDino();
 	bool spawnItem(std::string_view name);

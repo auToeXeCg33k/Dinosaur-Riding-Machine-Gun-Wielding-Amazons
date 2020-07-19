@@ -106,6 +106,8 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 		"\"move <x> <y>\"\n"
 		"\"lookaround\"\n"
 		"\"tame\"\n"
+		"\"geton\"\n"
+		"\"getoff\"\n"
 		"\"pickup <item>\"\n"
 		"\"drop <item>\"\n"
 		"\"equip <item>\"\n"
@@ -217,7 +219,6 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 
 		if (data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() == 0.0)
 		{
-			data.OtherPlayer().GetAmazon(v[1]).GetRiding();
 			map.tile(map.location(&data.OtherPlayer().GetAmazon(v[1]))).add(move(data.OtherPlayer().GetAmazon(v[1]).GetRiding()));
 			return v[1] + "'s dino died.\n";
 		}
@@ -379,4 +380,57 @@ string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	temp->tamed() = !temp->tamed();
 
 	return "Dino (" + to_string(static_cast<int>(round(temp->get_hp()))) + " HP) tamed.\n";
+}
+
+
+string Geton::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+{
+	if (v.size() != 1)
+		return "Invalid arguments.\n";
+
+	if (!data.CurrentPlayer().selected())
+		return "Select an amazon first!\n";
+
+	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+
+	if (!data.CurrentPlayer().selected()->GetDino())
+		return data.CurrentPlayer().selected()->get_name() + " does not have a dino. Tame one first!\n";
+
+	if (data.CurrentPlayer().selected()->GetRiding())
+		return data.CurrentPlayer().selected()->get_name() + " is already riding their dino.\n";
+
+	const auto point(map.location(data.CurrentPlayer().selected()));
+
+	if (!map.tile(point).is_here(data.CurrentPlayer().selected()->GetDino()))
+		return data.CurrentPlayer().selected()->get_name() + "'s dino is not nearby.\n";
+
+	if (data.CurrentPlayer().selected()->GetDino()->get_hp() == 0.0)
+		return data.CurrentPlayer().selected()->get_name() + "'s dino is dead.\n";
+
+	data.CurrentPlayer().selected()->GetRiding() = map.tile(point).remove(data.CurrentPlayer().selected()->GetDino());
+	return data.CurrentPlayer().selected()->get_name() + " got on their dino.\n";
+}
+
+
+string Getoff::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+{
+	if (v.size() != 1)
+		return "Invalid arguments.\n";
+
+	if (!data.CurrentPlayer().selected())
+		return "Select an amazon first!\n";
+	
+	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
+		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+
+	if (!data.CurrentPlayer().selected()->GetDino())
+		return data.CurrentPlayer().selected()->get_name() + " does not have a dino. Tame one first!\n";
+
+	if (!data.CurrentPlayer().selected()->GetRiding())
+		return data.CurrentPlayer().selected()->get_name() + " is currently not riding their dino.\n";
+
+	map.tile(map.location(data.CurrentPlayer().selected())).add(move(data.CurrentPlayer().selected()->GetRiding()));
+
+	return data.CurrentPlayer().selected()->get_name() + " got off their dino.\n";
 }

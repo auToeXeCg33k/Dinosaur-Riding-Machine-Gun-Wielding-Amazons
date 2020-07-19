@@ -79,10 +79,17 @@ bool Tile::spawnItem(string_view name)
 }
 
 
-bool Tile::is_here(Amazon* amazon)
+bool Tile::is_here(Amazon* const amazon)
 {
-	if (amazons.find(amazon) != amazons.end())
-		return true;
+	return amazons.find(amazon) != amazons.end();
+}
+
+
+bool Tile::is_here(Dino* const dino)
+{
+	for (const auto& x : dinos)
+		if (x.get() == dino)
+			return true;
 	return false;
 }
 

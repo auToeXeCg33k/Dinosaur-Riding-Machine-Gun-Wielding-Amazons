@@ -8,10 +8,18 @@
             "label": "build",
             "command": "clang++",
             "args": [
-                "${fileDirname}/*.cpp",
                 "-std=c++17",
-                "-o",
-                "${fileDirname}/amazonok"
+                "-I${workspaceFolder}/headers",
+                "-o ${workspaceFolder}/amazonok",
+                "${workspaceFolder}/sources/*.cpp"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "clean",
+            "command": "rm",
+            "args": [
+                "${workspaceFolder}/amazonok"
             ],
             "problemMatcher": []
         }

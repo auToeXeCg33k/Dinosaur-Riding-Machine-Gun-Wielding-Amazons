@@ -6,17 +6,24 @@
     [
         {
             "label": "build",
+            "type": "shell",
             "command": "clang++",
             "args": [
                 "-std=c++17",
                 "-I${workspaceFolder}/headers",
-                "-o ${workspaceFolder}/amazonok",
+                "-o",
+                "${workspaceFolder}/amazonok",
                 "${workspaceFolder}/sources/*.cpp"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "clean",
+            "type": "shell",
             "command": "rm",
             "args": [
                 "${workspaceFolder}/amazonok"

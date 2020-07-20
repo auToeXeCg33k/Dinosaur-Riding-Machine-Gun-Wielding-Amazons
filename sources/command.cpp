@@ -70,10 +70,10 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 		Point target(stoi(v.at(1)) - 1, stoi(v.at(2)) - 1);
 		Point current(map.find(data.CurrentPlayer().selected()));
 
-		if (target.x < 0 || target.y < 0 || target.x >= map.size() || target.y >= map.size())
+		if (target.x() < 0 || target.y() < 0 || target.x() >= map.size() || target.y() >= map.size())
 			return "Target tile does not exist.\n";
 
-		if (current.x + 1 < target.x || current.x - 1 > target.x || current.y + 1 < target.y || current.y - 1 > target.y)
+		if (current.x() + 1 < target.x() || current.x() - 1 > target.x() || current.y() + 1 < target.y() || current.y() - 1 > target.y())
 			return "Target tile is too far.\n";
 
 		if (current == target)
@@ -162,20 +162,20 @@ string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) n
 	string temp;
 
 	for (const auto& offset : offsets)
-		if (p.x + offset.x >= 0 && p.x + offset.x < map.size() && p.y + offset.y >= 0 && p.y + offset.y < map.size())
+		if (p.x() + offset.x() >= 0 && p.x() + offset.x() < map.size() && p.y() + offset.y() >= 0 && p.y() + offset.y() < map.size())
 		{
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).AmazonContainer())
+			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->name() + ", ");
 
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).DinoContainer())
+			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).DinoContainer())
 				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
-			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
+			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).ItemContainer())
 				for (const auto& y : x.second)
 					temp.append(y->name() + ", ");
 
-			if (map.tile(Point(p.x + offset.x, p.y + offset.y)).braindrainer())
+			if (map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).braindrainer())
 				temp.append("BRAINDRAINER, ");
 
 			if (temp.empty())
@@ -359,29 +359,34 @@ string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 		for (int j = 0; j < map.size(); j++)
 			if (map.tile(Point(j, i)).braindrainer())
 				drainers.emplace_back(make_pair(Point(j, i), map.tile(Point(j, i)).remove()));
-				
+
+	vector<Point> offsets;
+	offsets.reserve(9);
 
 	random_device rd;
 	mt19937_64 mt(rd());
-	uniform_int_distribution<> dist(0, 2);
 
 	for (auto& pair : drainers)
 	{
-		int x(dist(mt) - 1), y(dist(mt) - 1);
-
-		while (true)
+		offsets.clear();
+		
+		for (int i = -1; i != 2; i++)
+			for (int j = -1; j != 2; j++)
+				offsets.emplace_back(Point(i, j));
+		
+		while(true)
 		{
-			while (x + pair.first.x < 0 || x + pair.first.x >= map.size())
-				x = dist(mt) - 1;
+			uniform_int_distribution<> dist(0, offsets.size() - 1);
+			int rnd(dist(mt));
 
-			while (y + pair.first.y < 0 || y + pair.first.y >= map.size())
-				y = dist(mt) - 1;
-
-			if (!map.tile(Point(x + pair.first.x, y + pair.first.y)).braindrainer())
+			if (pair.first.x() + offsets.at(rnd).x() >= 0 && pair.first.x() + offsets.at(rnd).x() < map.size() && pair.first.y() + offsets.at(rnd).y() >= 0 && pair.first.y() + offsets.at(rnd).y() < map.size() && !map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer())
+			{
+				map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).add(move(pair.second));
 				break;
-		}
+			}
 
-		map.tile(Point(x + pair.first.x, y + pair.first.y)).add(move(pair.second));
+			offsets.erase(offsets.begin() + rnd);
+		}
 	}
 
 	return "\n### END OF TURN ###\n";

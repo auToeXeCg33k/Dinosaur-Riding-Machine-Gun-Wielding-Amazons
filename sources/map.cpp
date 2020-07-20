@@ -37,6 +37,12 @@ Map::Map(const int i) noexcept
 		while (!tiles.at(4 - dist2(mt)).at(dist1(mt)).spawnItem("shotgun"));
 		while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnItem("katana"));
 		while (!tiles.at(2).at(dist1(mt)).spawnItem("minigun"));
+
+		uniform_int_distribution<> dist3(0,2);
+
+		for (int i = 0; i < 2; i++)
+			while (!tiles.at(3 - dist3(mt)).at(dist1(mt)).spawnDrainer());
+
 		return;
 	}
 }

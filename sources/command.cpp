@@ -1,7 +1,7 @@
 #include "command.h"
 #include <stdexcept>
-#include <array>
 #include <cmath>
+#include <random>
 
 using namespace std;
 
@@ -84,7 +84,20 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 
 		data.CurrentPlayer().action();
 
-		return data.CurrentPlayer().selected()->name() + " moved to " + v.at(1) + ";" + v.at(2) + ".\n";
+		string ret(data.CurrentPlayer().selected()->name() + " moved to " + v.at(1) + ";" + v.at(2) + ".\n");
+
+		if (map.tile(target).braindrainer())
+		{
+			ret.append(map.tile(target).braindrainer()->attack(*data.CurrentPlayer().selected()));
+
+			if (data.CurrentPlayer().selected()->riding() && !data.CurrentPlayer().selected()->dino()->health())
+				map.tile(target).add(move(data.CurrentPlayer().selected()->riding()));
+
+			else if(!data.CurrentPlayer().selected()->health())
+				data.CurrentPlayer().decAlive();
+		}
+
+		return ret;
 	}
 
 	catch (invalid_argument&)
@@ -161,6 +174,9 @@ string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) n
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
 				for (const auto& y : x.second)
 					temp.append(y->name() + ", ");
+
+			if (map.tile(Point(p.x + offset.x, p.y + offset.y)).braindrainer())
+				temp.append("BRAINDRAINER, ");
 
 			if (temp.empty())
 				ret.append(offset.adj + " tile empty.\n");
@@ -333,9 +349,40 @@ string commands::Equip(const vector<string>& v, Map& map, GameData& data) noexce
 string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
-		return "Ivalid arguments.\n";
+		return "Invalid arguments.\n";
 
 	data.turn();
+
+	vector<pair<Point, unique_ptr<BrainDrainer>>> drainers;
+
+	for (int i = 0; i < map.size(); i++)
+		for (int j = 0; j < map.size(); j++)
+			if (map.tile(Point(j, i)).braindrainer())
+				drainers.emplace_back(make_pair(Point(j, i), map.tile(Point(j, i)).remove()));
+				
+
+	random_device rd;
+	mt19937_64 mt(rd());
+	uniform_int_distribution<> dist(0, 2);
+
+	for (auto& pair : drainers)
+	{
+		int x(dist(mt) - 1), y(dist(mt) - 1);
+
+		while (true)
+		{
+			while (x + pair.first.x < 0 || x + pair.first.x >= map.size())
+				x = dist(mt) - 1;
+
+			while (y + pair.first.y < 0 || y + pair.first.y >= map.size())
+				y = dist(mt) - 1;
+
+			if (!map.tile(Point(x + pair.first.x, y + pair.first.y)).braindrainer())
+				break;
+		}
+
+		map.tile(Point(x + pair.first.x, y + pair.first.y)).add(move(pair.second));
+	}
 
 	return "\n### END OF TURN ###\n";
 }
@@ -344,7 +391,7 @@ string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 string commands::Tame(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
-		return "Ivalid arguments.\n";
+		return "Invalid arguments.\n";
 
 	if (data.CurrentPlayer().actions() == data.MaxActions())
 		return "Maximum number of actions reached.\n";

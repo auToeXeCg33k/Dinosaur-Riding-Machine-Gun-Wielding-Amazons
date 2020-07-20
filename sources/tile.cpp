@@ -29,6 +29,12 @@ void Tile::add(unique_ptr<Item>&& item) noexcept
 }
 
 
+void Tile::add(unique_ptr<BrainDrainer>&& drainer) noexcept
+{
+	this->drainer = move(drainer);
+}
+
+
 void Tile::remove(Amazon* amazon) noexcept
 {
 	amazons.erase(amazon);
@@ -59,23 +65,9 @@ unique_ptr<Item> Tile::remove(string_view name) noexcept
 }
 
 
-bool Tile::spawnDino() noexcept
+unique_ptr<BrainDrainer> Tile::remove() noexcept
 {
-	if (dinos.size())
-		return false;
-
-	dinos.emplace_back(make_unique<Dino>());
-	return true;
-}
-
-
-bool Tile::spawnItem(string_view name) noexcept
-{
-	if (items.at(ItemFactory::lookUp(name)).size())
-		return false;
-
-	items.at(ItemFactory::lookUp(name)).emplace_back(ItemFactory::createItem(name));
-	return true;
+	return move(drainer);
 }
 
 
@@ -103,6 +95,42 @@ bool Tile::has(string_view name) const noexcept
 }
 
 
+bool Tile::has() const noexcept
+{
+	return drainer.get();
+}
+
+
+bool Tile::spawnDino() noexcept
+{
+	if (dinos.size())
+		return false;
+
+	dinos.emplace_back(make_unique<Dino>());
+	return true;
+}
+
+
+bool Tile::spawnItem(string_view name) noexcept
+{
+	if (items.at(ItemFactory::lookUp(name)).size())
+		return false;
+
+	items.at(ItemFactory::lookUp(name)).emplace_back(ItemFactory::createItem(name));
+	return true;
+}
+
+
+bool Tile::spawnDrainer() noexcept
+{
+	if (drainer)
+		return false;
+
+	drainer = make_unique<BrainDrainer>();
+	return true;
+}
+
+
 const unordered_set<Amazon*>& Tile::AmazonContainer() const noexcept
 {
 	return amazons;
@@ -118,4 +146,10 @@ const vector<unique_ptr<Dino>>& Tile::DinoContainer() const noexcept
 const unordered_map<ItemType, vector<unique_ptr<Item>>>& Tile::ItemContainer() const noexcept
 {
 	return items;
+}
+
+
+BrainDrainer* Tile::braindrainer() const noexcept
+{
+	return drainer.get();
 }

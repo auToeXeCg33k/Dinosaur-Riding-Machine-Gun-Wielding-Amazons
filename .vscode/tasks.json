@@ -13,7 +13,7 @@
                 "-I${workspaceFolder}/headers",
                 "-o",
                 "${workspaceFolder}/amazonok",
-                "${workspaceFolder}/sources/*.cpp"
+                "${workspaceFolder}/src/*.cpp"
             ],
             "problemMatcher": [],
             "group": {

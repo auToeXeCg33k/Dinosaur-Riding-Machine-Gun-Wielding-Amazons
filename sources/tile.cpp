@@ -11,7 +11,7 @@ Tile::Tile() noexcept
 Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), items(move(other.items)) {}
 
 
-void Tile::add(Amazon* amazon) noexcept
+void Tile::add(Amazon* const amazon) noexcept
 {
 	amazons.insert(amazon);
 }
@@ -35,7 +35,7 @@ void Tile::add(unique_ptr<BrainDrainer>&& drainer) noexcept
 }
 
 
-void Tile::remove(Amazon* amazon) noexcept
+void Tile::remove(Amazon* const amazon) noexcept
 {
 	amazons.erase(amazon);
 }

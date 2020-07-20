@@ -16,12 +16,12 @@ public:
 	Tile(const Tile& other) noexcept = delete;
 	Tile(Tile&& other) noexcept;
 
-	void add(Amazon* amazon) noexcept;
+	void add(Amazon* const amazon) noexcept;
 	void add(std::unique_ptr<Item>&& item) noexcept;
 	void add(std::unique_ptr<Dino>&& dino) noexcept;
 	void add(std::unique_ptr<BrainDrainer>&& drainer) noexcept;
 
-	void remove(Amazon* amazon) noexcept;
+	void remove(Amazon* const amazon) noexcept;
 	std::unique_ptr<Dino> remove(Dino* dino) noexcept;
 	std::unique_ptr<Item> remove(std::string_view name) noexcept;
 	std::unique_ptr<BrainDrainer> remove() noexcept;

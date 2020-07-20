@@ -4,19 +4,25 @@
 using namespace std;
 
 
-Item::Item(std::string_view name) : name(name) {}
+Item::Item(std::string_view name) noexcept : sName(name) {}
 
 
-const std::string& Item::get_name()
+Item::Item(Item&& other) noexcept : sName(move(other.sName)) {}
+
+
+const std::string& Item::name() const noexcept
 {
-	return name;
+	return sName;
 }
 
 
-Gun::Gun(string_view name, const double min, const double max, const int rate) : Item(name), min(min), max(max), rate(rate) {}
+Gun::Gun(string_view name, const double min, const double max, const int rate) noexcept : Item(name), min(min), max(max), rate(rate) {}
 
 
-double Gun::get_dmg()
+Gun::Gun(Gun&& other) noexcept : Item(move(other)), min(move(other.min)), max(move(other.max)), rate(move(other.rate)) {}
+
+
+double Gun::dmg() const noexcept
 {
 	random_device rd;
 	mt19937_64 mt(rd());
@@ -43,7 +49,7 @@ const unordered_map<ItemType, int> ItemFactory::typeLimits
 };
 
 
-ItemType ItemFactory::lookUp(string_view name)
+ItemType ItemFactory::lookUp(string_view name) noexcept
 {
 	for (auto x : types)
 		for (auto y : x.second)
@@ -52,7 +58,7 @@ ItemType ItemFactory::lookUp(string_view name)
 }
 
 
-bool ItemFactory::isValid(string_view name)
+bool ItemFactory::isValid(string_view name) noexcept
 {
 	for (auto x : types)
 		for (auto y : x.second)
@@ -62,13 +68,13 @@ bool ItemFactory::isValid(string_view name)
 }
 
 
-int ItemFactory::typeLimit(const ItemType type)
+int ItemFactory::typeLimit(const ItemType type) noexcept
 {
 	return typeLimits.at(type);
 }
 
 
-unique_ptr<Item> ItemFactory::CreateItem(string_view name)
+unique_ptr<Item> ItemFactory::createItem(string_view name) noexcept
 {
 	if (name == "pistol")
 		return make_unique<Gun>("pistol", 15.0, 20.0, 2);

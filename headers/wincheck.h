@@ -2,4 +2,4 @@
 #include "gamedata.h"
 
 
-char CheckWin(GameData& data);
+char CheckWin(GameData& data) noexcept;

@@ -12,13 +12,26 @@ private:
 	int nAlive;
 
 public:
-	Player(std::string_view name);
-	const std::string& name();
-	int& actions();
-	int& alive();
-	int spawns();
-	bool ExistsAmazon(const std::string& name);
-	void CreateAmazon(std::string_view name);
-	Amazon& GetAmazon(const std::string& name);
-	Amazon*& selected();
+	Player(std::string_view name) noexcept;
+	Player(const Player& other) noexcept = delete;
+	Player(Player&& other) noexcept;
+
+	const std::string& name() const noexcept;
+
+	int actions() const noexcept;
+	void action() noexcept;
+	void resetActions() noexcept;
+
+	int alive() const noexcept;
+	void incAlive() noexcept;
+	void decAlive() noexcept;
+	
+	int spawns() const noexcept;
+
+	bool existsAmazon(std::string_view name) const noexcept;
+	void createAmazon(std::string_view name) noexcept;
+	Amazon& getAmazon(std::string_view name) const noexcept;
+
+	Amazon* selected() const noexcept;
+	void selected(Amazon* const amazon) noexcept;
 };

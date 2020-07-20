@@ -14,7 +14,7 @@ int main()
 	GameData data(gameMode);
 	Map map(gameMode);
 
-	cout << "\nMap size is " << map.get_size() << "x" << map.get_size() << ".\n"
+	cout << "\nMap size is " << map.size() << "x" << map.size() << ".\n"
 		"The maximum number of actions per turn is " << data.MaxActions() << ".\n"
 		"The maximum number of spawns is " << data.MaxSpawns() << ".\n"
 		"The maximum number of living amazons is " << data.MaxAlive() << ".\n\n";

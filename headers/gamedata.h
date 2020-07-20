@@ -13,11 +13,16 @@ private:
 	const int nMaxAlive;
 
 public:
-	GameData(int i);
-	Player& CurrentPlayer();
-	Player& OtherPlayer();
-	int MaxActions();
-	int MaxSpawns();
-	int MaxAlive();
-	void turn();
+	GameData(int i) noexcept;
+	GameData(const GameData& other) noexcept = delete;
+	GameData(GameData&& other) noexcept;
+
+	Player& CurrentPlayer() noexcept;
+	Player& OtherPlayer() noexcept;
+
+	int MaxActions() const noexcept;
+	int MaxSpawns() const noexcept;
+	int MaxAlive() const noexcept;
+	
+	void turn() noexcept;
 };

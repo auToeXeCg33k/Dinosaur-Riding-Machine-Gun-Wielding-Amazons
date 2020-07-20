@@ -4,12 +4,12 @@
 using namespace std;
 
 
-Map::Map(const int i)
+Map::Map(const int i) noexcept
 {
 	switch (i)
 	{
 	case 1:
-		size = 5;
+		sz = 5;
 		for (int i = 0; i < 5; i++)
 		{
 			tiles.emplace_back();
@@ -42,28 +42,25 @@ Map::Map(const int i)
 }
 
 
-Tile& Map::tile(const char y, const char x)
-{
-	return tiles.at(y).at(x);
-}
+Map::Map(Map&& other) noexcept : tiles(move(other.tiles)), sz(move(other.sz)) {}
 
 
-Tile& Map::tile(const Point p)
+Tile& Map::tile(const Point p) noexcept
 {
 	return tiles.at(p.y).at(p.x);
 }
 
 
-int Map::get_size()
+int Map::size() const noexcept
 {
-	return size;
+	return sz;
 }
 
 
-Point Map::location(Amazon* amazon)
+Point Map::find(Amazon* amazon) const noexcept
 {
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			if (tiles.at(i).at(j).is_here(amazon))
+	for (int i = 0; i < sz; i++)
+		for (int j = 0; j < sz; j++)
+			if (tiles.at(i).at(j).has(amazon))
 				return Point(j, i);
 }

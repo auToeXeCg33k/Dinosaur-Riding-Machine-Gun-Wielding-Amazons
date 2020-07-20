@@ -6,10 +6,7 @@
 using namespace std;
 
 
-Command::~Command() {}
-
-
-string New::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::New(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -23,38 +20,38 @@ string New::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 	if (data.CurrentPlayer().alive() == data.MaxAlive())
 		return "Maximum number of living amazons reached.\n";
 
-	if (data.CurrentPlayer().ExistsAmazon(v[1]))
+	if (data.CurrentPlayer().existsAmazon(v[1]))
 		return v[1] + " already exists.\n";
 
-	data.CurrentPlayer().CreateAmazon(v[1]);
+	data.CurrentPlayer().createAmazon(v[1]);
 
-	map.tile(0, 0).add(&data.CurrentPlayer().GetAmazon(v[1]));
+	map.tile(Point(0,0)).add(&data.CurrentPlayer().getAmazon(v[1]));
 
-	data.CurrentPlayer().alive()++;
-	data.CurrentPlayer().actions()++;
+	data.CurrentPlayer().incAlive();
+	data.CurrentPlayer().action();
 
 	return v[1] + " created.\n";
 }
 
 
-string Select::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Select(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
 
-	if (!data.CurrentPlayer().ExistsAmazon(v[1]))
+	if (!data.CurrentPlayer().existsAmazon(v[1]))
 		return v[1] + " does not exist.\n";
 
-	if (data.CurrentPlayer().selected() && data.CurrentPlayer().selected()->get_name() == v[1])
+	if (data.CurrentPlayer().selected() && data.CurrentPlayer().selected()->name() == v[1])
 		return v[1] + " is already selected.\n";
 
-	data.CurrentPlayer().selected() = &data.CurrentPlayer().GetAmazon(v[1]);
+	data.CurrentPlayer().selected(&data.CurrentPlayer().getAmazon(v[1]));
 
 	return v[1] + " selected.\n";
 }
 
 
-string Move::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 3)
 		return "Invalid arguments.\n";
@@ -65,16 +62,16 @@ string Move::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	try
 	{
 		int x = stoi(v[1]) - 1;
 		int y = stoi(v[2]) - 1;
-		Point p = map.location(data.CurrentPlayer().selected());
+		Point p = map.find(data.CurrentPlayer().selected());
 
-		if (x < 0 || y < 0 || x >= map.get_size() || y >= map.get_size())
+		if (x < 0 || y < 0 || x >= map.size() || y >= map.size())
 			return "Target tile does not exist.\n";
 
 		if (p.x + 1 < x || p.x - 1 > x || p.y + 1 < y || p.y - 1 > y)
@@ -83,12 +80,12 @@ string Move::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 		if (p.x == x && p.y == y)
 			return "Target tile matches the current one.\n";
 
-		map.tile(p.y, p.x).remove(data.CurrentPlayer().selected());
-		map.tile(y, x).add(data.CurrentPlayer().selected());
+		map.tile(p).remove(data.CurrentPlayer().selected());
+		map.tile(Point(y, x)).add(data.CurrentPlayer().selected());
 
-		data.CurrentPlayer().actions()++;
+		data.CurrentPlayer().action();
 
-		return data.CurrentPlayer().selected()->get_name() + " moved to " + v[1] + ";" + v[2] + ".\n";
+		return data.CurrentPlayer().selected()->name() + " moved to " + v[1] + ";" + v[2] + ".\n";
 	}
 
 	catch (invalid_argument&)
@@ -98,7 +95,7 @@ string Move::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 }
 
 
-string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	return "Available commands:\n"
 		"\"new <name>\"\n"
@@ -118,7 +115,7 @@ string Help::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 }
 
 
-string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -126,8 +123,8 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	static const struct Offset : public Point
 	{
@@ -148,23 +145,23 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 		{-1, 1, "Northwestern", "North West"}
 	};
 
-	Point p(map.location(data.CurrentPlayer().selected()));
+	Point p(map.find(data.CurrentPlayer().selected()));
 	string ret;
 	string temp;
 
 	for (const auto& offset : offsets)
-		if (p.x + offset.x >= 0 && p.x + offset.x < map.get_size() && p.y + offset.y >= 0 && p.y + offset.y < map.get_size())
+		if (p.x + offset.x >= 0 && p.x + offset.x < map.size() && p.y + offset.y >= 0 && p.y + offset.y < map.size())
 		{
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
-					temp.append(x->get_name() + ", ");
+					temp.append(x->name() + ", ");
 
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).DinoContainer())
-				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->get_hp()))) + " HP), ");
+				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
 			for (const auto& x : map.tile(Point(p.x + offset.x, p.y + offset.y)).ItemContainer())
 				for (const auto& y : x.second)
-					temp.append(y->get_name() + ", ");
+					temp.append(y->name() + ", ");
 
 			if (temp.empty())
 				ret.append(offset.adj + " tile empty.\n");
@@ -180,7 +177,7 @@ string Lookaround::exec(const vector<string>& v, Map& map, GameData& data) const
 }
 
 
-string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Attack(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -191,35 +188,35 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	if (!data.CurrentPlayer().selected()->hand())
-		return data.CurrentPlayer().selected()->get_name() + " is not holding any weapon.\n";
+		return data.CurrentPlayer().selected()->name() + " is not holding any weapon.\n";
 
-	if (!data.OtherPlayer().ExistsAmazon(v[1]))
+	if (!data.OtherPlayer().existsAmazon(v[1]))
 		return "Enemy " + v[1] + " does not exist.\n";
 
-	if (map.location(data.CurrentPlayer().selected()) != map.location(&data.OtherPlayer().GetAmazon(v[1])))
+	if (map.find(data.CurrentPlayer().selected()) != map.find(&data.OtherPlayer().getAmazon(v[1])))
 		return v[1] + " is out of range.\n";
 
-	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() == 0.0)
+	if (data.OtherPlayer().getAmazon(v[1]).health() == 0.0)
 		return v[1] + " is already dead.\n";
 
-	double dmg = data.CurrentPlayer().selected()->hand()->get_dmg();
+	double dmg = data.CurrentPlayer().selected()->hand()->dmg();
 
-	data.CurrentPlayer().actions()++;
+	data.CurrentPlayer().action();
 
-	if (data.OtherPlayer().GetAmazon(v[1]).GetRiding())
+	if (data.OtherPlayer().getAmazon(v[1]).riding())
 	{
-		if (data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() - dmg < 0.0)
-			data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() = 0.0;
+		if (data.OtherPlayer().getAmazon(v[1]).dino()->health() - dmg < 0.0)
+			data.OtherPlayer().getAmazon(v[1]).dino()->health(0.0);
 		else
-			data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() -= dmg;
+			data.OtherPlayer().getAmazon(v[1]).dino()->health(data.OtherPlayer().getAmazon(v[1]).dino()->health() - dmg);
 
-		if (data.OtherPlayer().GetAmazon(v[1]).GetDino()->get_hp() == 0.0)
+		if (data.OtherPlayer().getAmazon(v[1]).dino()->health() == 0.0)
 		{
-			map.tile(map.location(&data.OtherPlayer().GetAmazon(v[1]))).add(move(data.OtherPlayer().GetAmazon(v[1]).GetRiding()));
+			map.tile(map.find(&data.OtherPlayer().getAmazon(v[1]))).add(move(data.OtherPlayer().getAmazon(v[1]).riding()));
 			return v[1] + "'s dino died.\n";
 		}
 
@@ -228,14 +225,14 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 		
 		
 
-	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() - dmg < 0.0)
-		data.OtherPlayer().GetAmazon(v[1]).get_hp() = 0.0;
+	if (data.OtherPlayer().getAmazon(v[1]).health() - dmg < 0.0)
+		data.OtherPlayer().getAmazon(v[1]).health(0.0);
 	else
-		data.OtherPlayer().GetAmazon(v[1]).get_hp() -= dmg;
+		data.OtherPlayer().getAmazon(v[1]).health(data.OtherPlayer().getAmazon(v[1]).health() - dmg);
 
-	if (data.OtherPlayer().GetAmazon(v[1]).get_hp() == 0.0)
+	if (data.OtherPlayer().getAmazon(v[1]).health() == 0.0)
 	{
-		data.OtherPlayer().alive()--;
+		data.OtherPlayer().decAlive();
 		return v[1] + " died.\n";
 	}
 
@@ -243,7 +240,7 @@ string Attack::exec(const vector<string>& v, Map& map, GameData& data) const noe
 }
 
 
-string Pickup::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Pickup(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -254,29 +251,29 @@ string Pickup::exec(const vector<string>& v, Map& map, GameData& data) const noe
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	if (!ItemFactory::isValid(v[1]))
 		return "Invalid item type.\n";
 
-	Point p = map.location(data.CurrentPlayer().selected());
+	Point p = map.find(data.CurrentPlayer().selected());
 
-	if (!map.tile(p.y, p.x).has(v[1]))
+	if (!map.tile(p).has(v[1]))
 		return v[1] + " cannot be found on the current tile.\n";
 
 	if (!data.CurrentPlayer().selected()->hasFreeSlot(ItemFactory::lookUp(v[1])))
-		return "Can't pick up " + v[1] + ". " + data.CurrentPlayer().selected()->get_name() + "'s inventory is full.\n";
+		return "Can't pick up " + v[1] + ". " + data.CurrentPlayer().selected()->name() + "'s inventory is full.\n";
 
-	data.CurrentPlayer().selected()->take(map.tile(p.y, p.x).remove(v[1]));
+	data.CurrentPlayer().selected()->take(map.tile(p).remove(v[1]));
 
-	data.CurrentPlayer().actions()++;
+	data.CurrentPlayer().action();
 
 	return "Picked up " + v[1] + ".\n";
 }
 
 
-string Drop::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Drop(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -287,31 +284,31 @@ string Drop::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	if (!ItemFactory::isValid(v[1]))
 		return "Invalid item type.\n";
 
 	if (!data.CurrentPlayer().selected()->hasItem(v[1]))
-		return v[1] + " cannot be found in " + data.CurrentPlayer().selected()->get_name() + "'s inventory.\n";
+		return v[1] + " cannot be found in " + data.CurrentPlayer().selected()->name() + "'s inventory.\n";
 
-	Point p = map.location(data.CurrentPlayer().selected());
+	Point p = map.find(data.CurrentPlayer().selected());
 
-	unique_ptr<Item> item(data.CurrentPlayer().selected()->remove(v[1]));
+	unique_ptr<Item> item(data.CurrentPlayer().selected()->drop(v[1]));
 
 	if (item.get() == data.CurrentPlayer().selected()->hand())
-		data.CurrentPlayer().selected()->hand() = nullptr;
+		data.CurrentPlayer().selected()->hand(nullptr);
 
-	map.tile(p.y, p.x).add(move(item));
+	map.tile(p).add(move(item));
 
-	data.CurrentPlayer().actions()++;
+	data.CurrentPlayer().action();
 
 	return v[1] + " dropped.\n";
 }
 
 
-string Equip::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Equip(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -319,22 +316,22 @@ string Equip::exec(const vector<string>& v, Map& map, GameData& data) const noex
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
 	if (!ItemFactory::isValid(v[1]) || ItemFactory::lookUp(v[1]) != ItemType::gun)
 		return "Invalid weapon type.\n";
 
 	if (!data.CurrentPlayer().selected()->hasItem(v[1]))
-		return v[1] + " cannot be found in " + data.CurrentPlayer().selected()->get_name() + "'s inventory.\n";
+		return v[1] + " cannot be found in " + data.CurrentPlayer().selected()->name() + "'s inventory.\n";
 
-	data.CurrentPlayer().selected()->hand() = static_cast<Gun*>(data.CurrentPlayer().selected()->item(v[1]));
+	data.CurrentPlayer().selected()->hand(static_cast<Gun*>(data.CurrentPlayer().selected()->item(v[1])));
 
 	return v[1] + " equipped.\n";
 }
 
 
-string End::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
 		return "Ivalid arguments.\n";
@@ -345,7 +342,7 @@ string End::exec(const vector<string>& v, Map& map, GameData& data) const noexce
 }
 
 
-string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Tame(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
 		return "Ivalid arguments.\n";
@@ -356,13 +353,13 @@ string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (data.CurrentPlayer().selected()->GetDino())
-		return data.CurrentPlayer().selected()->get_name() + " already has a dino.\n";
+	if (data.CurrentPlayer().selected()->dino())
+		return data.CurrentPlayer().selected()->name() + " already has a dino.\n";
 
-	const auto& dinos(map.tile(map.location(data.CurrentPlayer().selected())).DinoContainer());
+	const auto& dinos(map.tile(map.find(data.CurrentPlayer().selected())).DinoContainer());
 
 	if (dinos.empty())
 		return "There are no dinos nearby.\n";
@@ -370,20 +367,20 @@ string Tame::exec(const vector<string>& v, Map& map, GameData& data) const noexc
 	Dino* temp(dinos.front().get());
 
 	for (const auto& x : dinos)
-		if (x->get_hp() >= temp->get_hp() && !x->tamed())
+		if (x->health() >= temp->health() && !x->tamed())
 			temp = x.get();
 
 	if (temp->tamed())
 		return "There are no free dinos nearby.\n";
 
-	data.CurrentPlayer().selected()->GetDino() = temp;
-	temp->tamed() = !temp->tamed();
+	data.CurrentPlayer().selected()->dino(temp);
+	temp->tamed(!temp->tamed());
 
-	return "Dino (" + to_string(static_cast<int>(round(temp->get_hp()))) + " HP) tamed.\n";
+	return "Dino (" + to_string(static_cast<int>(round(temp->health()))) + " HP) tamed.\n";
 }
 
 
-string Geton::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Geton(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -391,29 +388,29 @@ string Geton::exec(const vector<string>& v, Map& map, GameData& data) const noex
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (!data.CurrentPlayer().selected()->GetDino())
-		return data.CurrentPlayer().selected()->get_name() + " does not have a dino. Tame one first!\n";
+	if (!data.CurrentPlayer().selected()->dino())
+		return data.CurrentPlayer().selected()->name() + " does not have a dino. Tame one first!\n";
 
-	if (data.CurrentPlayer().selected()->GetRiding())
-		return data.CurrentPlayer().selected()->get_name() + " is already riding their dino.\n";
+	if (data.CurrentPlayer().selected()->riding())
+		return data.CurrentPlayer().selected()->name() + " is already riding their dino.\n";
 
-	const auto point(map.location(data.CurrentPlayer().selected()));
+	const auto point(map.find(data.CurrentPlayer().selected()));
 
-	if (!map.tile(point).is_here(data.CurrentPlayer().selected()->GetDino()))
-		return data.CurrentPlayer().selected()->get_name() + "'s dino is not nearby.\n";
+	if (!map.tile(point).has(data.CurrentPlayer().selected()->dino()))
+		return data.CurrentPlayer().selected()->name() + "'s dino is not nearby.\n";
 
-	if (data.CurrentPlayer().selected()->GetDino()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + "'s dino is dead.\n";
+	if (data.CurrentPlayer().selected()->dino()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + "'s dino is dead.\n";
 
-	data.CurrentPlayer().selected()->GetRiding() = map.tile(point).remove(data.CurrentPlayer().selected()->GetDino());
-	return data.CurrentPlayer().selected()->get_name() + " got on their dino.\n";
+	data.CurrentPlayer().selected()->riding(map.tile(point).remove(data.CurrentPlayer().selected()->dino()));
+	return data.CurrentPlayer().selected()->name() + " got on their dino.\n";
 }
 
 
-string Getoff::exec(const vector<string>& v, Map& map, GameData& data) const noexcept
+string commands::Getoff(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -421,16 +418,16 @@ string Getoff::exec(const vector<string>& v, Map& map, GameData& data) const noe
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 	
-	if (data.CurrentPlayer().selected()->get_hp() == 0.0)
-		return data.CurrentPlayer().selected()->get_name() + " is dead.\n";
+	if (data.CurrentPlayer().selected()->health() == 0.0)
+		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (!data.CurrentPlayer().selected()->GetDino())
-		return data.CurrentPlayer().selected()->get_name() + " does not have a dino. Tame one first!\n";
+	if (!data.CurrentPlayer().selected()->dino())
+		return data.CurrentPlayer().selected()->name() + " does not have a dino. Tame one first!\n";
 
-	if (!data.CurrentPlayer().selected()->GetRiding())
-		return data.CurrentPlayer().selected()->get_name() + " is currently not riding their dino.\n";
+	if (!data.CurrentPlayer().selected()->riding())
+		return data.CurrentPlayer().selected()->name() + " is currently not riding their dino.\n";
 
-	map.tile(map.location(data.CurrentPlayer().selected())).add(move(data.CurrentPlayer().selected()->GetRiding()));
+	map.tile(map.find(data.CurrentPlayer().selected())).add(move(data.CurrentPlayer().selected()->riding()));
 
-	return data.CurrentPlayer().selected()->get_name() + " got off their dino.\n";
+	return data.CurrentPlayer().selected()->name() + " got off their dino.\n";
 }

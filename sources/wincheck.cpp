@@ -3,7 +3,7 @@
 using namespace std;
 
 
-char CheckWin(GameData& data)
+char CheckWin(GameData& data) noexcept
 {
 	if (!data.CurrentPlayer().alive() && data.CurrentPlayer().spawns() == data.MaxSpawns())
 		return 1;

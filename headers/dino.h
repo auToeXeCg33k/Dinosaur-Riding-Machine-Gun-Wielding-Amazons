@@ -7,7 +7,13 @@ private:
 	bool bTamed;
 
 public:
-	Dino();
-	double& get_hp();
-	bool& tamed();
+	Dino() noexcept;
+	Dino(const Dino& other) noexcept = delete;
+	Dino(Dino&& other) noexcept;
+
+	double health() const noexcept;
+	void health(double const hp) noexcept;
+
+	bool tamed() const noexcept;
+	void tamed(bool const tmd) noexcept;
 };

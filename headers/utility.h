@@ -2,6 +2,6 @@
 #include <string>
 #include <vector>
 
-int ReadGameMode();
+int ReadGameMode() noexcept;
 
-void ProcessInput(std::string_view input, std::vector<std::string>& words);
+void ProcessInput(std::string_view input, std::vector<std::string>& words) noexcept;

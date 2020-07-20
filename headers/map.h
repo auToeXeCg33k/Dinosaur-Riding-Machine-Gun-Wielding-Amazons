@@ -6,12 +6,16 @@ class Map
 {
 private:
 	std::vector<std::vector<Tile>> tiles;
-	int size;
+	int sz;
 
 public:
-	Map(const int i);
-	Tile& tile(const char y, const char x);
-	Tile& tile(const Point p);
-	int get_size();
-	Point location(Amazon* amazon);
+	Map(const int i) noexcept;
+	Map(const Map& other) noexcept = delete;
+	Map(Map&&) noexcept;
+	
+	Tile& tile(const Point p) noexcept;
+
+	int size() const noexcept;
+
+	Point find(Amazon* const amazon) const noexcept;
 };

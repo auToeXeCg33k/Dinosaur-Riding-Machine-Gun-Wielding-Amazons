@@ -2,101 +2,21 @@
 #include "gamedata.h"
 #include "map.h"
 
-
-class Command
+namespace commands
 {
-public:
-	virtual std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept = 0;
-	virtual ~Command();
-};
-
-
-class New : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Select : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Move : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Help : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Lookaround : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Attack : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Pickup : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Drop : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Equip : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class End : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Tame : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Geton : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
-
-
-class Getoff : public Command
-{
-public:
-	std::string exec(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
-};
+	typedef std::string (*command)(const std::vector<std::string>&, Map&, GameData&);
+	
+	std::string New(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Select(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Move(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Help(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Lookaround(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Attack(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Pickup(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Drop(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Equip(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string End(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Tame(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Geton(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Getoff(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+}

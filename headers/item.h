@@ -8,12 +8,18 @@
 class Item
 {
 protected:
-	const std::string name;
-	Item(std::string_view name);
+	const std::string sName;
+
+	Item(std::string_view name) noexcept;
+	Item(const Item& other) noexcept = delete;
+	Item(Item&& other) noexcept;
 
 public:
-	const std::string& get_name();
+	const std::string& name() const noexcept;
 };
+
+
+/*######################################*/
 
 
 class Gun : public Item
@@ -24,12 +30,21 @@ private:
 	const char rate;
 
 public:
-	Gun(std::string_view name, const double min, const double max, const int rate);
-	double get_dmg();
+	Gun(std::string_view name, const double min, const double max, const int rate) noexcept;
+	Gun(const Gun& other) noexcept = delete;
+	Gun(Gun&& other) noexcept;
+
+	double dmg() const noexcept;
 };
 
 
+/*######################################*/
+
+
 enum class ItemType { gun };
+
+
+/*######################################*/
 
 
 class ItemFactory
@@ -39,8 +54,8 @@ private:
 	static const std::unordered_map<ItemType, int> typeLimits;
 
 public:
-	static ItemType lookUp(std::string_view name);
-	static bool isValid(std::string_view name);
-	static int typeLimit(const ItemType type);
-	static std::unique_ptr<Item> CreateItem(std::string_view name);
+	static ItemType lookUp(std::string_view name) noexcept;
+	static bool isValid(std::string_view name) noexcept;
+	static int typeLimit(const ItemType type) noexcept;
+	static std::unique_ptr<Item> createItem(std::string_view name) noexcept;
 };

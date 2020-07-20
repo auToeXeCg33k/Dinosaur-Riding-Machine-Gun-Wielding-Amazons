@@ -6,23 +6,37 @@
 class Amazon
 {
 private:
-	const std::string name;
+	const std::string sName;
 	double hp;
 	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inventory;
 	Gun* held;
-	Dino* dino;
-	std::unique_ptr<Dino> riding;
+	Dino* pDino;
+	std::unique_ptr<Dino> pRiding;
 
 public:
-	Amazon(std::string_view name);
-	bool hasFreeSlot(ItemType type);
-	bool hasItem(std::string_view name);
-	void take(std::unique_ptr<Item>&& item);
-	std::unique_ptr<Item> remove(std::string_view name);
-	Item* item(std::string_view name);
-	const std::string& get_name();
-	double& get_hp();
-	Gun*& hand();
-	Dino*& GetDino();
-	std::unique_ptr<Dino>& GetRiding();
+	Amazon(std::string_view name) noexcept;
+	Amazon(const Amazon& other) noexcept = delete;
+	Amazon(Amazon&& other) noexcept;
+
+	bool hasFreeSlot(const ItemType type) const noexcept;
+	bool hasItem(std::string_view name) const noexcept;
+
+	void take(std::unique_ptr<Item>&& item) noexcept;
+	std::unique_ptr<Item> drop(std::string_view name) noexcept;
+	Item* item(std::string_view name) const noexcept;
+
+	const std::string& name() const noexcept;
+	
+	double health() const noexcept;
+	void health(double const hp) noexcept;
+
+	Gun* hand() const noexcept;
+	void hand(Gun* const item) noexcept;
+
+	Dino* dino() const noexcept;
+	void dino(Dino* const dino) noexcept;
+
+	std::unique_ptr<Dino>& riding() noexcept;
+	void riding(std::unique_ptr<Dino>&& dino) noexcept;
+
 };

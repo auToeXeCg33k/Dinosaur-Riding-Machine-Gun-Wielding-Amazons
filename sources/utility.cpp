@@ -5,7 +5,7 @@ using namespace std;
 
 
 
-int ReadGameMode()
+int ReadGameMode() noexcept
 {
 	cout << "Enter gamemode number: ";
 
@@ -37,7 +37,7 @@ int ReadGameMode()
 }
 
 
-void ProcessInput(string_view input, vector<string>& words)
+void ProcessInput(string_view input, vector<string>& words) noexcept
 {
 	string word;
 

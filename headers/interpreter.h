@@ -5,9 +5,12 @@
 class Interpreter
 {
 private:
-	std::unordered_map<std::string, const std::unique_ptr<const Command>> commands;
+	std::unordered_map<std::string, commands::command > commands;
 
 public:
-	Interpreter();
-	std::string interpret(const std::vector<std::string>& vec, Map& map, GameData& data) const noexcept;
+	Interpreter() noexcept;
+	Interpreter(const Interpreter& other) noexcept = delete;
+	Interpreter(Interpreter&& other) noexcept;
+
+	std::string interpret(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 };

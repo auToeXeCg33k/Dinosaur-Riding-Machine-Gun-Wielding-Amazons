@@ -69,7 +69,7 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 	{
 		int x = stoi(v[1]) - 1;
 		int y = stoi(v[2]) - 1;
-		Point p = map.find(data.CurrentPlayer().selected());
+		auto p = map.find(data.CurrentPlayer().selected());
 
 		if (x < 0 || y < 0 || x >= map.size() || y >= map.size())
 			return "Target tile does not exist.\n";
@@ -77,11 +77,11 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 		if (p.x + 1 < x || p.x - 1 > x || p.y + 1 < y || p.y - 1 > y)
 			return "Target tile is too far.\n";
 
-		if (p.x == x && p.y == y)
+		if (p == Point(x,y))
 			return "Target tile matches the current one.\n";
 
 		map.tile(p).remove(data.CurrentPlayer().selected());
-		map.tile(Point(y, x)).add(data.CurrentPlayer().selected());
+		map.tile(Point(x, y)).add(data.CurrentPlayer().selected());
 
 		data.CurrentPlayer().action();
 

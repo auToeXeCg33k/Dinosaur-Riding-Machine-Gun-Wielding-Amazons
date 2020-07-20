@@ -67,25 +67,24 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 
 	try
 	{
-		int x = stoi(v[1]) - 1;
-		int y = stoi(v[2]) - 1;
-		auto p = map.find(data.CurrentPlayer().selected());
+		Point target(stoi(v.at(1)) - 1, stoi(v.at(2)) - 1);
+		Point current(map.find(data.CurrentPlayer().selected()));
 
-		if (x < 0 || y < 0 || x >= map.size() || y >= map.size())
+		if (target.x < 0 || target.y < 0 || target.x >= map.size() || target.y >= map.size())
 			return "Target tile does not exist.\n";
 
-		if (p.x + 1 < x || p.x - 1 > x || p.y + 1 < y || p.y - 1 > y)
+		if (current.x + 1 < target.x || current.x - 1 > target.x || current.y + 1 < target.y || current.y - 1 > target.y)
 			return "Target tile is too far.\n";
 
-		if (p == Point(x,y))
+		if (current == target)
 			return "Target tile matches the current one.\n";
 
-		map.tile(p).remove(data.CurrentPlayer().selected());
-		map.tile(Point(x, y)).add(data.CurrentPlayer().selected());
+		map.tile(current).remove(data.CurrentPlayer().selected());
+		map.tile(target).add(data.CurrentPlayer().selected());
 
 		data.CurrentPlayer().action();
 
-		return data.CurrentPlayer().selected()->name() + " moved to " + v[1] + ";" + v[2] + ".\n";
+		return data.CurrentPlayer().selected()->name() + " moved to " + v.at(1) + ";" + v.at(2) + ".\n";
 	}
 
 	catch (invalid_argument&)

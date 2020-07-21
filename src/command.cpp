@@ -124,7 +124,7 @@ string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcep
 	"\n\n### Entities ###\n\n"
 	"Amazon: they have a max HP of 100, start without a dino and any items. Amazons can currently carry a maximum of 2 weapons at a time.\n"
 	"Dino: they also have a max HP of 100.\n"
-	"Braindrainer: they are unkillable, and deal a random amount of damage between 60 and 90. Every turn they either move to a surrounding tile, or stay where they are.\n"
+	"Braindrainer: they are unkillable, and deal a random amount of damage between 60 and 90. Every turn they either move to a surrounding tile, or stay where they are, and attack all amazons on their tile.\n"
 	"\n\n### Items ###\n\n"
 	"*Weapons*\n"
 	"Weapons deal a random amount of damage between a minimum, and a maximum value. They have a rate of fire. The total damage is the sum of rate of fire number of random damage values.\n"
@@ -392,6 +392,8 @@ string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 	random_device rd;
 	mt19937_64 mt(rd());
 
+	string ret;
+
 	for (auto& pair : drainers)
 	{
 		offsets.clear();
@@ -408,14 +410,17 @@ string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 			if (pair.first.x() + offsets.at(rnd).x() >= 0 && pair.first.x() + offsets.at(rnd).x() < map.size() && pair.first.y() + offsets.at(rnd).y() >= 0 && pair.first.y() + offsets.at(rnd).y() < map.size() && !map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer())
 			{
 				map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).add(move(pair.second));
+				for (auto& x : map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).AmazonContainer())
+					ret.append(map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer()->attack(*x));
 				break;
 			}
 
 			offsets.erase(offsets.begin() + rnd);
 		}
+
 	}
 
-	return "\n### END OF TURN ###\n";
+	return ret.append("\n### END OF TURN ###\n");
 }
 
 

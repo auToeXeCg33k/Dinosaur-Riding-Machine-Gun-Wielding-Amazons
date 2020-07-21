@@ -17,7 +17,8 @@ int main()
 	cout << "\nMap size is " << map.size() << "x" << map.size() << ".\n"
 		"The maximum number of actions per turn is " << data.MaxActions() << ".\n"
 		"The maximum number of spawns is " << data.MaxSpawns() << ".\n"
-		"The maximum number of living amazons is " << data.MaxAlive() << ".\n\n";
+		"The maximum number of living amazons is " << data.MaxAlive() << ".\n"
+		"To open the help menu, type \"help\"!\n" << endl;;
 
 	string input;
 	vector<string> words;

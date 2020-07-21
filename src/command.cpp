@@ -113,6 +113,7 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcept
 {
 	return "### About The Game ###\n\n"
+
 	"The game is turn and tile based, and played by 2 players.\n"
 	"Players create and control \"amazons\", who can tame \"dinos\", pick \"items\" up, and use them around the map.\n"
 	"There are multiple gamemodes (currently only 1 is implemented).\n"
@@ -120,36 +121,45 @@ string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcep
 	"Items and dinos spawn in random locations, their number and these locations also depend on the played gamemode.\n"
 	"Dinos can be tamed and ridden. This provides amazons with an additional layer of health, a shield, so to speak.\n"
 	"To attack, amazons need weapons. More on these later.\n"
-	"Players have common enemies: the braindrainers. The braindrainers attack anyone on their tiles. They move around and spawn randomly."
+	"Players have common enemies: the braindrainers. The braindrainers attack anyone on their tiles. They move around and spawn randomly.\n"
+
+
 	"\n\n### Entities ###\n\n"
-	"Amazon: they have a max HP of 100, start without a dino and any items. Amazons can currently carry a maximum of 2 weapons at a time.\n"
-	"Dino: they also have a max HP of 100.\n"
-	"Braindrainer: they are unkillable, and deal a random amount of damage between 60 and 90. Every turn they either move to a surrounding tile, or stay where they are, and attack all amazons on their tile.\n"
+
+	"	Amazon:			they have a max HP of 100, start without a dino and any items. Amazons can currently carry a maximum of 2 weapons at a time.\n"
+	"	Dino: 			they also have a max HP of 100.\n"
+	"	Braindrainer: 		they are unkillable, and deal a random amount of damage between 60 and 90. Every turn they either move to a surrounding tile, or stay where they are, and attack all amazons on their tile.\n"
+	
+
 	"\n\n### Items ###\n\n"
+
 	"*Weapons*\n"
-	"Weapons deal a random amount of damage between a minimum, and a maximum value. They have a rate of fire. The total damage is the sum of rate of fire number of random damage values.\n"
-	"Pistol: min damage: 15, max damage: 20, rate of fire: 2.\n"
-	"Shotgun: min damage: 50, max damage: 75, rate of fire: 1.\n"
-	"Katana: min damage: 20, max damage: 30, rate of fire: 3.\n"
-	"Minigun: min damage: 1.5, max damage: 5.0, rate of fire: 30.\n"
-	"Rocket Launcher: min damage: 90, max damage: 120, rate of fire: 1.\n"
+	"Weapons deal a random amount of damage between a minimum, and a maximum value. They have a rate of fire. The total damage is the sum of rate of fire number of random damage values.\n\n"
+	"	Pistol:			min damage: 15, max damage: 20, rate of fire: 2.\n\n"
+	"	Shotgun:		min damage: 50, max damage: 75, rate of fire: 1.\n\n"
+	"	Katana:			min damage: 20, max damage: 30, rate of fire: 3.\n\n"
+	"	Minigun:		min damage: 1.5, max damage: 5.0, rate of fire: 30.\n\n"
+	"	Rocket Launcher:	min damage: 90, max damage: 120, rate of fire: 1.\n"
+
+
 	"\n\n### Commands ### \n\n"
-	"new <name>: creates an amazon with the given name. The 2 players can have amazons with the same name. The starting player's amazons spawn in the bottom left, the other player's amazons spawn in the upper right corner of the map.\n"
-	"select <name>: selects a created amazon. Amazons have to be selected in order to command them.\n"
-	"move <x> <y>: moves the selected amazon to the given tile. Amazons can only move to surrounding tiles.\n"
-	"help: opens this menu.\n"
-	"attack <name>: the selected amazon attacks an enemy amazon with the given name. Only amazons on the same tile can attack each other. If the target is riding a dino, the dino is attacked.\n"
-	"lookaround: the selected amazon looks around and tells the player what it sees.\n"
-	"pickup <name>: the selected amazon picks up an item with the given name and puts it in their inventory. Only items on the selected amazon's tile can be picked up. In order to use a picked up item, it has to equipped first.\n"
-	"drop <name>: the selected amazon drops an item with the given name to the tile they are standing on. Prioritizes items not held by the amazon.\n"
-	"equip <name>: the selected amazon takes the item with the given name from their inventory into their hands.\n"
-	"end: players can end their turn with this command.\n"
-	"tame: the selected amazon tames the highest HP dino on their current tile. Amazons can only have one tamed dino at a time, and can only ride ones tamed by them.\n"
-	"geton: the selected amazon gets on their tamed dino. The dino and the amazon have to on the same tile. Only living dinos can be ridden.\n"
-	"getoff: the selected amazon gets off their tamed dino. If the tamed dino dies while their amazon is riding it, the amazon automatically gets off it.\n"
-	"list: lists the current player's amazons.\n"
-	"status: provides vital information about the selected amazon, such as health, location, items, dino status.\n"
-	"steps: provides information about the possible steps the current player can take at the time.\n";
+
+	"	new <name>:		creates an amazon with the given name. The 2 players can have amazons with the same name. The starting player's amazons spawn in the bottom left, the other player's amazons spawn in the upper right corner of the map.\n\n"
+	"	select <name>:		selects a created amazon. Amazons have to be selected in order to command them.\n\n"
+	"	move <x> <y>:		moves the selected amazon to the given tile. Amazons can only move to surrounding tiles.\n\n"
+	"	help:			opens this menu.\n\n"
+	"	attack <name>:		the selected amazon attacks an enemy amazon with the given name. Only amazons on the same tile can attack each other. If the target is riding a dino, the dino is attacked.\n\n"
+	"	lookaround:		the selected amazon looks around and tells the player what it sees.\n\n"
+	"	pickup <name>:		the selected amazon picks up an item with the given name and puts it in their inventory. Only items on the selected amazon's tile can be picked up. In order to use a picked up item, it has to equipped first.\n\n"
+	"	drop <name>:		the selected amazon drops an item with the given name to the tile they are standing on. Prioritizes items not held by the amazon.\n\n"
+	"	equip <name>:		the selected amazon takes the item with the given name from their inventory into their hands.\n\n"
+	"	end:			players can end their turn with this command.\n\n"
+	"	tame:			the selected amazon tames the highest HP dino on their current tile. Amazons can only have one tamed dino at a time, and can only ride ones tamed by them.\n\n"
+	"	geton:			the selected amazon gets on their tamed dino. The dino and the amazon have to on the same tile. Only living dinos can be ridden.\n\n"
+	"	getoff:			the selected amazon gets off their tamed dino. If the tamed dino dies while their amazon is riding it, the amazon automatically gets off it.\n\n"
+	"	list:			lists the current player's amazons.\n\n"
+	"	status:			provides vital information about the selected amazon, such as health, location, items, dino status.\n\n"
+	"	steps:			provides information about the possible steps the current player can take at the time.\n";
 }
 
 

@@ -10,11 +10,16 @@ private:
 	Amazon* pSelected;
 	int nActions;
 	int nAlive;
+	char nID;
+
+	static char nextID;
 
 public:
 	Player(std::string_view name) noexcept;
 	Player(const Player& other) noexcept = delete;
 	Player(Player&& other) noexcept;
+
+	~Player() noexcept;
 
 	const std::string& name() const noexcept;
 
@@ -31,6 +36,9 @@ public:
 	bool existsAmazon(std::string_view name) const noexcept;
 	void createAmazon(std::string_view name) noexcept;
 	Amazon& getAmazon(std::string_view name) const noexcept;
+	const std::unordered_map<std::string, std::unique_ptr<Amazon>>& amazons() const noexcept;
+
+	char id() const noexcept;
 
 	Amazon* selected() const noexcept;
 	void selected(Amazon* const amazon) noexcept;

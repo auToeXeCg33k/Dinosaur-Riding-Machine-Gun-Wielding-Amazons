@@ -25,7 +25,10 @@ string commands::New(const vector<string>& v, Map& map, GameData& data) noexcept
 
 	data.CurrentPlayer().createAmazon(v[1]);
 
-	map.tile(Point(0,0)).add(&data.CurrentPlayer().getAmazon(v[1]));
+	if (data.CurrentPlayer().id())
+		map.tile(Point(map.size() - 1, map.size() - 1)).add(&data.CurrentPlayer().getAmazon(v.at(1)));
+	else
+		map.tile(Point(0, 0)).add(&data.CurrentPlayer().getAmazon(v.at(1)));
 
 	data.CurrentPlayer().incAlive();
 	data.CurrentPlayer().action();
@@ -109,21 +112,44 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 
 string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcept
 {
-	return "Available commands:\n"
-		"\"new <name>\"\n"
-		"\"select <name>\"\n"
-		"\"move <x> <y>\"\n"
-		"\"lookaround\"\n"
-		"\"tame\"\n"
-		"\"geton\"\n"
-		"\"getoff\"\n"
-		"\"pickup <item>\"\n"
-		"\"drop <item>\"\n"
-		"\"equip <item>\"\n"
-		"\"attack <name>\"\n"
-		"\"help\"\n"
-		"\"end\"\n"
-		"\"exit\"\n";
+	return "### About The Game ###\n\n"
+	"The game is turn and tile based, and played by 2 players.\n"
+	"Players create and control \"amazons\", who can tame \"dinos\", pick \"items\" up, and use them around the map.\n"
+	"There are multiple gamemodes (currently only 1 is implemented).\n"
+	"A gamemode defines the size of the map, the maximum number of spawned and living amazons and actions per turn per player.\n"
+	"Items and dinos spawn in random locations, their number and these locations also depend on the played gamemode.\n"
+	"Dinos can be tamed and ridden. This provides amazons with an additional layer of health, a shield, so to speak.\n"
+	"To attack, amazons need weapons. More on these later.\n"
+	"Players have common enemies: the braindrainers. The braindrainers attack anyone on their tiles. They move around and spawn randomly."
+	"\n\n### Entities ###\n\n"
+	"Amazon: they have a max HP of 100, start without a dino and any items. Amazons can currently carry a maximum of 2 weapons at a time.\n"
+	"Dino: they also have a max HP of 100.\n"
+	"Braindrainer: they are unkillable, and deal a random amount of damage between 60 and 90. Every turn they either move to a surrounding tile, or stay where they are.\n"
+	"\n\n### Items ###\n\n"
+	"*Weapons*\n"
+	"Weapons deal a random amount of damage between a minimum, and a maximum value. They have a rate of fire. The total damage is the sum of rate of fire number of random damage values.\n"
+	"Pistol: min damage: 15, max damage: 20, rate of fire: 2.\n"
+	"Shotgun: min damage: 50, max damage: 75, rate of fire: 1.\n"
+	"Katana: min damage: 20, max damage: 30, rate of fire: 3.\n"
+	"Minigun: min damage: 1.5, max damage: 5.0, rate of fire: 30.\n"
+	"Rocket Launcher: min damage: 90, max damage: 120, rate of fire: 1.\n"
+	"\n\n### Commands ### \n\n"
+	"new <name>: creates an amazon with the given name. The 2 players can have amazons with the same name. The starting player's amazons spawn in the bottom left, the other player's amazons spawn in the upper right corner of the map.\n"
+	"select <name>: selects a created amazon. Amazons have to be selected in order to command them.\n"
+	"move <x> <y>: moves the selected amazon to the given tile. Amazons can only move to surrounding tiles.\n"
+	"help: opens this menu.\n"
+	"attack <name>: the selected amazon attacks an enemy amazon with the given name. Only amazons on the same tile can attack each other. If the target is riding a dino, the dino is attacked.\n"
+	"lookaround: the selected amazon looks around and tells the player what it sees.\n"
+	"pickup <name>: the selected amazon picks up an item with the given name and puts it in their inventory. Only items on the selected amazon's tile can be picked up. In order to use a picked up item, it has to equipped first.\n"
+	"drop <name>: the selected amazon drops an item with the given name to the tile they are standing on. Prioritizes items not held by the amazon.\n"
+	"equip <name>: the selected amazon takes the item with the given name from their inventory into their hands.\n"
+	"end: players can end their turn with this command.\n"
+	"tame: the selected amazon tames the highest HP dino on their current tile. Amazons can only have one tamed dino at a time, and can only ride ones tamed by them.\n"
+	"geton: the selected amazon gets on their tamed dino. The dino and the amazon have to on the same tile. Only living dinos can be ridden.\n"
+	"getoff: the selected amazon gets off their tamed dino. If the tamed dino dies while their amazon is riding it, the amazon automatically gets off it.\n"
+	"list: lists the current player's amazons.\n"
+	"status: provides vital information about the selected amazon, such as health, location, items, dino status.\n"
+	"steps: provides information about the possible steps the current player can take at the time.\n";
 }
 
 
@@ -166,7 +192,7 @@ string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) n
 		{
 			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
-					temp.append(x->name() + ", ");
+					temp.append(x->name() + "(" + (data.OtherPlayer().existsAmazon(x->name()) && &data.OtherPlayer().getAmazon(x->name()) == x ? "enemy" : "friendly") + ", " + to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
 			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).DinoContainer())
 				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->health()))) + " HP), ");
@@ -481,4 +507,68 @@ string commands::Getoff(const vector<string>& v, Map& map, GameData& data) noexc
 	map.tile(map.find(data.CurrentPlayer().selected())).add(move(data.CurrentPlayer().selected()->riding()));
 
 	return data.CurrentPlayer().selected()->name() + " got off their dino.\n";
+}
+
+
+string commands::List(const vector<string>& v, Map& map, GameData& data) noexcept
+{
+	if (v.size() != 1)
+		return "Invalid arguments.\n";
+
+	string ret;
+
+	for (const auto& x : data.CurrentPlayer().amazons())
+		ret.append(x.first + ", ");
+
+	if (ret.empty())
+		return "You don't have amazons.\n";
+
+	return "Your amazons: " + ret.substr(0, ret.size() - 2) + ".\n";
+}
+
+
+string commands::Status(const vector<string>& v, Map& map, GameData& data) noexcept
+{
+	if (v.size() != 1)
+		return "Invalid arguments.\n";
+
+	if (!data.CurrentPlayer().selected())
+		return "Select an amazon first!\n";
+	
+	auto selected(data.CurrentPlayer().selected());
+
+	string ret(selected->name() + ".\n");
+	ret.append(to_string(static_cast<int>(round(selected->health()))) + " HP.\n");
+
+	auto location(map.find(selected));
+
+	ret.append("On " + to_string(location.x() + 1) + ";" + to_string(location.y() + 1) + ".\n");
+	ret.append("Holding: " + (selected->hand() ? "a " + selected->hand()->name() : "nothing") + ".\n");
+	ret.append("Inventory: ");
+
+	string temp;
+	
+	for (const auto& x : selected->inventory())
+		for (const auto& y : x.second)
+			temp.append(y->name() + ", ");
+
+	if (temp.empty())
+		ret.append("empty.\n");
+	else
+		ret.append(temp.substr(0, temp.size() - 2) + ".\n");
+
+	ret.append("Dino: " + (selected->dino() ? to_string(static_cast<int>(round(selected->dino()->health()))) + " HP" : "none") + ".\n");
+	return ret.append(selected->riding() ? "Riding.\n" : "Not riding.\n");
+}
+
+
+string commands::Steps(const vector<string>& v, Map& map, GameData& data) noexcept
+{
+	if (v.size() != 1)
+		return "Invalid arguments.\n";
+
+	return "Remaining actions: " + to_string(data.MaxActions() - data.CurrentPlayer().actions()) + ".\n"
+	"Living amazons: " + to_string(data.CurrentPlayer().alive()) + ".\n"
+	"Spawns: " + to_string(data.CurrentPlayer().spawns()) + ".\n"
+	"Possible spawns: " + to_string(min(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
 }

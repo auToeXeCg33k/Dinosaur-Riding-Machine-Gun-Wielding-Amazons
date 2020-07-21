@@ -3,10 +3,25 @@
 using namespace std;
 
 
-Player::Player(string_view name) noexcept : sName(name), pSelected(nullptr), nActions(0), nAlive(0) {}
+char Player::nextID(0); 
 
 
-Player::Player(Player&& other) noexcept : sName(move(other.sName)), pSelected(move(other.pSelected)), nActions(move(other.nActions)), nAlive(move(other.nAlive)) {}
+Player::Player(string_view name) noexcept : sName(name), pSelected(nullptr), nActions(0), nAlive(0), nID(nextID)
+{
+	nextID++;
+}
+
+
+Player::Player(Player&& other) noexcept : sName(move(other.sName)), pSelected(move(other.pSelected)), nActions(move(other.nActions)), nAlive(move(other.nAlive)), nID(move(other.nID))
+{
+	nextID++;
+}
+
+
+Player::~Player() noexcept
+{
+	nextID--;
+}
 
 
 const string& Player::name() const noexcept
@@ -73,6 +88,19 @@ Amazon& Player::getAmazon(std::string_view name) const noexcept
 {
 	return *amazon_map.at(static_cast<string>(name));
 }
+
+
+const unordered_map<string, unique_ptr<Amazon>>& Player::amazons() const noexcept
+{
+	return amazon_map;
+}
+
+
+char Player::id() const noexcept
+{
+	return nID;
+}
+
 
 
 Amazon* Player::selected() const noexcept

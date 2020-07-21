@@ -18,6 +18,9 @@ Interpreter::Interpreter() noexcept
 	commands.emplace("tame", commands::Tame);
 	commands.emplace("geton", commands::Geton);
 	commands.emplace("getoff", commands::Getoff);
+	commands.emplace("list", commands::List);
+	commands.emplace("status", commands::Status);
+	commands.emplace("steps", commands::Steps);
 }
 
 

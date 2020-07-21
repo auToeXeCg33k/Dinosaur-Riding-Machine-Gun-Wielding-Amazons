@@ -5,22 +5,22 @@ using namespace std;
 
 Amazon::Amazon(string_view name) noexcept : sName(name), hp(100.0), held(nullptr), pDino(nullptr), pRiding(nullptr)
 {
-	inventory.emplace(ItemType::gun, std::vector<std::unique_ptr<Item>>());
+	inv.emplace(ItemType::gun, std::vector<std::unique_ptr<Item>>());
 }
 
 
-Amazon::Amazon(Amazon&& other) noexcept : sName(move(other.sName)), hp(move(other.hp)), inventory(move(other.inventory)), held(move(other.held)), pDino(move(other.pDino)), pRiding(move(other.pRiding)) {} 
+Amazon::Amazon(Amazon&& other) noexcept : sName(move(other.sName)), hp(move(other.hp)), inv(move(other.inv)), held(move(other.held)), pDino(move(other.pDino)), pRiding(move(other.pRiding)) {} 
 
 
 bool Amazon::hasFreeSlot(ItemType type) const noexcept
 {
-	return inventory.at(type).size() < ItemFactory::typeLimit(type);
+	return inv.at(type).size() < ItemFactory::typeLimit(type);
 }
 
 
 bool Amazon::hasItem(string_view name) const noexcept
 {
-	for (auto& x : inventory.at(ItemFactory::lookUp(name)))
+	for (auto& x : inv.at(ItemFactory::lookUp(name)))
 		if (x->name() == name)
 			return true;
 	return false;
@@ -29,7 +29,7 @@ bool Amazon::hasItem(string_view name) const noexcept
 
 void Amazon::take(unique_ptr<Item>&& item) noexcept
 {
-	inventory.at(ItemFactory::lookUp(item->name())).emplace_back(move(item));
+	inv.at(ItemFactory::lookUp(item->name())).emplace_back(move(item));
 }
 
 
@@ -38,10 +38,10 @@ unique_ptr<Item> Amazon::drop(string_view name) noexcept
 	std::unique_ptr<Item> ret;
 	int pos;
 
-	for (int i = 0; i < inventory.at(ItemFactory::lookUp(name)).size(); i++)
-		if (inventory.at(ItemFactory::lookUp(name)).at(i)->name() == name)
+	for (int i = 0; i < inv.at(ItemFactory::lookUp(name)).size(); i++)
+		if (inv.at(ItemFactory::lookUp(name)).at(i)->name() == name)
 		{
-			ret = move(inventory.at(ItemFactory::lookUp(name)).at(i));
+			ret = move(inv.at(ItemFactory::lookUp(name)).at(i));
 
 			if (ret.get() == held)
 			{
@@ -49,20 +49,26 @@ unique_ptr<Item> Amazon::drop(string_view name) noexcept
 				continue;
 			}
 
-			inventory.at(ItemFactory::lookUp(name)).erase(inventory.at(ItemFactory::lookUp(name)).begin() + i);
+			inv.at(ItemFactory::lookUp(name)).erase(inv.at(ItemFactory::lookUp(name)).begin() + i);
 			return ret;
 		}
 
-	inventory.at(ItemFactory::lookUp(name)).erase(inventory.at(ItemFactory::lookUp(name)).begin() + pos);
+	inv.at(ItemFactory::lookUp(name)).erase(inv.at(ItemFactory::lookUp(name)).begin() + pos);
 	return ret;
 }
 
 
 Item* Amazon::item(string_view name) const noexcept
 {
-	for (auto& x : inventory.at(ItemFactory::lookUp(name)))
+	for (auto& x : inv.at(ItemFactory::lookUp(name)))
 		if (x->name() == name)
 			return x.get();
+}
+
+
+const unordered_map<ItemType, vector<unique_ptr<Item>>>& Amazon::inventory() const noexcept
+{
+	return inv;
 }
 
 

@@ -8,7 +8,7 @@ class Amazon
 private:
 	const std::string sName;
 	double hp;
-	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inventory;
+	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inv;
 	Gun* held;
 	Dino* pDino;
 	std::unique_ptr<Dino> pRiding;
@@ -24,6 +24,8 @@ public:
 	void take(std::unique_ptr<Item>&& item) noexcept;
 	std::unique_ptr<Item> drop(std::string_view name) noexcept;
 	Item* item(std::string_view name) const noexcept;
+
+	const std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>>& inventory() const noexcept;
 
 	const std::string& name() const noexcept;
 	

@@ -88,6 +88,6 @@ unique_ptr<Item> ItemFactory::createItem(string_view name) noexcept
 	if (name == "minigun")
 		return make_unique<Gun>("minigun", 1.5, 5.0, 30);
 
-	if (name == "rocket")
-		return make_unique<Gun>("rocket", 90.0, 120.0, 1);
+	if (name == "rocketlauncher")
+		return make_unique<Gun>("rocketlauncher", 90.0, 120.0, 1);
 }

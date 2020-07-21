@@ -19,4 +19,7 @@ namespace commands
 	std::string Tame(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
 	std::string Geton(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
 	std::string Getoff(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string List(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Status(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
+	std::string Steps(const std::vector<std::string>& v, Map& map, GameData& data) noexcept;
 }

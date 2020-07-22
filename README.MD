@@ -154,6 +154,8 @@
 * The game no longer has a terminal of its own
 * The exit command can no longer be used to quit the game before selecting a gamemode
 * When a dino that's being ridden dies, its amazon automatically gets off of it
+* Ending turns no longer clears the players' amazon selection
+* Ending turns no longer clears the terminal
 * Massively improved the help menu
 * Fixed a bug resulting in braindrainers not attacking amazons at the end of rounds
 * Fixed lots of bugs around random-based mechanics

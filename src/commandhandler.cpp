@@ -1,4 +1,4 @@
-#include "command.h"
+#include "commandhandler.h"
 #include <stdexcept>
 #include <cmath>
 #include <random>
@@ -6,7 +6,37 @@
 using namespace std;
 
 
-string commands::New(const vector<string>& v, Map& map, GameData& data) noexcept
+CommandHandler::CommandHandler() noexcept
+{
+    commands.emplace("new", &CommandHandler::New);
+    commands.emplace("select", &CommandHandler::Select);
+    commands.emplace("move", &CommandHandler::Move);
+    commands.emplace("help", &CommandHandler::Help);
+    commands.emplace("lookaround", &CommandHandler::Lookaround);
+    commands.emplace("attack", &CommandHandler::Attack);
+    commands.emplace("pickup", &CommandHandler::Pickup);
+    commands.emplace("drop", &CommandHandler::Drop);
+    commands.emplace("equip", &CommandHandler::Equip);
+    commands.emplace("end", &CommandHandler::End);
+    commands.emplace("tame", &CommandHandler::Tame);
+    commands.emplace("geton", &CommandHandler::Geton);
+    commands.emplace("getoff", &CommandHandler::Getoff);
+    commands.emplace("list", &CommandHandler::List);
+    commands.emplace("status", &CommandHandler::Status);
+    commands.emplace("steps", &CommandHandler::Steps);
+}
+
+
+string CommandHandler::handleCommand(const vector<string>& v, Map& map, GameData& data) const noexcept
+{
+	if (commands.find(v.at(0)) == commands.end())
+		return "Invalid command.\n";
+
+	return (this->*commands.at(v.at(0)))(v, map, data);
+}
+
+
+string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -37,7 +67,7 @@ string commands::New(const vector<string>& v, Map& map, GameData& data) noexcept
 }
 
 
-string commands::Select(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Select(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -54,7 +84,7 @@ string commands::Select(const vector<string>& v, Map& map, GameData& data) noexc
 }
 
 
-string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 3)
 		return "Invalid arguments.\n";
@@ -110,7 +140,7 @@ string commands::Move(const vector<string>& v, Map& map, GameData& data) noexcep
 }
 
 
-string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Help(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	return "### About The Game ###\n\n"
 
@@ -163,7 +193,7 @@ string commands::Help(const vector<string>& v, Map& map, GameData& data) noexcep
 }
 
 
-string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -228,7 +258,7 @@ string commands::Lookaround(const vector<string>& v, Map& map, GameData& data) n
 }
 
 
-string commands::Attack(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Attack(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -291,7 +321,7 @@ string commands::Attack(const vector<string>& v, Map& map, GameData& data) noexc
 }
 
 
-string commands::Pickup(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Pickup(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -324,7 +354,7 @@ string commands::Pickup(const vector<string>& v, Map& map, GameData& data) noexc
 }
 
 
-string commands::Drop(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Drop(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -359,7 +389,7 @@ string commands::Drop(const vector<string>& v, Map& map, GameData& data) noexcep
 }
 
 
-string commands::Equip(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Equip(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -382,7 +412,7 @@ string commands::Equip(const vector<string>& v, Map& map, GameData& data) noexce
 }
 
 
-string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -434,7 +464,7 @@ string commands::End(const vector<string>& v, Map& map, GameData& data) noexcept
 }
 
 
-string commands::Tame(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Tame(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -472,7 +502,7 @@ string commands::Tame(const vector<string>& v, Map& map, GameData& data) noexcep
 }
 
 
-string commands::Geton(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Geton(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -502,7 +532,7 @@ string commands::Geton(const vector<string>& v, Map& map, GameData& data) noexce
 }
 
 
-string commands::Getoff(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Getoff(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -525,7 +555,7 @@ string commands::Getoff(const vector<string>& v, Map& map, GameData& data) noexc
 }
 
 
-string commands::List(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::List(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -542,7 +572,7 @@ string commands::List(const vector<string>& v, Map& map, GameData& data) noexcep
 }
 
 
-string commands::Status(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Status(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -577,7 +607,7 @@ string commands::Status(const vector<string>& v, Map& map, GameData& data) noexc
 }
 
 
-string commands::Steps(const vector<string>& v, Map& map, GameData& data) noexcept
+string CommandHandler::Steps(const vector<string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";

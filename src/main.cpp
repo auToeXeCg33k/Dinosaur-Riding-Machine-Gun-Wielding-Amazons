@@ -1,4 +1,4 @@
-#include "interpreter.h"
+#include "commandhandler.h"
 #include "utility.h"
 #include "wincheck.h"
 #include <iostream>
@@ -10,7 +10,7 @@ int main()
 {
 	const int gameMode(ReadGameMode());
 
-	const Interpreter interpreter;
+	const CommandHandler handler;
 	GameData data(gameMode);
 	Map map(gameMode);
 
@@ -38,7 +38,7 @@ int main()
 		if (words.at(0) == "exit")
 			return 0;
 
-		cout << '\n' << interpreter.interpret(words, map, data) << endl;
+		cout << '\n' << handler.handleCommand(words, map, data) << endl;
 
 		switch (CheckWin(data))
 		{

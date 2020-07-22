@@ -16,6 +16,9 @@ public:
 	Tile(const Tile& other) noexcept = delete;
 	Tile(Tile&& other) noexcept;
 
+	Tile& operator=(const Tile& other) noexcept = delete;
+	Tile& operator=(Tile&& other) noexcept = delete;
+
 	void add(Amazon* const amazon) noexcept;
 	void add(std::unique_ptr<Item>&& item) noexcept;
 	void add(std::unique_ptr<Dino>&& dino) noexcept;

@@ -5,8 +5,6 @@ using namespace std;
 
 BrainDrainer::BrainDrainer() noexcept : min(60.0), max(90.0) {}
 
-BrainDrainer::BrainDrainer(BrainDrainer&& other) noexcept : min(move(other.min)), max(move(other.max)) {}
-
 double BrainDrainer::damage() const noexcept
 {
     random_device rd;

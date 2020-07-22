@@ -48,9 +48,6 @@ Map::Map(const int i) noexcept
 }
 
 
-Map::Map(Map&& other) noexcept : tiles(move(other.tiles)), sz(move(other.sz)) {}
-
-
 Tile& Map::tile(const Point p) noexcept
 {
 	return tiles.at(p.y()).at(p.x());

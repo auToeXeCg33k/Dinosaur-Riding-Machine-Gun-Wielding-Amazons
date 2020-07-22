@@ -14,8 +14,7 @@ private:
 
 public:
 	GameData(int i) noexcept;
-	GameData(const GameData& other) noexcept = delete;
-	GameData(GameData&& other) noexcept;
+	GameData(GameData&& other) noexcept = delete;
 
 	Player& CurrentPlayer() noexcept;
 	Player& OtherPlayer() noexcept;

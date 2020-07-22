@@ -10,8 +10,7 @@ private:
 
 public:
 	Map(const int i) noexcept;
-	Map(const Map& other) noexcept = delete;
-	Map(Map&&) noexcept;
+	Map(Map&&) noexcept = delete;
 	
 	Tile& tile(const Point p) noexcept;
 

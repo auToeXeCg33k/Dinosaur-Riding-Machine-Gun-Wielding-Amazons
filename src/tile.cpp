@@ -8,7 +8,7 @@ Tile::Tile() noexcept
 }
 
 
-Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), items(move(other.items)) {}
+Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)), drainer(move(other.drainer)) {}
 
 
 void Tile::add(Amazon* const amazon) noexcept

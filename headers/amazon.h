@@ -15,8 +15,7 @@ private:
 
 public:
 	Amazon(std::string_view name) noexcept;
-	Amazon(const Amazon& other) noexcept = delete;
-	Amazon(Amazon&& other) noexcept;
+	Amazon(Amazon&& other) noexcept = delete;
 
 	bool hasFreeSlot(const ItemType type) const noexcept;
 	bool hasItem(std::string_view name) const noexcept;

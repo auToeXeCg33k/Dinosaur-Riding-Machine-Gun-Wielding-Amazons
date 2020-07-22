@@ -12,12 +12,6 @@ Player::Player(string_view name) noexcept : sName(name), pSelected(nullptr), nAc
 }
 
 
-Player::Player(Player&& other) noexcept : sName(move(other.sName)), pSelected(move(other.pSelected)), nActions(move(other.nActions)), nAlive(move(other.nAlive)), nID(move(other.nID))
-{
-	nextID++;
-}
-
-
 Player::~Player() noexcept
 {
 	nextID--;

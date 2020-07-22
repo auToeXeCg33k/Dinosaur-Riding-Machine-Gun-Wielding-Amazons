@@ -16,8 +16,7 @@ private:
 
 public:
 	Player(std::string_view name) noexcept;
-	Player(const Player& other) noexcept = delete;
-	Player(Player&& other) noexcept;
+	Player(Player&& other) noexcept = delete;
 
 	~Player() noexcept;
 

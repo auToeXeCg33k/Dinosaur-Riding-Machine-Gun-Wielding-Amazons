@@ -30,6 +30,7 @@ private:
 	std::string Steps(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 public:
     CommandHandler() noexcept;
+	CommandHandler(CommandHandler&& other) noexcept = delete;
 
     std::string handleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 };

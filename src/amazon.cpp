@@ -9,9 +9,6 @@ Amazon::Amazon(string_view name) noexcept : sName(name), hp(100.0), held(nullptr
 }
 
 
-Amazon::Amazon(Amazon&& other) noexcept : sName(move(other.sName)), hp(move(other.hp)), inv(move(other.inv)), held(move(other.held)), pDino(move(other.pDino)), pRiding(move(other.pRiding)) {} 
-
-
 bool Amazon::hasFreeSlot(ItemType type) const noexcept
 {
 	return inv.at(type).size() < ItemFactory::typeLimit(type);

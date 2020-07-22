@@ -8,8 +8,7 @@ private:
 
 public:
 	Dino() noexcept;
-	Dino(const Dino& other) noexcept = delete;
-	Dino(Dino&& other) noexcept;
+	Dino(Dino&& other) noexcept = delete;
 
 	double health() const noexcept;
 	void health(double const hp) noexcept;

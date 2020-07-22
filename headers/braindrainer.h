@@ -11,8 +11,7 @@ private:
 
 public:
     BrainDrainer() noexcept;
-    BrainDrainer(const BrainDrainer& other) noexcept = delete;
-    BrainDrainer(BrainDrainer&& other) noexcept;
+    BrainDrainer(BrainDrainer&& other) noexcept = delete;
 
     std::string attack(Amazon& amazon) const noexcept;
 };

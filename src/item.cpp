@@ -7,9 +7,6 @@ using namespace std;
 Item::Item(std::string_view name) noexcept : sName(name) {}
 
 
-Item::Item(Item&& other) noexcept : sName(move(other.sName)) {}
-
-
 const std::string& Item::name() const noexcept
 {
 	return sName;
@@ -17,9 +14,6 @@ const std::string& Item::name() const noexcept
 
 
 Gun::Gun(string_view name, const double min, const double max, const int rate) noexcept : Item(name), min(min), max(max), rate(rate) {}
-
-
-Gun::Gun(Gun&& other) noexcept : Item(move(other)), min(move(other.min)), max(move(other.max)), rate(move(other.rate)) {}
 
 
 double Gun::dmg() const noexcept

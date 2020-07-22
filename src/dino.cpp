@@ -4,9 +4,6 @@
 Dino::Dino() noexcept : hp(100.0), bTamed(false) {}
 
 
-Dino::Dino(Dino&& other) noexcept : hp(std::move(other.hp)), bTamed(std::move(other.bTamed)) {}
-
-
 double Dino::health() const noexcept
 {
 	return hp;

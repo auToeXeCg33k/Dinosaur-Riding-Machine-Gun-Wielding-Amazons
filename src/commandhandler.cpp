@@ -1,9 +1,8 @@
 #include "commandhandler.h"
+#include "utility.h"
 #include <stdexcept>
 #include <cmath>
 #include <random>
-
-using namespace std;
 
 
 CommandHandler::CommandHandler() noexcept
@@ -27,13 +26,16 @@ CommandHandler::CommandHandler() noexcept
 }
 
 
-string CommandHandler::handleCommand(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::handleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
-	if (commands.find(v.at(0)) == commands.end())
+	if (commands.find(toLower(v.at(0))) == commands.end())
 		return "Invalid command.\n";
 
-	return (this->*commands.at(v.at(0)))(v, map, data);
+	return (this->*commands.at(toLower(v.at(0))))(v, map, data);
 }
+
+
+using namespace std;
 
 
 string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) const noexcept

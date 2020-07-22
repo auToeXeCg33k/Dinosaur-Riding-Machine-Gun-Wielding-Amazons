@@ -1,8 +1,20 @@
 #include "utility.h"
 #include <iostream>
+#include <cctype>
+
+
+std::string toLower(std::string_view input) noexcept
+{
+	std::string ret;
+
+	for (const auto& x : input)
+		ret.push_back(std::tolower(x));
+
+	return ret;
+}
+
 
 using namespace std;
-
 
 
 int ReadGameMode() noexcept

@@ -1,9 +1,8 @@
 package entities;
 
+
 public interface Entity {
-  void decHP(double paramDouble);
-  
-  void incHP(double paramDouble);
-  
-  double getHP();
+    public void decHP (double r);
+    public void incHP (double r);
+    public double getHP ();
 }

@@ -119,7 +119,7 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 
 		data.CurrentPlayer().action();
 
-		string ret(data.CurrentPlayer().selected()->name() + " moved to " + v.at(1) + ";" + v.at(2) + ".\n");
+		string ret(data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n");
 
 		if (map.tile(target).braindrainer())
 		{
@@ -206,23 +206,17 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 	if (data.CurrentPlayer().selected()->health() == 0.0)
 		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	static const struct Offset : public Point
+	static const Point offsets[]
 	{
-		string adj;
-		string noun;
-
-		Offset(const char x, const char y, string_view adj, string_view noun) : Point(x, y), adj(adj), noun(noun) {}
-	} offsets[]
-	{
-		{0, 0, "Current", "Current tile"},
-		{0, 1,"Northern", "North"},
-		{1, 1, "Northeastern", "North East"},
-		{1, 0, "Eastern", "East"},
-		{1, -1, "Southeastern", "South East:"},
-		{0, -1, "Southern", "South"},
-		{-1, -1,"Southwestern", "South West"},
-		{-1, 0, "Western", "West"},
-		{-1, 1, "Northwestern", "North West"}
+		{0, 0},
+		{0, 1},
+		{1, 1},
+		{1, 0},
+		{1, -1},
+		{0, -1},
+		{-1, -1},
+		{-1, 0},
+		{-1, 1}
 	};
 
 	Point p(map.find(data.CurrentPlayer().selected()));
@@ -232,6 +226,8 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 	for (const auto& offset : offsets)
 		if (p.x() + offset.x() >= 0 && p.x() + offset.x() < map.size() && p.y() + offset.y() >= 0 && p.y() + offset.y() < map.size())
 		{
+			ret.append("(" + to_string(p.x() + offset.x() + 1) + ", " + to_string(p.y() + offset.y() + 1) + "): ");
+
 			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->name() + "(" + (data.OtherPlayer().existsAmazon(x->name()) && &data.OtherPlayer().getAmazon(x->name()) == x ? "enemy" : "friendly") + ", " + to_string(static_cast<int>(round(x->health()))) + " HP), ");
@@ -247,11 +243,10 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 				temp.append("BRAINDRAINER, ");
 
 			if (temp.empty())
-				ret.append(offset.adj + " tile empty.\n");
-
+				ret.append("empty.\n");
 			else
 			{
-				ret.append(offset.noun + ": " + temp.substr(0, temp.length() - 2) + ".\n");
+				ret.append(temp.substr(0, temp.length() - 2) + ".\n");
 				temp.clear();
 			}
 		}
@@ -589,7 +584,7 @@ string CommandHandler::Status(const vector<string>& v, Map& map, GameData& data)
 
 	auto location(map.find(selected));
 
-	ret.append("On " + to_string(location.x() + 1) + ";" + to_string(location.y() + 1) + ".\n");
+	ret.append("On (" + to_string(location.x() + 1) + ", " + to_string(location.y() + 1) + ").\n");
 	ret.append("Holding: " + (selected->hand() ? "a " + selected->hand()->name() : "nothing") + ".\n");
 	ret.append("Inventory: ");
 

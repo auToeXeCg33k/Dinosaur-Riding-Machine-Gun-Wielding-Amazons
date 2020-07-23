@@ -149,14 +149,19 @@
 *I've switched to C++ for several reasons, none of which I'm going to explain here. This is the main one, all versions from here on are only C++ ones, and the Java edition is deprecated.*
 
 ### ALPHA 1.3.0
-* Switched language to C++
-* Changed the game language to English
-* The game no longer has a terminal of its own
-* The exit command can no longer be used to quit the game before selecting a gamemode
-* When a dino that's being ridden dies, its amazon automatically gets off of it
-* Ending turns no longer clears the players' amazon selection
-* Ending turns no longer clears the terminal
-* Massively improved the help menu
-* Fixed a bug resulting in braindrainers not attacking amazons at the end of rounds
-* Fixed lots of bugs around random-based mechanics
-* Changed several algorithms to faster and more reliable ones
+* Switched language to C++.
+* Changed the game language to English.
+* The game no longer has a terminal of its own.
+* The exit command can no longer be used to quit the game before selecting a gamemode.
+* When a dino that's being ridden dies, its amazon automatically gets off of it.
+* Ending turns no longer clears the players' amazon selection.
+* Ending turns no longer clears the terminal.
+* The map is no longer rotated for the second player.
+* Massively improved the help menu.
+* Fixed a bug resulting in braindrainers not attacking amazons at the end of rounds.
+* Fixed lots of bugs around random-based mechanics.
+* Changed several algorithms to faster and more reliable ones.
+
+### ALPHA 1.3.1
+* Changed the lookaround command to display coordinates instead of directions.
+* Coordinates are now displayed as (x, y) instead of x;y for better readability.

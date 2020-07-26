@@ -1,6 +1,6 @@
 #pragma once
-#include "amazon.h"
 
+#include "amazon.h"
 
 class Player
 {

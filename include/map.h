@@ -1,4 +1,5 @@
 #pragma once
+
 #include "tile.h"
 #include "point.h"
 

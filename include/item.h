@@ -1,9 +1,9 @@
 #pragma once
+
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <memory>
-
 
 class Item
 {
@@ -16,9 +16,6 @@ protected:
 public:
 	const std::string& name() const noexcept;
 };
-
-
-/*######################################*/
 
 
 class Gun : public Item

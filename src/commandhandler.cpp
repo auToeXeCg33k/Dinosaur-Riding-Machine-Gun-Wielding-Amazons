@@ -26,6 +26,13 @@ CommandHandler::CommandHandler() noexcept
 }
 
 
+CommandHandler& CommandHandler::instance() noexcept
+{
+	static CommandHandler inst;
+	return inst;
+}
+
+
 std::string CommandHandler::handleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (commands.find(toLower(v.at(0))) == commands.end())

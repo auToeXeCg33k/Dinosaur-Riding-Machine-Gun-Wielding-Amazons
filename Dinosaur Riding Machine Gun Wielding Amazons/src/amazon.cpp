@@ -32,21 +32,23 @@ void Amazon::take(unique_ptr<Item>&& item) noexcept
 
 unique_ptr<Item> Amazon::drop(string_view name) noexcept
 {
-	std::unique_ptr<Item> ret;
 	long long pos(-1);
 
 	for (size_t i = 0; i < inv.at(ItemFactory::lookUp(name)).size(); i++)
 		if (inv.at(ItemFactory::lookUp(name)).at(i)->name() == name)
 		{
-			ret = move(inv.at(ItemFactory::lookUp(name)).at(i));
 			pos = i;
 
-			if (ret.get() != held)
+			if (inv.at(ItemFactory::lookUp(name)).at(i).get() != held)
 				break;
 		}
 
-	if (pos != -1)
-		inv.at(ItemFactory::lookUp(name)).erase(inv.at(ItemFactory::lookUp(name)).begin() + pos);
+	if (pos == -1)
+		return nullptr;
+
+	std::unique_ptr<Item> ret(move(inv.at(ItemFactory::lookUp(name)).at(pos)));
+
+	inv.at(ItemFactory::lookUp(name)).erase(inv.at(ItemFactory::lookUp(name)).begin() + pos);
 
 	return ret;
 }

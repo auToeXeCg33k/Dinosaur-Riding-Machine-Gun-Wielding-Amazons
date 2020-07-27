@@ -3,6 +3,12 @@
 ## C++ edition
 *I've switched to C++ for several reasons, none of which I'm going to explain here. This is the main one, all versions from here on are only C++ ones, and the Java edition is deprecated.*
 
+### ALPHA 1.3.2
+* Fixed a bug that caused crashes under some very specific circumstances around items.
+* Fixed a bug that resulted in infinite loops in various situations if an amazon had more than ~2 billion items.
+* Fixed a bug that resulted in infinite loops in some specific situations if a tile had more than ~2 billion dinos or items.
+* Fixed a bug that resulted in an infinite loop if a player's command was longer than ~2 billion characters.
+
 ### ALPHA 1.3.1
 * Changed the lookaround command to display coordinates instead of directions.
 * Coordinates are now displayed as (x, y) instead of x;y for better readability.

@@ -18,19 +18,19 @@ Player& GameData::OtherPlayer() noexcept
 }
 
 
-int GameData::MaxActions() const noexcept
+unsigned GameData::MaxActions() const noexcept
 {
 	return nMaxActions;
 }
 
 
-int GameData::MaxSpawns() const noexcept
+unsigned GameData::MaxSpawns() const noexcept
 {
 	return nMaxSpawns;
 }
 
 
-int GameData::MaxAlive() const noexcept
+unsigned GameData::MaxAlive() const noexcept
 {
 	return nMaxAlive;
 }

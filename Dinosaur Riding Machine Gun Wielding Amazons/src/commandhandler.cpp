@@ -1,7 +1,7 @@
 #include "commandhandler.h"
 #include "utility.h"
 #include <stdexcept>
-#include <cmath>
+#include <algorithm>
 #include <random>
 
 
@@ -448,8 +448,8 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 		
 		while(true)
 		{
-			uniform_int_distribution<> dist(0, offsets.size() - 1);
-			int rnd(dist(mt));
+			uniform_int_distribution<size_t> dist(0, offsets.size() - 1);
+			size_t rnd(dist(mt));
 
 			if (pair.first.x() + offsets.at(rnd).x() >= 0 && pair.first.x() + offsets.at(rnd).x() < map.size() && pair.first.y() + offsets.at(rnd).y() >= 0 && pair.first.y() + offsets.at(rnd).y() < map.size() && !map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer())
 			{
@@ -619,5 +619,5 @@ string CommandHandler::Steps(const vector<string>& v, Map& map, GameData& data) 
 	return "Remaining actions: " + to_string(data.MaxActions() - data.CurrentPlayer().actions()) + ".\n"
 	"Living amazons: " + to_string(data.CurrentPlayer().alive()) + ".\n"
 	"Spawns: " + to_string(data.CurrentPlayer().spawns()) + ".\n"
-	"Possible spawns: " + to_string(min(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
+	"Possible spawns: " + to_string(min<size_t>(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
 }

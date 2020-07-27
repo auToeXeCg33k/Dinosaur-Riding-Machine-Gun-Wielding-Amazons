@@ -8,8 +8,8 @@ private:
 	const std::string sName;
 	std::unordered_map<std::string, std::unique_ptr<Amazon>> amazon_map;
 	Amazon* pSelected;
-	int nActions;
-	int nAlive;
+	unsigned nActions;
+	unsigned nAlive;
 	char nID;
 
 	static char nextID;
@@ -22,15 +22,15 @@ public:
 
 	const std::string& name() const noexcept;
 
-	int actions() const noexcept;
+	unsigned actions() const noexcept;
 	void action() noexcept;
 	void resetActions() noexcept;
 
-	int alive() const noexcept;
+	unsigned alive() const noexcept;
 	void incAlive() noexcept;
 	void decAlive() noexcept;
 	
-	int spawns() const noexcept;
+	size_t spawns() const noexcept;
 
 	bool existsAmazon(std::string_view name) const noexcept;
 	void createAmazon(std::string_view name) noexcept;

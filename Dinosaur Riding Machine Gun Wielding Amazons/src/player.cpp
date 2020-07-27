@@ -24,7 +24,7 @@ const string& Player::name() const noexcept
 }
 
 
-int Player::actions() const noexcept
+unsigned Player::actions() const noexcept
 {
 	return nActions;
 }
@@ -42,7 +42,7 @@ void Player::resetActions() noexcept
 }
 
 
-int Player::alive() const noexcept
+unsigned Player::alive() const noexcept
 {
 	return nAlive;
 }
@@ -60,7 +60,7 @@ void Player::decAlive() noexcept
 }
 
 
-int Player::spawns() const noexcept
+size_t Player::spawns() const noexcept
 {
 	return amazon_map.size();
 }

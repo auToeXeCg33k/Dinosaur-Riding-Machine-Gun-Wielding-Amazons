@@ -53,7 +53,7 @@ void ProcessInput(string_view input, vector<string>& words) noexcept
 {
 	string word;
 
-	for (int i = 0; i < input.length(); i++)
+	for (size_t i = 0; i < input.length(); i++)
 	{
 		if (input.at(i) != ' ')
 			word.push_back(input.at(i));

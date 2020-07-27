@@ -43,7 +43,7 @@ void Tile::remove(Amazon* const amazon) noexcept
 
 unique_ptr<Dino> Tile::remove(Dino* dino) noexcept
 {
-	for (int i = 0; i < dinos.size(); i++)
+	for (size_t i = 0; i < dinos.size(); i++)
 		if (dinos.at(i).get() == dino)
 		{
 			auto ret(move(dinos.at(i)));
@@ -55,7 +55,7 @@ unique_ptr<Dino> Tile::remove(Dino* dino) noexcept
 
 unique_ptr<Item> Tile::remove(string_view name) noexcept
 {
-	for (int i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
+	for (size_t i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
 		if (items.at(ItemFactory::lookUp(name)).at(i)->name() == name)
 		{
 			unique_ptr<Item> ret(move(items.at(ItemFactory::lookUp(name)).at(i)));

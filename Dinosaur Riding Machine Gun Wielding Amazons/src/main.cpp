@@ -1,9 +1,13 @@
-#include "commandhandler.h"
-#include "utility.h"
-#include "wincheck.h"
 #include <iostream>
 
-using namespace std;
+#include "utility.h"
+#include "map.h"
+#include "command.h"
+
+using std::cout;
+using std::endl;
+using std::string;
+
 
 int main()
 {
@@ -19,12 +23,12 @@ int main()
 		"To open the help menu, type \"help\"!\n" << endl;;
 
 	string input;
-	vector<string> words;
+	std::vector<string> words;
 
 	while (1)
 	{
 		cout << data.CurrentPlayer().name() << ": ";
-		getline(cin, input);
+		std::getline(std::cin, input);
 
 		words.clear();
 

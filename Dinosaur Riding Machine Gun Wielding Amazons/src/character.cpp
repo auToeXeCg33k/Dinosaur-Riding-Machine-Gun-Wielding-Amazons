@@ -1,6 +1,40 @@
-#include "amazon.h"
+#include <random>
 
-using namespace std;
+#include "character.h"
+
+using std::string;
+using std::string_view;
+using std::unique_ptr;
+using std::move;
+
+
+Dino::Dino() noexcept : hp(100.0), bTamed(false) {}
+
+
+double Dino::health() const noexcept
+{
+	return hp;
+}
+
+
+void Dino::health(double const hp) noexcept
+{
+	this->hp = hp;
+}
+
+
+bool Dino::tamed() const noexcept
+{
+	return bTamed;
+}
+
+
+void Dino::tamed(bool const tmd) noexcept
+{
+	bTamed = tmd;
+}
+
+
 
 
 Amazon::Amazon(string_view name) noexcept : sName(name), hp(100.0), held(nullptr), pDino(nullptr), pRiding(nullptr)
@@ -62,7 +96,7 @@ Item* Amazon::item(string_view name) const noexcept
 }
 
 
-const unordered_map<ItemType, vector<unique_ptr<Item>>>& Amazon::inventory() const noexcept
+const std::unordered_map<ItemType, std::vector<unique_ptr<Item>>>& Amazon::inventory() const noexcept
 {
 	return inv;
 }
@@ -119,4 +153,50 @@ unique_ptr<Dino>& Amazon::riding() noexcept
 void Amazon::riding(unique_ptr<Dino>&& dino) noexcept
 {
 	pRiding = move(dino);
+}
+
+
+
+
+BrainDrainer::BrainDrainer() noexcept : min(60.0), max(90.0) {}
+
+
+double BrainDrainer::damage() const noexcept
+{
+	std::random_device rd;
+	std::mt19937_64 mt(rd());
+	std::uniform_real_distribution<> dist(0, 1);
+
+	return (max - min) * dist(mt) + min;
+}
+
+
+string BrainDrainer::attack(Amazon& amazon) const noexcept
+{
+	auto dmg(damage());
+
+	if (amazon.riding())
+	{
+		if (amazon.dino()->health() - dmg < 0.0)
+			amazon.dino()->health(0.0);
+		else
+			amazon.dino()->health(amazon.dino()->health() - dmg);
+
+		if (!amazon.dino()->health())
+		{
+			return amazon.name() + "'s dino was killed by a Braindrainer.\n";
+		}
+
+		return amazon.name() + "'s dino suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage from a Braindrainer.\n";
+	}
+
+	if (amazon.health() - dmg < 0.0)
+		amazon.health(0.0);
+	else
+		amazon.health(amazon.health() - dmg);
+
+	if (!amazon.health())
+		return amazon.name() + " was killed by a Braindrainer.\n";
+
+	return amazon.name() + " suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage from a Braindrainer.\n";
 }

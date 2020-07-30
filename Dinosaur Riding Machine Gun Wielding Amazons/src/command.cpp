@@ -1,8 +1,13 @@
-#include "commandhandler.h"
-#include "utility.h"
 #include <stdexcept>
-#include <algorithm>
 #include <random>
+
+#include "command.h"
+
+using std::string;
+using std::vector;
+using std::to_string;
+using std::unique_ptr;
+using std::move;
 
 
 CommandHandler::CommandHandler() noexcept
@@ -40,9 +45,6 @@ std::string CommandHandler::handleCommand(const std::vector<std::string>& v, Map
 
 	return (this->*commands.at(toLower(v.at(0))))(v, map, data);
 }
-
-
-using namespace std;
 
 
 string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) const noexcept
@@ -142,7 +144,7 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 		return ret;
 	}
 
-	catch (invalid_argument&)
+	catch (std::invalid_argument&)
 	{
 		return "Invalid arguments.\n";
 	}
@@ -423,7 +425,7 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 
 	data.turn();
 
-	vector<pair<Point, unique_ptr<BrainDrainer>>> drainers;
+	vector<std::pair<Point, unique_ptr<BrainDrainer>>> drainers;
 
 	for (int i = 0; i < map.size(); i++)
 		for (int j = 0; j < map.size(); j++)
@@ -433,8 +435,8 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 	vector<Point> offsets;
 	offsets.reserve(9);
 
-	random_device rd;
-	mt19937_64 mt(rd());
+	std::random_device rd;
+	std::mt19937_64 mt(rd());
 
 	string ret;
 
@@ -448,7 +450,7 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 		
 		while(true)
 		{
-			uniform_int_distribution<size_t> dist(0, offsets.size() - 1);
+			std::uniform_int_distribution<size_t> dist(0, offsets.size() - 1);
 			size_t rnd(dist(mt));
 
 			if (pair.first.x() + offsets.at(rnd).x() >= 0 && pair.first.x() + offsets.at(rnd).x() < map.size() && pair.first.y() + offsets.at(rnd).y() >= 0 && pair.first.y() + offsets.at(rnd).y() < map.size() && !map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer())
@@ -619,5 +621,5 @@ string CommandHandler::Steps(const vector<string>& v, Map& map, GameData& data) 
 	return "Remaining actions: " + to_string(data.MaxActions() - data.CurrentPlayer().actions()) + ".\n"
 	"Living amazons: " + to_string(data.CurrentPlayer().alive()) + ".\n"
 	"Spawns: " + to_string(data.CurrentPlayer().spawns()) + ".\n"
-	"Possible spawns: " + to_string(min<size_t>(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
+	"Possible spawns: " + to_string(std::min<size_t>(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
 }

@@ -1,10 +1,13 @@
-#include "item.h"
 #include <random>
 
-using namespace std;
+#include "item.h"
+
+using std::string_view;
+using std::unordered_map;
+using std::make_unique;
 
 
-Item::Item(std::string_view name) noexcept : sName(name) {}
+Item::Item(string_view name) noexcept : sName(name) {}
 
 
 const std::string& Item::name() const noexcept
@@ -13,14 +16,16 @@ const std::string& Item::name() const noexcept
 }
 
 
+
+
 Gun::Gun(string_view name, const double min, const double max, const int rate) noexcept : Item(name), min(min), max(max), rate(rate) {}
 
 
 double Gun::dmg() const noexcept
 {
-	random_device rd;
-	mt19937_64 mt(rd());
-	uniform_real_distribution<> dist(0, 1);
+	std::random_device rd;
+	std::mt19937_64 mt(rd());
+	std::uniform_real_distribution<> dist(0, 1);
 
 	double dmg = 0.0;
 
@@ -31,7 +36,9 @@ double Gun::dmg() const noexcept
 }
 
 
-const unordered_map<ItemType, vector<string>> ItemFactory::types
+
+
+const unordered_map<ItemType, std::vector<std::string>> ItemFactory::types
 {
 	{ItemType::gun, {"pistol", "shotgun", "katana", "minigun", "rocketlauncher"}}
 };
@@ -68,7 +75,7 @@ int ItemFactory::typeLimit(const ItemType type) noexcept
 }
 
 
-unique_ptr<Item> ItemFactory::createItem(string_view name) noexcept
+std::unique_ptr<Item> ItemFactory::createItem(string_view name) noexcept
 {
 	if (name == "pistol")
 		return make_unique<Gun>("pistol", 15.0, 20.0, 2);

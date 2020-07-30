@@ -1,6 +1,7 @@
 #include "player.h"
 
-using namespace std;
+using std::string;
+using std::string_view;
 
 
 char Player::nextID(0); 
@@ -74,7 +75,7 @@ bool Player::existsAmazon(std::string_view name) const noexcept
 
 void Player::createAmazon(string_view name) noexcept
 {
-	amazon_map.emplace(name, make_unique<Amazon>(name));
+	amazon_map.emplace(name, std::make_unique<Amazon>(name));
 }
 
 
@@ -84,7 +85,7 @@ Amazon& Player::getAmazon(std::string_view name) const noexcept
 }
 
 
-const unordered_map<string, unique_ptr<Amazon>>& Player::amazons() const noexcept
+const std::unordered_map<string, std::unique_ptr<Amazon>>& Player::amazons() const noexcept
 {
 	return amazon_map;
 }
@@ -96,7 +97,6 @@ char Player::id() const noexcept
 }
 
 
-
 Amazon* Player::selected() const noexcept
 {
 	return pSelected;
@@ -106,4 +106,47 @@ Amazon* Player::selected() const noexcept
 void Player::selected(Amazon* const amazon) noexcept
 {
 	pSelected = amazon;
+}
+
+
+
+
+GameData::GameData(int i) noexcept : p1("Player 1"), p2("Player 2"), active(false), nMaxActions(i == 1 ? 3 : 3), nMaxSpawns(i == 1 ? 6 : 6), nMaxAlive(i == 1 ? 3 : 3) {}
+
+
+Player& GameData::CurrentPlayer() noexcept
+{
+	return active ? p2 : p1;
+}
+
+
+Player& GameData::OtherPlayer() noexcept
+{
+	return active ? p1 : p2;
+}
+
+
+unsigned GameData::MaxActions() const noexcept
+{
+	return nMaxActions;
+}
+
+
+unsigned GameData::MaxSpawns() const noexcept
+{
+	return nMaxSpawns;
+}
+
+
+unsigned GameData::MaxAlive() const noexcept
+{
+	return nMaxAlive;
+}
+
+
+void GameData::turn() noexcept
+{
+	active = !active;
+	p1.resetActions();
+	p2.resetActions();
 }

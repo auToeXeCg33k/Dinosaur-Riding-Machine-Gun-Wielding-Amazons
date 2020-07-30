@@ -1,16 +1,18 @@
-#pragma once
+#ifndef COMMAND_H
+#define COMMAND_H
 
-#include "gamedata.h"
-#include "map.h"
+#include <string>
 #include <unordered_map>
+
+#include "map.h"
+#include "player.h"
+
 
 class CommandHandler
 {
 private:
     std::unordered_map<std::string, std::string(CommandHandler::*)(const std::vector<std::string>&, Map&, GameData&) const noexcept> commands;
-
 	CommandHandler() noexcept;
-
     std::string New(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 	std::string Select(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 	std::string Move(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
@@ -29,10 +31,9 @@ private:
 	std::string Steps(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 
 public:
-    
 	CommandHandler(CommandHandler&& other) noexcept = delete;
-
 	static CommandHandler& instance() noexcept;
-
     std::string handleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept;
 };
+
+#endif

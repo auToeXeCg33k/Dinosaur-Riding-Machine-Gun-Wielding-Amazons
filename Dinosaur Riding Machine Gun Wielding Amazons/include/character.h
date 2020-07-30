@@ -1,7 +1,31 @@
-#pragma once
+#ifndef CHARACTER_H
+#define CHARACTER_H
 
-#include "dino.h"
+#include <memory>
+#include <unordered_map>
+#include <string>
+#include <vector>
+
 #include "item.h"
+
+
+class Dino
+{
+private:
+	double hp;
+	bool bTamed;
+
+public:
+	Dino() noexcept;
+	Dino(Dino&& other) noexcept = delete;
+
+	double health() const noexcept;
+	void health(double const hp) noexcept;
+
+	bool tamed() const noexcept;
+	void tamed(bool const tmd) noexcept;
+};
+
 
 class Amazon
 {
@@ -27,7 +51,7 @@ public:
 	const std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>>& inventory() const noexcept;
 
 	const std::string& name() const noexcept;
-	
+
 	double health() const noexcept;
 	void health(double const hp) noexcept;
 
@@ -41,3 +65,21 @@ public:
 	void riding(std::unique_ptr<Dino>&& dino) noexcept;
 
 };
+
+
+class BrainDrainer
+{
+private:
+	const double min;
+	const double max;
+
+	double damage() const noexcept;
+
+public:
+	BrainDrainer() noexcept;
+	BrainDrainer(BrainDrainer&& other) noexcept = delete;
+
+	std::string attack(Amazon& amazon) const noexcept;
+};
+
+#endif

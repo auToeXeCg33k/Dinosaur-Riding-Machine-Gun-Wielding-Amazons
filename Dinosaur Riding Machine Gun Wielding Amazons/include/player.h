@@ -8,7 +8,7 @@ class Player
 {
 private:
 	const std::string sName;
-	std::unordered_map<std::string, std::unique_ptr<Amazon>> amazon_map;
+	std::unordered_map<std::string, Amazon> amazon_map;
 	Amazon* pSelected;
 	unsigned nActions;
 	unsigned nAlive;
@@ -36,8 +36,8 @@ public:
 
 	bool existsAmazon(std::string_view name) const noexcept;
 	void createAmazon(std::string_view name) noexcept;
-	Amazon& getAmazon(std::string_view name) const noexcept;
-	const std::unordered_map<std::string, std::unique_ptr<Amazon>>& amazons() const noexcept;
+	Amazon& getAmazon(std::string_view name) noexcept;
+	const std::unordered_map<std::string, Amazon>& amazons() const noexcept;
 
 	char id() const noexcept;
 

@@ -75,17 +75,17 @@ bool Player::existsAmazon(std::string_view name) const noexcept
 
 void Player::createAmazon(string_view name) noexcept
 {
-	amazon_map.emplace(name, std::make_unique<Amazon>(name));
+	amazon_map.emplace(name, name);
 }
 
 
-Amazon& Player::getAmazon(std::string_view name) const noexcept
+Amazon& Player::getAmazon(std::string_view name) noexcept
 {
-	return *amazon_map.at(static_cast<string>(name));
+	return amazon_map.at(static_cast<string>(name));
 }
 
 
-const std::unordered_map<string, std::unique_ptr<Amazon>>& Player::amazons() const noexcept
+const std::unordered_map<string, Amazon>& Player::amazons() const noexcept
 {
 	return amazon_map;
 }

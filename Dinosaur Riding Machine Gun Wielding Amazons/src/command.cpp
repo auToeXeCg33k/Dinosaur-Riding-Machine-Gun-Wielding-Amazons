@@ -67,9 +67,9 @@ string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) co
 	data.CurrentPlayer().createAmazon(v[1]);
 
 	if (data.CurrentPlayer().id())
-		map.tile(Point(map.size() - 1, map.size() - 1)).add(&data.CurrentPlayer().getAmazon(v.at(1)));
+		map.tile(Point{ map.size() - 1, map.size() - 1 }).add(&data.CurrentPlayer().getAmazon(v.at(1)));
 	else
-		map.tile(Point(0, 0)).add(&data.CurrentPlayer().getAmazon(v.at(1)));
+		map.tile(Point{ 0, 0 }).add(&data.CurrentPlayer().getAmazon(v.at(1)));
 
 	data.CurrentPlayer().incAlive();
 	data.CurrentPlayer().action();
@@ -111,8 +111,8 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 
 	try
 	{
-		Point target(stoi(v.at(1)) - 1, stoi(v.at(2)) - 1);
-		Point current(map.find(data.CurrentPlayer().selected()));
+		Point target{ stoi(v.at(1)) - 1, stoi(v.at(2)) - 1 };
+		Point current{ map.find(data.CurrentPlayer().selected()) };
 
 		if (target.x() < 0 || target.y() < 0 || target.x() >= map.size() || target.y() >= map.size())
 			return "Target tile does not exist.\n";
@@ -128,7 +128,7 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 
 		data.CurrentPlayer().action();
 
-		string ret(data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n");
+		string ret{ data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n" };
 
 		if (map.tile(target).braindrainer())
 		{
@@ -144,7 +144,7 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 		return ret;
 	}
 
-	catch (std::invalid_argument&)
+	catch (const std::invalid_argument&)
 	{
 		return "Invalid arguments.\n";
 	}
@@ -228,7 +228,7 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 		{-1, 1}
 	};
 
-	Point p(map.find(data.CurrentPlayer().selected()));
+	Point p{ map.find(data.CurrentPlayer().selected()) };
 	string ret;
 	string temp;
 
@@ -237,18 +237,18 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 		{
 			ret.append("(" + to_string(p.x() + offset.x() + 1) + ", " + to_string(p.y() + offset.y() + 1) + "): ");
 
-			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).AmazonContainer())
+			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
 					temp.append(x->name() + "(" + (data.OtherPlayer().existsAmazon(x->name()) && &data.OtherPlayer().getAmazon(x->name()) == x ? "enemy" : "friendly") + ", " + to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
-			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).DinoContainer())
+			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).DinoContainer())
 				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
-			for (const auto& x : map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).ItemContainer())
+			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).ItemContainer())
 				for (const auto& y : x.second)
 					temp.append(y->name() + ", ");
 
-			if (map.tile(Point(p.x() + offset.x(), p.y() + offset.y())).braindrainer())
+			if (map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).braindrainer())
 				temp.append("BRAINDRAINER, ");
 
 			if (temp.empty())
@@ -290,7 +290,7 @@ string CommandHandler::Attack(const vector<string>& v, Map& map, GameData& data)
 	if (data.OtherPlayer().getAmazon(v[1]).health() == 0.0)
 		return v[1] + " is already dead.\n";
 
-	double dmg = data.CurrentPlayer().selected()->hand()->dmg();
+	double dmg{ data.CurrentPlayer().selected()->hand()->dmg() };
 
 	data.CurrentPlayer().action();
 
@@ -341,15 +341,15 @@ string CommandHandler::Pickup(const vector<string>& v, Map& map, GameData& data)
 	if (data.CurrentPlayer().selected()->health() == 0.0)
 		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (!ItemFactory::isValid(v[1]))
+	if (!ItemFactory::IsValid(v[1]))
 		return "Invalid item type.\n";
 
-	Point p = map.find(data.CurrentPlayer().selected());
+	Point p{ map.find(data.CurrentPlayer().selected()) };
 
 	if (!map.tile(p).has(v[1]))
 		return v[1] + " cannot be found on the current tile.\n";
 
-	if (!data.CurrentPlayer().selected()->hasFreeSlot(ItemFactory::lookUp(v[1])))
+	if (!data.CurrentPlayer().selected()->hasFreeSlot(ItemFactory::TypeOf(v[1])))
 		return "Can't pick up " + v[1] + ". " + data.CurrentPlayer().selected()->name() + "'s inventory is full.\n";
 
 	data.CurrentPlayer().selected()->take(map.tile(p).remove(v[1]));
@@ -374,15 +374,15 @@ string CommandHandler::Drop(const vector<string>& v, Map& map, GameData& data) c
 	if (data.CurrentPlayer().selected()->health() == 0.0)
 		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (!ItemFactory::isValid(v[1]))
+	if (!ItemFactory::IsValid(v[1]))
 		return "Invalid item type.\n";
 
 	if (!data.CurrentPlayer().selected()->hasItem(v[1]))
 		return v[1] + " cannot be found in " + data.CurrentPlayer().selected()->name() + "'s inventory.\n";
 
-	Point p = map.find(data.CurrentPlayer().selected());
+	Point p{ map.find(data.CurrentPlayer().selected()) };
 
-	unique_ptr<Item> item(data.CurrentPlayer().selected()->drop(v[1]));
+	unique_ptr<Item> item{ data.CurrentPlayer().selected()->drop(v[1]) };
 
 	if (item.get() == data.CurrentPlayer().selected()->hand())
 		data.CurrentPlayer().selected()->hand(nullptr);
@@ -406,7 +406,7 @@ string CommandHandler::Equip(const vector<string>& v, Map& map, GameData& data) 
 	if (data.CurrentPlayer().selected()->health() == 0.0)
 		return data.CurrentPlayer().selected()->name() + " is dead.\n";
 
-	if (!ItemFactory::isValid(v[1]) || ItemFactory::lookUp(v[1]) != ItemType::gun)
+	if (!ItemFactory::IsValid(v[1]) || ItemFactory::TypeOf(v[1]) != ItemType::gun)
 		return "Invalid weapon type.\n";
 
 	if (!data.CurrentPlayer().selected()->hasItem(v[1]))
@@ -429,14 +429,13 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 
 	for (int i = 0; i < map.size(); i++)
 		for (int j = 0; j < map.size(); j++)
-			if (map.tile(Point(j, i)).braindrainer())
-				drainers.emplace_back(make_pair(Point(j, i), map.tile(Point(j, i)).remove()));
+			if (map.tile(Point{ j, i }).braindrainer())
+				drainers.emplace_back(make_pair(Point{ j, i }, map.tile(Point{ j, i }).remove()));
 
 	vector<Point> offsets;
 	offsets.reserve(9);
 
-	std::random_device rd;
-	std::mt19937_64 mt(rd());
+	std::mt19937_64 mt{ std::random_device{}() };
 
 	string ret;
 
@@ -446,18 +445,18 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 		
 		for (int i = -1; i != 2; i++)
 			for (int j = -1; j != 2; j++)
-				offsets.emplace_back(Point(i, j));
+				offsets.emplace_back(Point{ i, j });
 		
 		while(true)
 		{
-			std::uniform_int_distribution<size_t> dist(0, offsets.size() - 1);
-			size_t rnd(dist(mt));
+			std::uniform_int_distribution<size_t> dist{ 0, offsets.size() - 1 };
+			size_t rnd{ dist(mt) };
 
 			if (pair.first.x() + offsets.at(rnd).x() >= 0 && pair.first.x() + offsets.at(rnd).x() < map.size() && pair.first.y() + offsets.at(rnd).y() >= 0 && pair.first.y() + offsets.at(rnd).y() < map.size() && !map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer())
 			{
-				map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).add(move(pair.second));
-				for (auto& x : map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).AmazonContainer())
-					ret.append(map.tile(Point(pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y())).braindrainer()->attack(*x));
+				map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).add(move(pair.second));
+				for (auto& x : map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).AmazonContainer())
+					ret.append(map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).braindrainer()->attack(*x));
 				break;
 			}
 
@@ -487,12 +486,12 @@ string CommandHandler::Tame(const vector<string>& v, Map& map, GameData& data) c
 	if (data.CurrentPlayer().selected()->dino())
 		return data.CurrentPlayer().selected()->name() + " already has a dino.\n";
 
-	const auto& dinos(map.tile(map.find(data.CurrentPlayer().selected())).DinoContainer());
+	const auto& dinos = map.tile(map.find(data.CurrentPlayer().selected())).DinoContainer();
 
 	if (dinos.empty())
 		return "There are no dinos nearby.\n";
 
-	Dino* temp(dinos.front().get());
+	Dino* temp{ dinos.front().get() };
 
 	for (const auto& x : dinos)
 		if (x->health() >= temp->health() && !x->tamed())
@@ -525,7 +524,7 @@ string CommandHandler::Geton(const vector<string>& v, Map& map, GameData& data) 
 	if (data.CurrentPlayer().selected()->riding())
 		return data.CurrentPlayer().selected()->name() + " is already riding their dino.\n";
 
-	const auto point(map.find(data.CurrentPlayer().selected()));
+	const Point point{ map.find(data.CurrentPlayer().selected()) };
 
 	if (!map.tile(point).has(data.CurrentPlayer().selected()->dino()))
 		return data.CurrentPlayer().selected()->name() + "'s dino is not nearby.\n";
@@ -568,7 +567,7 @@ string CommandHandler::List(const vector<string>& v, Map& map, GameData& data) c
 
 	string ret;
 
-	for (const auto& x : data.CurrentPlayer().amazons())
+	for (const auto& x : data.CurrentPlayer().AmazonContainer())
 		ret.append(x.first + ", ");
 
 	if (ret.empty())
@@ -586,12 +585,12 @@ string CommandHandler::Status(const vector<string>& v, Map& map, GameData& data)
 	if (!data.CurrentPlayer().selected())
 		return "Select an amazon first!\n";
 	
-	auto selected(data.CurrentPlayer().selected());
+	Amazon* selected{ data.CurrentPlayer().selected() };
 
-	string ret(selected->name() + ".\n");
+	string ret{ selected->name() + ".\n" };
 	ret.append(to_string(static_cast<int>(round(selected->health()))) + " HP.\n");
 
-	auto location(map.find(selected));
+	Point location{ map.find(selected) };
 
 	ret.append("On (" + to_string(location.x() + 1) + ", " + to_string(location.y() + 1) + ").\n");
 	ret.append("Holding: " + (selected->hand() ? "a " + selected->hand()->name() : "nothing") + ".\n");

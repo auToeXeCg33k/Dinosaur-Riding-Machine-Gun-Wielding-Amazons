@@ -8,7 +8,7 @@ using std::unique_ptr;
 using std::move;
 
 
-Dino::Dino() noexcept : hp(100.0), bTamed(false) {}
+Dino::Dino() noexcept : hp{ 100.0 }, is_tamed{ false } {}
 
 
 double Dino::health() const noexcept
@@ -25,64 +25,65 @@ void Dino::health(double const hp) noexcept
 
 bool Dino::tamed() const noexcept
 {
-	return bTamed;
+	return is_tamed;
 }
 
 
 void Dino::tamed(bool const tmd) noexcept
 {
-	bTamed = tmd;
+	is_tamed = tmd;
 }
 
 
 
 
-Amazon::Amazon(string_view name) noexcept : sName(name), hp(100.0), held(nullptr), pDino(nullptr), pRiding(nullptr)
+Amazon::Amazon(string_view name) noexcept : nm{ name }, hp{ 100.0 }, held{ nullptr }, owned_dino{ nullptr }, ridden_dino{ nullptr }
 {
-	inv.emplace(ItemType::gun, std::vector<std::unique_ptr<Item>>());
+	inv.emplace(std::make_pair(ItemType::gun, std::vector<std::unique_ptr<Item>>{}));
 }
 
 
 bool Amazon::hasFreeSlot(ItemType type) const noexcept
 {
-	return inv.at(type).size() < ItemFactory::typeLimit(type);
+	return inv.at(type).size() < ItemFactory::LimitOf(type);
 }
 
 
 bool Amazon::hasItem(string_view name) const noexcept
 {
-	for (auto& x : inv.at(ItemFactory::lookUp(name)))
+	for (const auto& x : inv.at(ItemFactory::TypeOf(name)))
 		if (x->name() == name)
 			return true;
+
 	return false;
 }
 
 
 void Amazon::take(unique_ptr<Item>&& item) noexcept
 {
-	inv.at(ItemFactory::lookUp(item->name())).emplace_back(move(item));
+	inv.at(ItemFactory::TypeOf(item->name())).emplace_back(move(item));
 }
 
 
 unique_ptr<Item> Amazon::drop(string_view name) noexcept
 {
-	long long pos(-1);
+	long long pos{ -1 };
 
-	for (size_t i = 0; i < inv.at(ItemFactory::lookUp(name)).size(); i++)
-		if (inv.at(ItemFactory::lookUp(name)).at(i)->name() == name)
+	for (size_t i = 0; i < inv.at(ItemFactory::TypeOf(name)).size(); i++)
+		if (inv.at(ItemFactory::TypeOf(name)).at(i)->name() == name)
 		{
 			pos = i;
 
-			if (inv.at(ItemFactory::lookUp(name)).at(i).get() != held)
+			if (inv.at(ItemFactory::TypeOf(name)).at(i).get() != held)
 				break;
 		}
 
 	if (pos == -1)
 		return nullptr;
 
-	std::unique_ptr<Item> ret(move(inv.at(ItemFactory::lookUp(name)).at(pos)));
+	std::unique_ptr<Item> ret{ move(inv.at(ItemFactory::TypeOf(name)).at(pos)) };
 
-	inv.at(ItemFactory::lookUp(name)).erase(inv.at(ItemFactory::lookUp(name)).begin() + pos);
+	inv.at(ItemFactory::TypeOf(name)).erase(inv.at(ItemFactory::TypeOf(name)).begin() + pos);
 
 	return ret;
 }
@@ -90,7 +91,7 @@ unique_ptr<Item> Amazon::drop(string_view name) noexcept
 
 Item* Amazon::item(string_view name) const noexcept
 {
-	for (auto& x : inv.at(ItemFactory::lookUp(name)))
+	for (const auto& x : inv.at(ItemFactory::TypeOf(name)))
 		if (x->name() == name)
 			return x.get();
 }
@@ -104,7 +105,7 @@ const std::unordered_map<ItemType, std::vector<unique_ptr<Item>>>& Amazon::inven
 
 const string& Amazon::name() const noexcept
 {
-	return sName;
+	return nm;
 }
 
 
@@ -126,46 +127,45 @@ Gun* Amazon::hand() const noexcept
 }
 
 
-void Amazon::hand(Gun* const item) noexcept
+void Amazon::hand(Gun* const gun) noexcept
 {
-	held = item;
+	held = gun;
 }
 
 
 Dino* Amazon::dino() const noexcept
 {
-	return pDino;
+	return owned_dino;
 }
 
 
 void Amazon::dino(Dino* const dino) noexcept
 {
-	pDino = dino;
+	owned_dino = dino;
 }
 
 
 unique_ptr<Dino>& Amazon::riding() noexcept
 {
-	return pRiding;
+	return ridden_dino;
 }
 
 
 void Amazon::riding(unique_ptr<Dino>&& dino) noexcept
 {
-	pRiding = move(dino);
+	ridden_dino = move(dino);
 }
 
 
 
 
-BrainDrainer::BrainDrainer() noexcept : min(60.0), max(90.0) {}
+BrainDrainer::BrainDrainer() noexcept : min{ 60.0 }, max{ 90.0 } {}
 
 
 double BrainDrainer::damage() const noexcept
 {
-	std::random_device rd;
-	std::mt19937_64 mt(rd());
-	std::uniform_real_distribution<> dist(0, 1);
+	std::mt19937_64 mt{ std::random_device{}() };
+	std::uniform_real_distribution<> dist{ 0, 1 };
 
 	return (max - min) * dist(mt) + min;
 }
@@ -173,7 +173,7 @@ double BrainDrainer::damage() const noexcept
 
 string BrainDrainer::attack(Amazon& amazon) const noexcept
 {
-	auto dmg(damage());
+	auto dmg{ damage() };
 
 	if (amazon.riding())
 	{
@@ -183,9 +183,7 @@ string BrainDrainer::attack(Amazon& amazon) const noexcept
 			amazon.dino()->health(amazon.dino()->health() - dmg);
 
 		if (!amazon.dino()->health())
-		{
 			return amazon.name() + "'s dino was killed by a Braindrainer.\n";
-		}
 
 		return amazon.name() + "'s dino suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage from a Braindrainer.\n";
 	}

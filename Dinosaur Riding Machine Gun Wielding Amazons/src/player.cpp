@@ -4,10 +4,10 @@ using std::string;
 using std::string_view;
 
 
-char Player::nextID(0); 
+char Player::nextID{ 0 };
 
 
-Player::Player(string_view name) noexcept : sName(name), pSelected(nullptr), nActions(0), nAlive(0), nID(nextID)
+Player::Player(string_view name) noexcept : nm{ name }, slctd{ nullptr }, nActions{ 0 }, nAlive{ 0 }, nID{ nextID }
 {
 	nextID++;
 }
@@ -21,7 +21,7 @@ Player::~Player() noexcept
 
 const string& Player::name() const noexcept
 {
-	return sName;
+	return nm;
 }
 
 
@@ -63,31 +63,31 @@ void Player::decAlive() noexcept
 
 size_t Player::spawns() const noexcept
 {
-	return amazon_map.size();
+	return amazons.size();
 }
 
 
-bool Player::existsAmazon(std::string_view name) const noexcept
+bool Player::existsAmazon(const string& name) const noexcept
 {
-	return amazon_map.find(static_cast<string>(name)) != amazon_map.end();
+	return amazons.find(name) != amazons.end();
 }
 
 
-void Player::createAmazon(string_view name) noexcept
+void Player::createAmazon(const string& name) noexcept
 {
-	amazon_map.emplace(name, name);
+	amazons.emplace(name, name);
 }
 
 
-Amazon& Player::getAmazon(std::string_view name) noexcept
+Amazon& Player::getAmazon(const string& name) noexcept
 {
-	return amazon_map.at(static_cast<string>(name));
+	return amazons.at(name);
 }
 
 
-const std::unordered_map<string, Amazon>& Player::amazons() const noexcept
+const std::unordered_map<string, Amazon>& Player::AmazonContainer() const noexcept
 {
-	return amazon_map;
+	return amazons;
 }
 
 
@@ -99,19 +99,19 @@ char Player::id() const noexcept
 
 Amazon* Player::selected() const noexcept
 {
-	return pSelected;
+	return slctd;
 }
 
 
 void Player::selected(Amazon* const amazon) noexcept
 {
-	pSelected = amazon;
+	slctd = amazon;
 }
 
 
 
 
-GameData::GameData(int i) noexcept : p1("Player 1"), p2("Player 2"), active(false), nMaxActions(i == 1 ? 3 : 3), nMaxSpawns(i == 1 ? 6 : 6), nMaxAlive(i == 1 ? 3 : 3) {}
+GameData::GameData(int i) noexcept : p1{ "Player 1" }, p2{ "Player 2" }, active{ 0 }, nMaxActions{ i == 1 ? 3u : 3u }, nMaxSpawns{ i == 1 ? 6u : 6u }, nMaxAlive{ i == 1 ? 3u : 3u } {}
 
 
 Player& GameData::CurrentPlayer() noexcept

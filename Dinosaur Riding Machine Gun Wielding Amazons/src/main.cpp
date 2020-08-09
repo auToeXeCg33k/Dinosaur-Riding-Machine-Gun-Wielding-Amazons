@@ -11,10 +11,10 @@ using std::string;
 
 int main()
 {
-	const int gameMode(ReadGameMode());
+	const int gameMode{ ReadGameMode() };
 
-	GameData data(gameMode);
-	Map map(gameMode);
+	GameData data{ gameMode };
+	Map map{ gameMode };
 
 	cout << "\nMap size is " << map.size() << "x" << map.size() << ".\n"
 		"The maximum number of actions per turn is " << data.MaxActions() << ".\n"

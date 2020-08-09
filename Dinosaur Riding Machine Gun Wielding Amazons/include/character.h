@@ -13,7 +13,7 @@ class Dino
 {
 private:
 	double hp;
-	bool bTamed;
+	bool is_tamed;
 
 public:
 	Dino() noexcept;
@@ -30,12 +30,12 @@ public:
 class Amazon
 {
 private:
-	const std::string sName;
+	const std::string nm;
 	double hp;
 	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inv;
 	Gun* held;
-	Dino* pDino;
-	std::unique_ptr<Dino> pRiding;
+	Dino* owned_dino;
+	std::unique_ptr<Dino> ridden_dino;
 
 public:
 	Amazon(std::string_view name) noexcept;
@@ -56,7 +56,7 @@ public:
 	void health(double const hp) noexcept;
 
 	Gun* hand() const noexcept;
-	void hand(Gun* const item) noexcept;
+	void hand(Gun* const gun) noexcept;
 
 	Dino* dino() const noexcept;
 	void dino(Dino* const dino) noexcept;

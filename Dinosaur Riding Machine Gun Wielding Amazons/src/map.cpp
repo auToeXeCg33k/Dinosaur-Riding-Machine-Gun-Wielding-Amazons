@@ -11,11 +11,11 @@ using std::uniform_int_distribution;
 
 Tile::Tile() noexcept
 {
-	items.emplace(ItemType::gun, vector<unique_ptr<Item>>());
+	items.emplace(std::make_pair(ItemType::gun, vector<unique_ptr<Item>>{}));
 }
 
 
-Tile::Tile(Tile&& other) noexcept : amazons(move(other.amazons)), dinos(move(other.dinos)), items(move(other.items)), drainer(move(other.drainer)) {}
+Tile::Tile(Tile&& other) noexcept : amazons{ move(other.amazons) }, dinos{ move(other.dinos) }, items{ move(other.items) }, drainer{ move(other.drainer) } {}
 
 
 void Tile::add(Amazon* const amazon) noexcept
@@ -32,7 +32,7 @@ void Tile::add(unique_ptr<Dino>&& dino) noexcept
 
 void Tile::add(unique_ptr<Item>&& item) noexcept
 {
-	items.at(ItemFactory::lookUp(item->name())).emplace_back(move(item));
+	items.at(ItemFactory::TypeOf(item->name())).emplace_back(move(item));
 }
 
 
@@ -53,7 +53,7 @@ unique_ptr<Dino> Tile::remove(Dino* dino) noexcept
 	for (size_t i = 0; i < dinos.size(); i++)
 		if (dinos.at(i).get() == dino)
 		{
-			auto ret(move(dinos.at(i)));
+			unique_ptr<Dino> ret{ move(dinos.at(i)) };
 			dinos.erase(dinos.begin() + i);
 			return ret;
 		}
@@ -62,11 +62,11 @@ unique_ptr<Dino> Tile::remove(Dino* dino) noexcept
 
 unique_ptr<Item> Tile::remove(string_view name) noexcept
 {
-	for (size_t i = 0; i < items.at(ItemFactory::lookUp(name)).size(); i++)
-		if (items.at(ItemFactory::lookUp(name)).at(i)->name() == name)
+	for (size_t i = 0; i < items.at(ItemFactory::TypeOf(name)).size(); i++)
+		if (items.at(ItemFactory::TypeOf(name)).at(i)->name() == name)
 		{
-			unique_ptr<Item> ret(move(items.at(ItemFactory::lookUp(name)).at(i)));
-			items.at(ItemFactory::lookUp(name)).erase(items.at(ItemFactory::lookUp(name)).begin() + i);
+			unique_ptr<Item> ret{ move(items.at(ItemFactory::TypeOf(name)).at(i)) };
+			items.at(ItemFactory::TypeOf(name)).erase(items.at(ItemFactory::TypeOf(name)).begin() + i);
 			return ret;
 		}
 }
@@ -89,15 +89,17 @@ bool Tile::has(Dino* const dino) const noexcept
 	for (const auto& x : dinos)
 		if (x.get() == dino)
 			return true;
+
 	return false;
 }
 
 
 bool Tile::has(string_view name) const noexcept
 {
-	for (const auto& x : items.at(ItemFactory::lookUp(name)))
+	for (const auto& x : items.at(ItemFactory::TypeOf(name)))
 		if (x->name() == name)
 			return true;
+
 	return false;
 }
 
@@ -120,10 +122,10 @@ bool Tile::spawnDino() noexcept
 
 bool Tile::spawnItem(string_view name) noexcept
 {
-	if (items.at(ItemFactory::lookUp(name)).size())
+	if (items.at(ItemFactory::TypeOf(name)).size())
 		return false;
 
-	items.at(ItemFactory::lookUp(name)).emplace_back(ItemFactory::createItem(name));
+	items.at(ItemFactory::TypeOf(name)).emplace_back(ItemFactory::CreateItem(name));
 	return true;
 }
 
@@ -177,10 +179,9 @@ Map::Map(const int i) noexcept
 				tiles.at(i).emplace_back();
 		}
 
-		std::random_device rd;
-		std::mt19937_64 mt(rd());
+		std::mt19937_64 mt(std::random_device{}());
 
-		uniform_int_distribution<> dist1(0, 4);
+		uniform_int_distribution<> dist1{ 0, 4 };
 
 		for (int i = 0; i < 5; i++)
 			while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnDino());
@@ -191,14 +192,14 @@ Map::Map(const int i) noexcept
 			while (!tiles.at(4).at(dist1(mt)).spawnItem("pistol"));
 		}
 
-		uniform_int_distribution<unsigned> dist2(0, 1);
+		uniform_int_distribution<unsigned> dist2{ 0, 1 };
 
 		while (!tiles.at(dist2(mt)).at(dist1(mt)).spawnItem("shotgun"));
 		while (!tiles.at(4 - dist2(mt)).at(dist1(mt)).spawnItem("shotgun"));
 		while (!tiles.at(dist1(mt)).at(dist1(mt)).spawnItem("katana"));
 		while (!tiles.at(2).at(dist1(mt)).spawnItem("minigun"));
 
-		uniform_int_distribution<unsigned> dist3(0,2);
+		uniform_int_distribution<unsigned> dist3{ 0, 2 };
 
 		for (int i = 0; i < 2; i++)
 			while (!tiles.at(3 - dist3(mt)).at(dist1(mt)).spawnDrainer());
@@ -225,5 +226,5 @@ Point Map::find(Amazon* amazon) const noexcept
 	for (int i = 0; i < sz; i++)
 		for (int j = 0; j < sz; j++)
 			if (tiles.at(i).at(j).has(amazon))
-				return Point(j, i);
+				return Point{ j, i };
 }

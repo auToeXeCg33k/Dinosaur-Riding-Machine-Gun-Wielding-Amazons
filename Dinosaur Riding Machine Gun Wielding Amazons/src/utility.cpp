@@ -4,20 +4,19 @@
 
 using std::move;
 using std::string;
-using std::string_view;
 using std::cout;
 
 
-Point::Point() noexcept : cx(0), cy(0) {}
+Point::Point() noexcept : cx{ 0 }, cy{ 0 } {}
 
 
-Point::Point(const int x, const int y) noexcept : cx(x), cy(y) {}
+Point::Point(const int x, const int y) noexcept : cx{ x }, cy{ y } {}
 
 
-Point::Point(const Point& other) noexcept : cx(other.cx), cy(other.cy) {}
+Point::Point(const Point& other) noexcept : cx{other.cx}, cy{other.cy} {}
 
 
-Point::Point(Point&& other) noexcept : cx(move(other.cx)), cy(move(other.cy)) {}
+Point::Point(Point&& other) noexcept : cx{ move(other.cx) }, cy{ move(other.cy) } {}
 
 
 int Point::x() const noexcept
@@ -104,7 +103,7 @@ int ReadGameMode() noexcept
 
 
 
-char CheckWin(GameData& data) noexcept
+int CheckWin(GameData& data) noexcept
 {
 	if (!data.CurrentPlayer().alive() && data.CurrentPlayer().spawns() == data.MaxSpawns())
 		return 1;
@@ -118,7 +117,7 @@ char CheckWin(GameData& data) noexcept
 
 
 
-string toLower(string_view input) noexcept
+string toLower(const string& input) noexcept
 {
 	string ret;
 
@@ -131,7 +130,7 @@ string toLower(string_view input) noexcept
 
 
 
-void ProcessInput(string_view input, std::vector<string>& words) noexcept
+void ProcessInput(const string& input, std::vector<string>& words) noexcept
 {
 	string word;
 

@@ -32,12 +32,12 @@ public:
 int ReadGameMode() noexcept;
 
 
-char CheckWin(GameData& data) noexcept;
+int CheckWin(GameData& data) noexcept;
 
 
-std::string toLower(std::string_view input) noexcept;
+std::string toLower(const std::string& input) noexcept;
 
 
-void ProcessInput(std::string_view input, std::vector<std::string>& words) noexcept;
+void ProcessInput(const std::string& input, std::vector<std::string>& words) noexcept;
 
 #endif

@@ -1,79 +1,12 @@
-#include <iostream>
-
 #include "utility.h"
 
-using std::move;
-using std::string;
-using std::cout;
-
-
-Point::Point() noexcept : cx{ 0 }, cy{ 0 } {}
-
-
-Point::Point(const int x, const int y) noexcept : cx{ x }, cy{ y } {}
-
-
-Point::Point(const Point& other) noexcept : cx{other.cx}, cy{other.cy} {}
-
-
-Point::Point(Point&& other) noexcept : cx{ move(other.cx) }, cy{ move(other.cy) } {}
-
-
-int Point::x() const noexcept
-{
-	return cx;
-}
-
-
-int Point::y() const noexcept
-{
-	return cy;
-}
-
-
-bool Point::operator==(const Point& other) const noexcept
-{
-	return cx == other.cx && cy == other.cy;
-}
-
-
-bool Point::operator!=(const Point& other) const noexcept
-{
-	return cx != other.cx || cy != other.cy;
-}
-
-
-Point& Point::operator=(const Point& other) noexcept
-{
-	if (&other == this)
-		return *this;
-
-	cx = other.cx;
-	cy = other.cy;
-
-	return *this;
-}
-
-
-Point& Point::operator=(Point&& other) noexcept
-{
-	if (&other == this)
-		return *this;
-
-	this->cx = move(other.cx);
-	this->cy = move(other.cy);
-
-	return *this;
-}
-
-
-
+#include <iostream>
 
 int ReadGameMode() noexcept
 {
-	cout << "Enter gamemode number: ";
+	std::cout << "Enter gamemode number: ";
 
-	string input;
+	std::string input;
 	int mode;
 
 	while (1)
@@ -86,7 +19,7 @@ int ReadGameMode() noexcept
 
 			if (mode < 1 || mode > 1)
 			{
-				cout << "Invalid gamemode. Try again: ";
+				std::cout << "Invalid gamemode. Try again: ";
 				continue;
 			}
 
@@ -95,13 +28,10 @@ int ReadGameMode() noexcept
 
 		catch (const std::invalid_argument&)
 		{
-			cout << "Not a number. Try again: ";
+			std::cout << "Not a number. Try again: ";
 		}
 	}
 }
-
-
-
 
 int CheckWin(GameData& data) noexcept
 {
@@ -114,12 +44,9 @@ int CheckWin(GameData& data) noexcept
 	return 0;
 }
 
-
-
-
-string toLower(const string& input) noexcept
+std::string toLower(const std::string& input) noexcept
 {
-	string ret;
+	std::string ret;
 
 	for (const auto& x : input)
 		ret.push_back(std::tolower(x));
@@ -127,12 +54,9 @@ string toLower(const string& input) noexcept
 	return ret;
 }
 
-
-
-
-void ProcessInput(const string& input, std::vector<string>& words) noexcept
+void ProcessInput(const std::string& input, std::vector<std::string>& words) noexcept
 {
-	string word;
+	std::string word;
 
 	for (size_t i = 0; i < input.length(); i++)
 	{

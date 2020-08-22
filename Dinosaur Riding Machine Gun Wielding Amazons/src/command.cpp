@@ -1,53 +1,46 @@
+#include "Command.h"
+
+#include "GameData.h"
+#include "Utility.h"
+
 #include <stdexcept>
 #include <random>
 
-#include "command.h"
-
-using std::string;
-using std::vector;
-using std::to_string;
-using std::unique_ptr;
-using std::move;
-
-
 CommandHandler::CommandHandler() noexcept
 {
-    commands.emplace("new", &CommandHandler::New);
-    commands.emplace("select", &CommandHandler::Select);
-    commands.emplace("move", &CommandHandler::Move);
-    commands.emplace("help", &CommandHandler::Help);
-    commands.emplace("lookaround", &CommandHandler::Lookaround);
-    commands.emplace("attack", &CommandHandler::Attack);
-    commands.emplace("pickup", &CommandHandler::Pickup);
-    commands.emplace("drop", &CommandHandler::Drop);
-    commands.emplace("equip", &CommandHandler::Equip);
-    commands.emplace("end", &CommandHandler::End);
-    commands.emplace("tame", &CommandHandler::Tame);
-    commands.emplace("geton", &CommandHandler::Geton);
-    commands.emplace("getoff", &CommandHandler::Getoff);
-    commands.emplace("list", &CommandHandler::List);
-    commands.emplace("status", &CommandHandler::Status);
-    commands.emplace("steps", &CommandHandler::Steps);
+    m_Commands.emplace("new", &CommandHandler::New);
+    m_Commands.emplace("select", &CommandHandler::Select);
+    m_Commands.emplace("move", &CommandHandler::Move);
+    m_Commands.emplace("help", &CommandHandler::Help);
+    m_Commands.emplace("lookaround", &CommandHandler::Lookaround);
+    m_Commands.emplace("attack", &CommandHandler::Attack);
+    m_Commands.emplace("pickup", &CommandHandler::Pickup);
+    m_Commands.emplace("drop", &CommandHandler::Drop);
+    m_Commands.emplace("equip", &CommandHandler::Equip);
+    m_Commands.emplace("end", &CommandHandler::End);
+    m_Commands.emplace("tame", &CommandHandler::Tame);
+    m_Commands.emplace("geton", &CommandHandler::Geton);
+    m_Commands.emplace("getoff", &CommandHandler::Getoff);
+    m_Commands.emplace("list", &CommandHandler::List);
+    m_Commands.emplace("status", &CommandHandler::Status);
+    m_Commands.emplace("steps", &CommandHandler::Steps);
 }
 
-
-CommandHandler& CommandHandler::instance() noexcept
+CommandHandler& CommandHandler::Instance() noexcept
 {
 	static CommandHandler inst;
 	return inst;
 }
 
-
-std::string CommandHandler::handleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::HandleCommand(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
-	if (commands.find(toLower(v.at(0))) == commands.end())
+	if (m_Commands.find(toLower(v.at(0))) == m_Commands.end())
 		return "Invalid command.\n";
 
-	return (this->*commands.at(toLower(v.at(0))))(v, map, data);
+	return (this->*m_Commands.at(toLower(v.at(0))))(v, map, data);
 }
 
-
-string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::New(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -77,8 +70,7 @@ string CommandHandler::New(const vector<string>& v, Map& map, GameData& data) co
 	return v[1] + " created.\n";
 }
 
-
-string CommandHandler::Select(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Select(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -94,8 +86,7 @@ string CommandHandler::Select(const vector<string>& v, Map& map, GameData& data)
 	return v[1] + " selected.\n";
 }
 
-
-string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Move(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 3)
 		return "Invalid arguments.\n";
@@ -128,18 +119,10 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 
 		data.CurrentPlayer().action();
 
-		string ret{ data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n" };
+		std::string ret{ data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n" };
 
 		if (map.tile(target).braindrainer())
-		{
-			ret.append(map.tile(target).braindrainer()->attack(*data.CurrentPlayer().selected()));
-
-			if (data.CurrentPlayer().selected()->riding() && !data.CurrentPlayer().selected()->dino()->health())
-				map.tile(target).add(move(data.CurrentPlayer().selected()->riding()));
-
-			else if(!data.CurrentPlayer().selected()->health())
-				data.CurrentPlayer().decAlive();
-		}
+			ret.append(map.tile(target).braindrainer()->Attack(*data.CurrentPlayer().selected(), map, data));
 
 		return ret;
 	}
@@ -150,8 +133,7 @@ string CommandHandler::Move(const vector<string>& v, Map& map, GameData& data) c
 	}
 }
 
-
-string CommandHandler::Help(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Help(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	return "### About The Game ###\n\n"
 
@@ -203,8 +185,7 @@ string CommandHandler::Help(const vector<string>& v, Map& map, GameData& data) c
 	"	steps:			provides information about the possible steps the current player can take at the time.\n";
 }
 
-
-string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Lookaround(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -229,24 +210,24 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 	};
 
 	Point p{ map.find(data.CurrentPlayer().selected()) };
-	string ret;
-	string temp;
+	std::string ret;
+	std::string temp;
 
 	for (const auto& offset : offsets)
 		if (p.x() + offset.x() >= 0 && p.x() + offset.x() < map.size() && p.y() + offset.y() >= 0 && p.y() + offset.y() < map.size())
 		{
-			ret.append("(" + to_string(p.x() + offset.x() + 1) + ", " + to_string(p.y() + offset.y() + 1) + "): ");
+			ret.append("(" + std::to_string(p.x() + offset.x() + 1) + ", " + std::to_string(p.y() + offset.y() + 1) + "): ");
 
 			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).AmazonContainer())
 				if (x != data.CurrentPlayer().selected())
-					temp.append(x->name() + "(" + (data.OtherPlayer().existsAmazon(x->name()) && &data.OtherPlayer().getAmazon(x->name()) == x ? "enemy" : "friendly") + ", " + to_string(static_cast<int>(round(x->health()))) + " HP), ");
+					temp.append(x->name() + "(" + (data.OtherPlayer().existsAmazon(x->name()) && &data.OtherPlayer().getAmazon(x->name()) == x ? "enemy" : "friendly") + ", " + std::to_string(static_cast<int>(round(x->health()))) + " HP), ");
 
 			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).DinoContainer())
-				temp.append((x->tamed() ? "Tamed" : "Untamed") + static_cast<string>(" Dino (") +  to_string(static_cast<int>(round(x->health()))) + " HP), ");
+				temp.append((x->Tamed() ? "Tamed" : "Untamed") + static_cast<std::string>(" Dino (") +  std::to_string(static_cast<int>(round(x->Health()))) + " HP), ");
 
 			for (const auto& x : map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).ItemContainer())
 				for (const auto& y : x.second)
-					temp.append(y->name() + ", ");
+					temp.append(y->Name() + ", ");
 
 			if (map.tile(Point{ p.x() + offset.x(), p.y() + offset.y() }).braindrainer())
 				temp.append("BRAINDRAINER, ");
@@ -263,8 +244,7 @@ string CommandHandler::Lookaround(const vector<string>& v, Map& map, GameData& d
 	return ret;
 }
 
-
-string CommandHandler::Attack(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Attack(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -290,24 +270,24 @@ string CommandHandler::Attack(const vector<string>& v, Map& map, GameData& data)
 	if (data.OtherPlayer().getAmazon(v[1]).health() == 0.0)
 		return v[1] + " is already dead.\n";
 
-	double dmg{ data.CurrentPlayer().selected()->hand()->dmg() };
+	double dmg{ data.CurrentPlayer().selected()->hand()->Damage() };
 
 	data.CurrentPlayer().action();
 
 	if (data.OtherPlayer().getAmazon(v[1]).riding())
 	{
-		if (data.OtherPlayer().getAmazon(v[1]).dino()->health() - dmg < 0.0)
-			data.OtherPlayer().getAmazon(v[1]).dino()->health(0.0);
+		if (data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg < 0.0)
+			data.OtherPlayer().getAmazon(v[1]).dino()->Health(0.0);
 		else
-			data.OtherPlayer().getAmazon(v[1]).dino()->health(data.OtherPlayer().getAmazon(v[1]).dino()->health() - dmg);
+			data.OtherPlayer().getAmazon(v[1]).dino()->Health(data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg);
 
-		if (data.OtherPlayer().getAmazon(v[1]).dino()->health() == 0.0)
+		if (data.OtherPlayer().getAmazon(v[1]).dino()->Health() == 0.0)
 		{
 			map.tile(map.find(&data.OtherPlayer().getAmazon(v[1]))).add(move(data.OtherPlayer().getAmazon(v[1]).riding()));
 			return v[1] + "'s dino died.\n";
 		}
 
-		return v[1] + "'s dino suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
+		return v[1] + "'s dino suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 	}
 		
 		
@@ -323,11 +303,10 @@ string CommandHandler::Attack(const vector<string>& v, Map& map, GameData& data)
 		return v[1] + " died.\n";
 	}
 
-	return v[1] + " suffered " + to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
+	return v[1] + " suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 }
 
-
-string CommandHandler::Pickup(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Pickup(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -359,8 +338,7 @@ string CommandHandler::Pickup(const vector<string>& v, Map& map, GameData& data)
 	return "Picked up " + v[1] + ".\n";
 }
 
-
-string CommandHandler::Drop(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Drop(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -382,7 +360,7 @@ string CommandHandler::Drop(const vector<string>& v, Map& map, GameData& data) c
 
 	Point p{ map.find(data.CurrentPlayer().selected()) };
 
-	unique_ptr<Item> item{ data.CurrentPlayer().selected()->drop(v[1]) };
+	std::unique_ptr<Item> item{ data.CurrentPlayer().selected()->drop(v[1]) };
 
 	if (item.get() == data.CurrentPlayer().selected()->hand())
 		data.CurrentPlayer().selected()->hand(nullptr);
@@ -394,8 +372,7 @@ string CommandHandler::Drop(const vector<string>& v, Map& map, GameData& data) c
 	return v[1] + " dropped.\n";
 }
 
-
-string CommandHandler::Equip(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Equip(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 2)
 		return "Invalid arguments.\n";
@@ -417,27 +394,26 @@ string CommandHandler::Equip(const vector<string>& v, Map& map, GameData& data) 
 	return v[1] + " equipped.\n";
 }
 
-
-string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::End(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
 
 	data.turn();
 
-	vector<std::pair<Point, unique_ptr<BrainDrainer>>> drainers;
+	std::vector<std::pair<Point, std::unique_ptr<BrainDrainer>>> drainers;
 
 	for (int i = 0; i < map.size(); i++)
 		for (int j = 0; j < map.size(); j++)
 			if (map.tile(Point{ j, i }).braindrainer())
 				drainers.emplace_back(make_pair(Point{ j, i }, map.tile(Point{ j, i }).remove()));
 
-	vector<Point> offsets;
+	std::vector<Point> offsets;
 	offsets.reserve(9);
 
 	std::mt19937_64 mt{ std::random_device{}() };
 
-	string ret;
+	std::string ret;
 
 	for (auto& pair : drainers)
 	{
@@ -456,7 +432,7 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 			{
 				map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).add(move(pair.second));
 				for (auto& x : map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).AmazonContainer())
-					ret.append(map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).braindrainer()->attack(*x));
+					ret.append(map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).braindrainer()->Attack(*x, map, data));
 				break;
 			}
 
@@ -468,8 +444,7 @@ string CommandHandler::End(const vector<string>& v, Map& map, GameData& data) co
 	return ret.append("\n### END OF TURN ###\n");
 }
 
-
-string CommandHandler::Tame(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Tame(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -494,20 +469,19 @@ string CommandHandler::Tame(const vector<string>& v, Map& map, GameData& data) c
 	Dino* temp{ dinos.front().get() };
 
 	for (const auto& x : dinos)
-		if (x->health() >= temp->health() && !x->tamed())
+		if (x->Health() >= temp->Health() && !x->Tamed())
 			temp = x.get();
 
-	if (temp->tamed())
+	if (temp->Tamed())
 		return "There are no free dinos nearby.\n";
 
 	data.CurrentPlayer().selected()->dino(temp);
-	temp->tamed(!temp->tamed());
+	temp->Tamed(!temp->Tamed());
 
-	return "Dino (" + to_string(static_cast<int>(round(temp->health()))) + " HP) tamed.\n";
+	return "Dino (" + std::to_string(static_cast<int>(round(temp->Health()))) + " HP) tamed.\n";
 }
 
-
-string CommandHandler::Geton(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Geton(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -529,15 +503,14 @@ string CommandHandler::Geton(const vector<string>& v, Map& map, GameData& data) 
 	if (!map.tile(point).has(data.CurrentPlayer().selected()->dino()))
 		return data.CurrentPlayer().selected()->name() + "'s dino is not nearby.\n";
 
-	if (data.CurrentPlayer().selected()->dino()->health() == 0.0)
+	if (data.CurrentPlayer().selected()->dino()->Health() == 0.0)
 		return data.CurrentPlayer().selected()->name() + "'s dino is dead.\n";
 
 	data.CurrentPlayer().selected()->riding(map.tile(point).remove(data.CurrentPlayer().selected()->dino()));
 	return data.CurrentPlayer().selected()->name() + " got on their dino.\n";
 }
 
-
-string CommandHandler::Getoff(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Getoff(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -559,13 +532,12 @@ string CommandHandler::Getoff(const vector<string>& v, Map& map, GameData& data)
 	return data.CurrentPlayer().selected()->name() + " got off of their dino.\n";
 }
 
-
-string CommandHandler::List(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::List(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
 
-	string ret;
+	std::string ret;
 
 	for (const auto& x : data.CurrentPlayer().AmazonContainer())
 		ret.append(x.first + ", ");
@@ -576,8 +548,7 @@ string CommandHandler::List(const vector<string>& v, Map& map, GameData& data) c
 	return "Your amazons: " + ret.substr(0, ret.size() - 2) + ".\n";
 }
 
-
-string CommandHandler::Status(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Status(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
@@ -587,38 +558,37 @@ string CommandHandler::Status(const vector<string>& v, Map& map, GameData& data)
 	
 	Amazon* selected{ data.CurrentPlayer().selected() };
 
-	string ret{ selected->name() + ".\n" };
-	ret.append(to_string(static_cast<int>(round(selected->health()))) + " HP.\n");
+	std::string ret{ selected->name() + ".\n" };
+	ret.append(std::to_string(static_cast<int>(round(selected->health()))) + " HP.\n");
 
 	Point location{ map.find(selected) };
 
-	ret.append("On (" + to_string(location.x() + 1) + ", " + to_string(location.y() + 1) + ").\n");
-	ret.append("Holding: " + (selected->hand() ? "a " + selected->hand()->name() : "nothing") + ".\n");
+	ret.append("On (" + std::to_string(location.x() + 1) + ", " + std::to_string(location.y() + 1) + ").\n");
+	ret.append("Holding: " + (selected->hand() ? "a " + selected->hand()->Name() : "nothing") + ".\n");
 	ret.append("Inventory: ");
 
-	string temp;
+	std::string temp;
 	
 	for (const auto& x : selected->inventory())
 		for (const auto& y : x.second)
-			temp.append(y->name() + ", ");
+			temp.append(y->Name() + ", ");
 
 	if (temp.empty())
 		ret.append("empty.\n");
 	else
 		ret.append(temp.substr(0, temp.size() - 2) + ".\n");
 
-	ret.append("Dino: " + (selected->dino() ? to_string(static_cast<int>(round(selected->dino()->health()))) + " HP" : "none") + ".\n");
+	ret.append("Dino: " + (selected->dino() ? std::to_string(static_cast<int>(round(selected->dino()->Health()))) + " HP" : "none") + ".\n");
 	return ret.append(selected->riding() ? "Riding.\n" : "Not riding.\n");
 }
 
-
-string CommandHandler::Steps(const vector<string>& v, Map& map, GameData& data) const noexcept
+std::string CommandHandler::Steps(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept
 {
 	if (v.size() != 1)
 		return "Invalid arguments.\n";
 
-	return "Remaining actions: " + to_string(data.MaxActions() - data.CurrentPlayer().actions()) + ".\n"
-	"Living amazons: " + to_string(data.CurrentPlayer().alive()) + ".\n"
-	"Spawns: " + to_string(data.CurrentPlayer().spawns()) + ".\n"
-	"Possible spawns: " + to_string(std::min<size_t>(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
+	return "Remaining actions: " + std::to_string(data.MaxActions() - data.CurrentPlayer().actions()) + ".\n"
+	"Living amazons: " + std::to_string(data.CurrentPlayer().alive()) + ".\n"
+	"Spawns: " + std::to_string(data.CurrentPlayer().spawns()) + ".\n"
+	"Possible spawns: " + std::to_string(std::min<size_t>(data.MaxSpawns() - data.CurrentPlayer().spawns(), data.MaxAlive() - data.CurrentPlayer().alive())) + ".\n";
 }

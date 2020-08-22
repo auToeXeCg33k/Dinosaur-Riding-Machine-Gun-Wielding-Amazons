@@ -1,152 +1,38 @@
-#include "player.h"
-
-using std::string;
-using std::string_view;
+#include "Player.h"
 
 
-char Player::nextID{ 0 };
+Player::Player(std::string_view name) noexcept
+	: m_Name{ name }, m_Selected{ nullptr }, m_Actions{ 0 }, m_Alive{ 0 }, m_ID{ m_NextID }
+{ m_NextID++; }
 
+Player::~Player() noexcept { m_NextID--; }
 
-Player::Player(string_view name) noexcept : nm{ name }, slctd{ nullptr }, nActions{ 0 }, nAlive{ 0 }, nID{ nextID }
-{
-	nextID++;
-}
+const std::string& Player::name() const noexcept { return m_Name; }
 
+unsigned Player::actions() const noexcept { return m_Actions; }
 
-Player::~Player() noexcept
-{
-	nextID--;
-}
+void Player::action() noexcept { m_Actions++; }
 
+void Player::resetActions() noexcept { m_Actions = 0; }
 
-const string& Player::name() const noexcept
-{
-	return nm;
-}
+unsigned Player::alive() const noexcept { return m_Alive; }
 
+void Player::incAlive() noexcept { m_Alive++; }
 
-unsigned Player::actions() const noexcept
-{
-	return nActions;
-}
+void Player::decAlive() noexcept { m_Alive--; }
 
+size_t Player::spawns() const noexcept { return m_Amazons.size(); }
 
-void Player::action() noexcept
-{
-	nActions++;
-}
+bool Player::existsAmazon(const std::string& name) const noexcept { return m_Amazons.find(name) != m_Amazons.end(); }
 
+void Player::createAmazon(const std::string& name) noexcept { m_Amazons.emplace(name, name); }
 
-void Player::resetActions() noexcept
-{
-	nActions = 0;
-}
+Amazon& Player::getAmazon(const std::string& name) noexcept { return m_Amazons.at(name); }
 
+const std::unordered_map<std::string, Amazon>& Player::AmazonContainer() const noexcept { return m_Amazons; }
 
-unsigned Player::alive() const noexcept
-{
-	return nAlive;
-}
+char Player::id() const noexcept { return m_ID; }
 
+Amazon* Player::selected() const noexcept { return m_Selected; }
 
-void Player::incAlive() noexcept
-{
-	nAlive++;
-}
-
-
-void Player::decAlive() noexcept
-{
-	nAlive--;
-}
-
-
-size_t Player::spawns() const noexcept
-{
-	return amazons.size();
-}
-
-
-bool Player::existsAmazon(const string& name) const noexcept
-{
-	return amazons.find(name) != amazons.end();
-}
-
-
-void Player::createAmazon(const string& name) noexcept
-{
-	amazons.emplace(name, name);
-}
-
-
-Amazon& Player::getAmazon(const string& name) noexcept
-{
-	return amazons.at(name);
-}
-
-
-const std::unordered_map<string, Amazon>& Player::AmazonContainer() const noexcept
-{
-	return amazons;
-}
-
-
-char Player::id() const noexcept
-{
-	return nID;
-}
-
-
-Amazon* Player::selected() const noexcept
-{
-	return slctd;
-}
-
-
-void Player::selected(Amazon* const amazon) noexcept
-{
-	slctd = amazon;
-}
-
-
-
-
-GameData::GameData(int i) noexcept : p1{ "Player 1" }, p2{ "Player 2" }, active{ 0 }, nMaxActions{ i == 1 ? 3u : 3u }, nMaxSpawns{ i == 1 ? 6u : 6u }, nMaxAlive{ i == 1 ? 3u : 3u } {}
-
-
-Player& GameData::CurrentPlayer() noexcept
-{
-	return active ? p2 : p1;
-}
-
-
-Player& GameData::OtherPlayer() noexcept
-{
-	return active ? p1 : p2;
-}
-
-
-unsigned GameData::MaxActions() const noexcept
-{
-	return nMaxActions;
-}
-
-
-unsigned GameData::MaxSpawns() const noexcept
-{
-	return nMaxSpawns;
-}
-
-
-unsigned GameData::MaxAlive() const noexcept
-{
-	return nMaxAlive;
-}
-
-
-void GameData::turn() noexcept
-{
-	active = !active;
-	p1.resetActions();
-	p2.resetActions();
-}
+void Player::selected(Amazon* const amazon) noexcept { m_Selected = amazon; }

@@ -1,42 +1,19 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#pragma once
 
-#include <memory>
-#include <unordered_map>
+#include "Dino.h"
+#include "Item.h"
+
 #include <string>
-#include <vector>
-
-#include "item.h"
-
-
-class Dino
-{
-private:
-	double hp;
-	bool is_tamed;
-
-public:
-	Dino() noexcept;
-	Dino(Dino&& other) noexcept = delete;
-
-	double health() const noexcept;
-	void health(double const hp) noexcept;
-
-	bool tamed() const noexcept;
-	void tamed(bool const tmd) noexcept;
-};
-
 
 class Amazon
 {
 private:
-	const std::string nm;
-	double hp;
-	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> inv;
-	Gun* held;
-	Dino* owned_dino;
-	std::unique_ptr<Dino> ridden_dino;
-
+	const std::string m_Name;
+	double m_HP;
+	std::unordered_map<ItemType, std::vector<std::unique_ptr<Item>>> m_Inventory;
+	Gun* m_Hand;
+	Dino* m_Dino;
+	std::unique_ptr<Dino> m_Ridden;
 public:
 	Amazon(std::string_view name) noexcept;
 	Amazon(Amazon&& other) noexcept = delete;
@@ -63,23 +40,4 @@ public:
 
 	std::unique_ptr<Dino>& riding() noexcept;
 	void riding(std::unique_ptr<Dino>&& dino) noexcept;
-
 };
-
-
-class BrainDrainer
-{
-private:
-	const double min;
-	const double max;
-
-	double damage() const noexcept;
-
-public:
-	BrainDrainer() noexcept;
-	BrainDrainer(BrainDrainer&& other) noexcept = delete;
-
-	std::string attack(Amazon& amazon) const noexcept;
-};
-
-#endif

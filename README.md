@@ -3,6 +3,10 @@
 ## C++ edition
 *I've switched to C++ for several reasons, none of which I'm going to explain here. This is the main one, all versions from here on are only C++ ones, and the Java edition is deprecated.*
 
+### ALPHA 1.3.3
+* Fixed a bug that could cause Braindrainers not to attack at the end of turns even when they should.
+* Small performance optimizations.
+
 ### ALPHA 1.3.2
 * Fixed a bug that caused crashes under some very specific circumstances around items.
 * Fixed a bug that resulted in infinite loops in various situations if an amazon had more than ~2 billion items.

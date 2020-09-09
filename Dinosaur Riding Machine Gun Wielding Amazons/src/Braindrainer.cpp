@@ -37,7 +37,12 @@ std::string BrainDrainer::Attack(Amazon& amazon, Tile& tile, GameData& data) con
 	if (amazon.health() - dmg <= 0.0)
 	{
 		amazon.health(0.0);
-		data.CurrentPlayer().decAlive();
+
+		if (data.CurrentPlayer().existsAmazon(amazon.name()) && &data.CurrentPlayer().getAmazon(amazon.name()) == &amazon)
+			data.CurrentPlayer().decAlive();
+		else
+			data.OtherPlayer().decAlive();
+
 		return amazon.name() + " was killed by a Braindrainer.\n";
 	}
 	

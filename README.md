@@ -6,6 +6,7 @@
 ### ALPHA 1.3.3
 * Fixed a bug that caused Braindrainers to leave attacked riding amazons in an invalid state at the end of turns.
 * Fixed a bug that caused Braindrainers to attack dead amazons at the end of turns.
+* Fixed a bug that caused end-of-turn Braindrainer attacks to potentially mismanage the amazon registry.
 * Fixed a rare bug that could cause attacks to report incorrectly.
 * Small performance optimizations.
 

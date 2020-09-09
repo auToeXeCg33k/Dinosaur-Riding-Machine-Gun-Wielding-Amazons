@@ -3,7 +3,7 @@
 #include <string>
 
 class Amazon;
-class Map;
+class Tile;
 class GameData;
 
 class BrainDrainer
@@ -18,5 +18,5 @@ public:
 	BrainDrainer() noexcept;
 	BrainDrainer(BrainDrainer&& other) noexcept = delete;
 
-	std::string Attack(Amazon& amazon, Map& map, GameData& data) const noexcept;
+	std::string Attack(Amazon& amazon, Tile& tile, GameData& data) const noexcept;
 };

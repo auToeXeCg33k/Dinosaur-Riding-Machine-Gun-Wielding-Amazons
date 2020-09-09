@@ -7,7 +7,7 @@ Tile::Tile(Tile&& other) noexcept
 
 void Tile::add(Amazon* const amazon) noexcept { m_Amazons.insert(amazon); }
 
-void Tile::add(std::unique_ptr<Dino>&& dino) noexcept { m_Dinos.push_back(move(dino)); }
+void Tile::add(std::unique_ptr<Dino>&& dino) noexcept { m_Dinos.emplace_back(move(dino)); }
 
 void Tile::add(std::unique_ptr<Item>&& item) noexcept { m_Items.at(ItemFactory::TypeOf(item->Name())).emplace_back(move(item)); }
 

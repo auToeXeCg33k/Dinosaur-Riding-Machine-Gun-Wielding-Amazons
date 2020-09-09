@@ -122,7 +122,7 @@ std::string CommandHandler::Move(const std::vector<std::string>& v, Map& map, Ga
 		std::string ret{ data.CurrentPlayer().selected()->name() + " moved to (" + v.at(1) + ", " + v.at(2) + ").\n" };
 
 		if (map.tile(target).braindrainer())
-			ret.append(map.tile(target).braindrainer()->Attack(*data.CurrentPlayer().selected(), map, data));
+			ret.append(map.tile(target).braindrainer()->Attack(*data.CurrentPlayer().selected(), map.tile(target), data));
 
 		return ret;
 	}
@@ -276,33 +276,26 @@ std::string CommandHandler::Attack(const std::vector<std::string>& v, Map& map, 
 
 	if (data.OtherPlayer().getAmazon(v[1]).riding())
 	{
-		if (data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg < 0.0)
-			data.OtherPlayer().getAmazon(v[1]).dino()->Health(0.0);
-		else
-			data.OtherPlayer().getAmazon(v[1]).dino()->Health(data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg);
-
-		if (data.OtherPlayer().getAmazon(v[1]).dino()->Health() == 0.0)
+		if (data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg <= 0.0)
 		{
+			data.OtherPlayer().getAmazon(v[1]).dino()->Health(0.0);
 			map.tile(map.find(&data.OtherPlayer().getAmazon(v[1]))).add(move(data.OtherPlayer().getAmazon(v[1]).riding()));
 			return v[1] + "'s dino died.\n";
 		}
 
+		data.OtherPlayer().getAmazon(v[1]).dino()->Health(data.OtherPlayer().getAmazon(v[1]).dino()->Health() - dmg);
 		return v[1] + "'s dino suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 	}
 		
-		
 
-	if (data.OtherPlayer().getAmazon(v[1]).health() - dmg < 0.0)
-		data.OtherPlayer().getAmazon(v[1]).health(0.0);
-	else
-		data.OtherPlayer().getAmazon(v[1]).health(data.OtherPlayer().getAmazon(v[1]).health() - dmg);
-
-	if (data.OtherPlayer().getAmazon(v[1]).health() == 0.0)
+	if (data.OtherPlayer().getAmazon(v[1]).health() - dmg <= 0.0)
 	{
+		data.OtherPlayer().getAmazon(v[1]).health(0.0);
 		data.OtherPlayer().decAlive();
 		return v[1] + " died.\n";
 	}
 
+	data.OtherPlayer().getAmazon(v[1]).health(data.OtherPlayer().getAmazon(v[1]).health() - dmg);
 	return v[1] + " suffered " + std::to_string(static_cast<int>(round(dmg))) + " points of damage.\n";
 }
 
@@ -432,7 +425,8 @@ std::string CommandHandler::End(const std::vector<std::string>& v, Map& map, Gam
 			{
 				map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).add(move(pair.second));
 				for (auto& x : map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).AmazonContainer())
-					ret.append(map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).braindrainer()->Attack(*x, map, data));
+					if (x->health())
+						ret.append(map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }).braindrainer()->Attack(*x, map.tile(Point{ pair.first.x() + offsets.at(rnd).x(), pair.first.y() + offsets.at(rnd).y() }), data));
 				break;
 			}
 

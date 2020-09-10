@@ -2,6 +2,7 @@
 
 #include "GameData.h"
 #include "Utility.h"
+#include "Debug.h"
 
 #include <stdexcept>
 #include <random>
@@ -37,7 +38,7 @@ std::string CommandHandler::HandleCommand(const std::vector<std::string>& v, Map
 	if (m_Commands.find(toLower(v.at(0))) == m_Commands.end())
 		return "Invalid command.\n";
 
-	return (this->*m_Commands.at(toLower(v.at(0))))(v, map, data);
+	DebugReturn((this->*m_Commands.at(toLower(v.at(0))))(v, map, data));
 }
 
 std::string CommandHandler::New(const std::vector<std::string>& v, Map& map, GameData& data) const noexcept

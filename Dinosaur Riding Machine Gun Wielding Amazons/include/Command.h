@@ -3,8 +3,6 @@
 #include "Map.h"
 #include "GameData.h"
 
-#include <unordered_map>
-
 class CommandHandler
 {
 private:

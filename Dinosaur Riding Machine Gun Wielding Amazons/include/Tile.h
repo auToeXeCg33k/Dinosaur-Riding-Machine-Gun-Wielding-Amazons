@@ -3,10 +3,7 @@
 #include "Amazon.h"
 #include "Braindrainer.h"
 
-#include <unordered_map>
-#include <vector>
 #include <unordered_set>
-#include <memory>
 
 class Tile
 {

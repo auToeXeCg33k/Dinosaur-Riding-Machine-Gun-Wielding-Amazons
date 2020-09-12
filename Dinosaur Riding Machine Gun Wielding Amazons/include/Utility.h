@@ -1,9 +1,9 @@
 #pragma once
 
+#include "GameData.h"
+
 #include <string>
 #include <vector>
-
-#include "GameData.h"
 
 int ReadGameMode() noexcept;
 

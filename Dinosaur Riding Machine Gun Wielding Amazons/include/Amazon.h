@@ -3,8 +3,6 @@
 #include "Dino.h"
 #include "Item.h"
 
-#include <string>
-
 class Amazon
 {
 private:

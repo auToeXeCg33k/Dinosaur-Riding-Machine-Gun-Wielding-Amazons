@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "utility.h"
-#include "map.h"
-#include "command.h"
+#include "Utility.h"
+#include "Map.h"
+#include "Command.h"
 
 int main()
 {
